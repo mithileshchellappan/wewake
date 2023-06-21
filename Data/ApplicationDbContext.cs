@@ -18,17 +18,7 @@ namespace WeWakeAPI.Data
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
-
-            modelBuilder.Entity<User>()
-                .HasMany(u => u.Memberships)
-                .WithMany(g => g.Members)
-                .UsingEntity(j => j.ToTable("GroupUser"));
-
-            modelBuilder.Entity<Alarm>()
-                .HasOne(a => a.AlarmOptions)
-                .WithOne()
-                .HasForeignKey<AlarmOptions>(ao => ao.AlarmId)
-                .OnDelete(DeleteBehavior.Cascade);
+    
         }
     }
 }

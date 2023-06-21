@@ -1,5 +1,6 @@
 using Microsoft.EntityFrameworkCore;
 using WeWakeAPI.Data;
+using WeWakeAPI.Controllers;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -27,5 +28,6 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+
 
 app.Run();

@@ -10,7 +10,5 @@ namespace WeWakeAPI.Models
         public DateTime Time { get; set; }
         public bool IsEnabled { get; set; }
 
-        public Group AlarmGroup { get; set; }
-        public AlarmOptions AlarmOptions { get; set; }
     }
 }

@@ -12,8 +12,8 @@ using WeWakeAPI.Data;
 namespace WeWakeAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230618130305_InitialCreate")]
-    partial class InitialCreate
+    [Migration("20230621102043_Initial")]
+    partial class Initial
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -46,9 +46,6 @@ namespace WeWakeAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
-                    b.Property<Guid>("AlarmOptionsId")
-                        .HasColumnType("uniqueidentifier");
-
                     b.Property<Guid>("GroupId")
                         .HasColumnType("uniqueidentifier");
 
@@ -60,10 +57,6 @@ namespace WeWakeAPI.Migrations
 
                     b.HasKey("AlarmId");
 
-                    b.HasIndex("AlarmOptionsId");
-
-                    b.HasIndex("GroupId");
-
                     b.ToTable("Alarms");
                 });
 
@@ -71,6 +64,9 @@ namespace WeWakeAPI.Migrations
                 {
                     b.Property<Guid>("AlarmOptionsId")
                         .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("AlarmId")
                         .HasColumnType("uniqueidentifier");
 
                     b.Property<string>("AudioURL")
@@ -100,6 +96,8 @@ namespace WeWakeAPI.Migrations
 
                     b.HasKey("AlarmOptionsId");
 
+                    b.HasIndex("AlarmId");
+
                     b.ToTable("AlarmOptions");
                 });
 
@@ -120,8 +118,6 @@ namespace WeWakeAPI.Migrations
                         .HasColumnType("nvarchar(max)");
 
                     b.HasKey("GroupId");
-
-                    b.HasIndex("AdminId");
 
                     b.ToTable("Groups");
                 });
@@ -164,39 +160,15 @@ namespace WeWakeAPI.Migrations
                         .IsRequired();
                 });
 
-            modelBuilder.Entity("WeWakeAPI.Models.Alarm", b =>
+            modelBuilder.Entity("WeWakeAPI.Models.AlarmOptions", b =>
                 {
-                    b.HasOne("WeWakeAPI.Models.AlarmOptions", "AlarmOptions")
+                    b.HasOne("WeWakeAPI.Models.Alarm", "Alarm")
                         .WithMany()
-                        .HasForeignKey("AlarmOptionsId")
+                        .HasForeignKey("AlarmId")
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
-                    b.HasOne("WeWakeAPI.Models.Group", "AlarmGroup")
-                        .WithMany()
-                        .HasForeignKey("GroupId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("AlarmGroup");
-
-                    b.Navigation("AlarmOptions");
-                });
-
-            modelBuilder.Entity("WeWakeAPI.Models.Group", b =>
-                {
-                    b.HasOne("WeWakeAPI.Models.User", "Admin")
-                        .WithMany("AdminGroups")
-                        .HasForeignKey("AdminId")
-                        .OnDelete(DeleteBehavior.Cascade)
-                        .IsRequired();
-
-                    b.Navigation("Admin");
-                });
-
-            modelBuilder.Entity("WeWakeAPI.Models.User", b =>
-                {
-                    b.Navigation("AdminGroups");
+                    b.Navigation("Alarm");
                 });
 #pragma warning restore 612, 618
         }
