@@ -1,12 +1,9 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WeWakeAPI.Data;
 using WeWakeAPI.Models;
+using WeWakeAPI.RequestModels;
+using WeWakeAPI.Utils;
 
 namespace WeWakeAPI.Controllers
 {
@@ -19,6 +16,32 @@ namespace WeWakeAPI.Controllers
         public UsersController(ApplicationDbContext context)
         {
             _context = context;
+        }
+        [HttpPost("/SignUp")]
+        public async Task<ActionResult> SignUp(UserRequest userRequest)
+        {
+            try
+            {
+                var user = new User();
+                user.UserId = Guid.NewGuid();
+                user.Name = userRequest.Name;
+                user.Email = userRequest.Email;
+                var pwdHash = PasswordHasher.Hash(userRequest.Password);
+                user.PasswordHash = pwdHash;
+                _context.Users.Add(user);
+                await _context.SaveChangesAsync();
+                var jwtToken = JWTHasher.GenerateToken(user);
+                var resObj = new
+                {
+                    jwtToken,
+                    Name = user.Name
+                };
+                return CreatedAtAction("SignUp", new { UserId = user.UserId }, resObj);
+            }catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+            
         }
 
         // GET: api/Users
