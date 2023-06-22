@@ -4,6 +4,7 @@ using Newtonsoft.Json;
 using Newtonsoft.Json.Converters;
 using System.Dynamic;
 using WeWakeAPI.Data;
+using WeWakeAPI.DBServices;
 using WeWakeAPI.Models;
 using WeWakeAPI.RequestModels;
 
@@ -13,10 +14,12 @@ namespace WeWakeAPI.Controllers
     public class GroupController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserService _userService;
 
-        public GroupController(ApplicationDbContext context)
+        public GroupController(ApplicationDbContext context,UserService userService)
         {
             _context = context;
+            _userService = userService;
         }
 
         //GET: api/Group
@@ -40,11 +43,7 @@ namespace WeWakeAPI.Controllers
                 var group = new Group();
                 group.GroupId = Guid.NewGuid();
                 group.GroupName = gr.GroupName;
-                Guid UserId = (Guid)HttpContext.Items["UserId"];
-                if (UserId == null)
-                {
-                    return Unauthorized();
-                }
+                Guid UserId = _userService.GetUserIdFromJWT();
                 group.AdminId = UserId;
                 group.CreatedAt = DateTime.Now;
                 var resObj = new
@@ -55,6 +54,8 @@ namespace WeWakeAPI.Controllers
                 };
 
                 _context.Groups.Add(group);
+                Member member = new Member(UserId, group.GroupId, true);
+                _context.Members.Add(member);
                 await _context.SaveChangesAsync();
 
                 return Ok(resObj);
@@ -72,23 +73,17 @@ namespace WeWakeAPI.Controllers
             {
                 var converter = new ExpandoObjectConverter();
                 var conObject = JsonConvert.DeserializeObject<ExpandoObject>(jsonData.ToString(), converter) as dynamic;
-                Guid groupId = new Guid(conObject.groupId);
-                Console.WriteLine(groupId);
-                Group group = await _context.Groups.FirstOrDefaultAsync(g => g.GroupId == groupId);
+                Guid GroupId = new Guid(conObject.groupId);
+                Group group = await _context.Groups.FirstOrDefaultAsync(g => g.GroupId == GroupId);
                 if (group == null)
                 {
                     throw new Exception("Group Does Not Exist");
                 }
-                Guid UserId = (Guid)HttpContext.Items["UserId"];
-                User member = await _context.Users.FirstOrDefaultAsync(u => u.UserId == UserId);
-                if (member == null)
-                {
-                    throw new Exception("Member not found");
-                }
-                //Console.WriteLine("members" + group.Members);
-                //group.Members.Add(member);
+                Guid UserId = await _userService.CheckIfUserExistsFromJWT();
+                Member member = new Member(UserId, GroupId);
+                _context.Members.Add(member);
                 await _context.SaveChangesAsync();
-                return Ok();
+                return Ok(member);
             }
             catch (Exception e)
             {
