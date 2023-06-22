@@ -22,19 +22,28 @@ namespace WeWakeAPI.Controllers
         {
             try
             {
+                var userExists = await _context.Users.FirstOrDefaultAsync(user => user.Email == userRequest.Email);
+                if (userExists != null)
+                {
+                    throw new Exception("User already exists.");
+                }
+                if (String.IsNullOrEmpty(userRequest.Name))
+                {
+                    throw new Exception("Name is required");
+                }
                 var user = new User();
                 user.UserId = Guid.NewGuid();
                 user.Name = userRequest.Name;
                 user.Email = userRequest.Email;
-                var pwdHash = PasswordHasher.Hash(userRequest.Password);
-                user.PasswordHash = pwdHash;
+                user.PasswordHash = PasswordHasher.Hash(userRequest.Password); ;
                 _context.Users.Add(user);
                 await _context.SaveChangesAsync();
                 var jwtToken = JWTHasher.GenerateToken(user);
                 var resObj = new
                 {
                     jwtToken,
-                    Name = user.Name
+                    Name = user.Name,
+                    UserId = user.UserId
                 };
                 return CreatedAtAction("SignUp", new { UserId = user.UserId }, resObj);
             }catch (Exception e)
@@ -42,6 +51,35 @@ namespace WeWakeAPI.Controllers
                 return BadRequest(e.Message);
             }
             
+        }
+
+        [HttpPost("/Login")]
+        public async Task<ActionResult> Login(UserRequest userRequest)
+        {
+            try
+            {
+                var existingUser = await _context.Users.FirstOrDefaultAsync(u => u.Email == userRequest.Email);
+                if(existingUser == null)
+                {
+                    return Unauthorized();
+                }
+                var passwordVerify = PasswordHasher.Verify(userRequest.Password, existingUser.PasswordHash);
+                if (!passwordVerify)
+                {
+                    return Unauthorized();
+                }
+                var jwtToken = JWTHasher.GenerateToken(existingUser);
+                var resObj = new
+                {
+                    jwtToken,
+                    Name = existingUser.Name,
+                    UserId = existingUser.UserId
+                };
+                return Ok(resObj);
+            }catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
         // GET: api/Users
