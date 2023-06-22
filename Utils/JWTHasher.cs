@@ -39,7 +39,7 @@ namespace WeWakeAPI.Utils
             }
         }
 
-        public static (bool, object) ValidateToken(string token)
+        public static (bool, object,object) ValidateToken(string token)
         {
             var symmetricKey = Convert.FromBase64String(Secret);
             var tokenHandler = new JwtSecurityTokenHandler();
@@ -59,15 +59,16 @@ namespace WeWakeAPI.Utils
                 var jwtToken = (JwtSecurityToken)validatedToken;
                 var payload = jwtToken.Payload;
                 var UserId = payload.Claims.FirstOrDefault(c => c.Type == ClaimTypes.Sid)?.Value;
+                var Name = payload.Claims.FirstOrDefault(c => c.Type == ClaimTypes.GivenName)?.Value;
                 Console.WriteLine(UserId);
 
 
-                return (true, UserId);
+                return (true, UserId,Name);
             }
             catch (Exception ex)
             {
                 Console.WriteLine(ex.Message);
-                return (false, null);
+                return (false, null,null);
             }
         }
     }
