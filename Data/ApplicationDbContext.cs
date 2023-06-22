@@ -14,6 +14,7 @@ namespace WeWakeAPI.Data
         public DbSet<Group> Groups { get; set; }
         public DbSet<Alarm> Alarms { get; set; }
         public DbSet<AlarmOptions> AlarmOptions { get; set; }
+        public DbSet<Member> Members { get; set; }
 
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {

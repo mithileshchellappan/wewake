@@ -38,6 +38,7 @@ namespace WeWakeAPI.Middlewares
 
             if (isValid)
             {
+                Console.WriteLine("Requesting User:" + UserId);
                 context.Items["UserId"] = UserId;
                 context.Items["Name"] = Name;
                 await _next(context);

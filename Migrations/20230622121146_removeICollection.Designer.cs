@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WeWakeAPI.Data;
 
@@ -11,9 +12,11 @@ using WeWakeAPI.Data;
 namespace WeWakeAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230622121146_removeICollection")]
+    partial class removeICollection
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -102,23 +105,6 @@ namespace WeWakeAPI.Migrations
                     b.HasKey("GroupId");
 
                     b.ToTable("Groups");
-                });
-
-            modelBuilder.Entity("WeWakeAPI.Models.Member", b =>
-                {
-                    b.Property<Guid>("MemberId")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<Guid>("GroupId")
-                        .HasColumnType("uniqueidentifier");
-
-                    b.Property<bool>("isAdmin")
-                        .HasColumnType("bit");
-
-                    b.HasKey("MemberId");
-
-                    b.ToTable("Members");
                 });
 
             modelBuilder.Entity("WeWakeAPI.Models.User", b =>

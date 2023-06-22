@@ -5,11 +5,14 @@ namespace WeWakeAPI.Models
 {
     public class Group
     {
+        //public Group() {
+        //    Members = new HashSet<User>();
+        //}
+
         [Key]
         public Guid GroupId { get; set; }
         public string GroupName { get; set; }
         public Guid AdminId { get; set; }
         public DateTime CreatedAt { get; set; }
-        public virtual ICollection<User> Members { get; set; }
     }
 }

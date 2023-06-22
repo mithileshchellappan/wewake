@@ -16,8 +16,7 @@ namespace WeWakeAPI.Models
         public string Name { get; set; }
         public string Email { get; set; }
         public string PasswordHash { get; set; }
-        [InverseProperty("Members")]
-        public virtual ICollection<Group> Memberships { get; set; }
+
     }
 
 
