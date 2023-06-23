@@ -15,11 +15,13 @@ namespace WeWakeAPI.Controllers
     {
         private readonly ApplicationDbContext _context;
         private readonly UserService _userService;
+        private readonly GroupService _groupService;
 
-        public GroupController(ApplicationDbContext context,UserService userService)
+        public GroupController(ApplicationDbContext context,UserService userService,GroupService groupService)
         {
             _context = context;
             _userService = userService;
+            _groupService = groupService;
         }
 
         //GET: api/Group
@@ -67,27 +69,20 @@ namespace WeWakeAPI.Controllers
         }
 
         [HttpPost("AddMember")]
-        public async Task<ActionResult> AddMemberToGroup([FromBody] dynamic jsonData)
+        public async Task<ActionResult> AddMemberToGroup([FromBody] GroupMemberRequest request)
         {
             try
             {
-                var converter = new ExpandoObjectConverter();
-                var conObject = JsonConvert.DeserializeObject<ExpandoObject>(jsonData.ToString(), converter) as dynamic;
-                Guid GroupId = new Guid(conObject.groupId);
-                Group group = await _context.Groups.FirstOrDefaultAsync(g => g.GroupId == GroupId);
-                if (group == null)
-                {
-                    throw new Exception("Group Does Not Exist");
-                }
+                Guid GroupId = new Guid(request.GroupId);
+                 _groupService.CheckIfGroupExists(GroupId);
                 Guid UserId = await _userService.CheckIfUserExistsFromJWT();
-                Member member = new Member(UserId, GroupId);
-                _context.Members.Add(member);
-                await _context.SaveChangesAsync();
-                return Ok(member);
+                 _groupService.CheckIfMemberAlreadyExists(GroupId, UserId);
+                Member member = await _groupService.AddMemberToGroup(GroupId, UserId);
+                return Ok(new {success=true,member});
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                return BadRequest(new {success=false,error=e.Message});
             }
         }
 
