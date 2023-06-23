@@ -69,7 +69,7 @@ namespace WeWakeAPI.Controllers
         }
 
         [HttpPost("AddMember")]
-        public async Task<ActionResult> AddMemberToGroup([FromBody] GroupMemberRequest request)
+        public async Task<ActionResult> AddMember([FromBody] GroupMemberRequest request)
         {
             try
             {
@@ -86,7 +86,7 @@ namespace WeWakeAPI.Controllers
             }
         }
         [HttpPost("RemoveMember")]
-        public async Task<ActionResult> RemoveMemberFromGroup([FromBody] GroupMemberRequest req)
+        public async Task<ActionResult> RemoveMember([FromBody] GroupMemberRequest req)
         {
             try
             {
@@ -104,6 +104,22 @@ namespace WeWakeAPI.Controllers
                 return Unauthorized(e.Message);
             }
             catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("Members/{groupId}")]
+        public async Task<IActionResult> GetMembers(string groupId)
+        {
+            try
+            {
+                Guid GroupId = Guid.Parse(groupId);
+                List<User> members = await _groupService.GetMembers(GroupId);
+                return Ok(new { success = true, members });
+
+
+            }catch(Exception e)
             {
                 return BadRequest(e.Message);
             }

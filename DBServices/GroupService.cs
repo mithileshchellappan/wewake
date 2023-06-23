@@ -1,4 +1,5 @@
 ﻿using Microsoft.EntityFrameworkCore;
+using System.ComponentModel;
 using WeWakeAPI.Data;
 using WeWakeAPI.Models;
 
@@ -98,6 +99,25 @@ namespace WeWakeAPI.DBServices
                 await _context.SaveChangesAsync();
                 return true;
             }catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task<List<User>> GetMembers(Guid groupId)
+        {
+            try
+            {
+                Group group = GetGroup(groupId);
+                List<User> members = await _context.Members.Where(g => g.GroupId == groupId)
+                .Select(m => new User
+                {
+                    UserId = m.User.UserId,
+                    Name = m.User.Name,
+                }).ToListAsync();
+                return members;
+            }
+            catch (Exception e)
             {
                 throw new Exception(e.Message);
             }
