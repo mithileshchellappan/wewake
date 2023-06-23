@@ -73,7 +73,7 @@ namespace WeWakeAPI.Controllers
         {
             try
             {
-                Guid GroupId = new Guid(request.GroupId);
+                Guid GroupId = new(request.GroupId);
                  _groupService.CheckIfGroupExists(GroupId);
                 Guid UserId = await _userService.CheckIfUserExistsFromJWT();
                  _groupService.CheckIfMemberAlreadyExists(GroupId, UserId);
@@ -91,11 +91,19 @@ namespace WeWakeAPI.Controllers
             try
             {
                 console.log(req.MemberId);
-                Guid GroupId = new Guid(req.GroupId);
-                Guid MemberId = new Guid(req.MemberId);
-                return Ok(req);
+                Guid GroupId = Guid.Parse(req.GroupId);
+                Guid MemberId = Guid.Parse(req.MemberId);
+                Guid UserId = _userService.GetUserIdFromJWT();
 
-            }catch(Exception e)
+                await _groupService.RemoveMemberFromGroup(GroupId, MemberId,UserId);
+                return Ok(new {success=true,message="Member removed successfully"});
+
+            }
+            catch(UnauthorizedAccessException e)
+            {
+                return Unauthorized(e.Message);
+            }
+            catch(Exception e)
             {
                 return BadRequest(e.Message);
             }

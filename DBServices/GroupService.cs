@@ -1,5 +1,4 @@
 ﻿using Microsoft.EntityFrameworkCore;
-using System.Text.RegularExpressions;
 using WeWakeAPI.Data;
 using WeWakeAPI.Models;
 
@@ -35,6 +34,20 @@ namespace WeWakeAPI.DBServices
 
         }
 
+        public Group GetGroup(Guid groupId)
+        {
+            try
+            {
+                Group group = _context.Groups.FirstOrDefault(m => m.GroupId == groupId);
+                return group;
+
+            }catch(Exception e)
+            {
+                throw new Exception(e.Message);
+
+            }
+        }
+
         public bool CheckIfGroupExists(Guid groupId,bool throwException = true)
         {
             int count = _context.Groups.Where(g => g.GroupId == groupId).Count();
@@ -68,6 +81,25 @@ namespace WeWakeAPI.DBServices
             catch(Exception ex)
             {
                 throw new Exception(ex.Message);
+            }
+        }
+
+        public async Task<bool> RemoveMemberFromGroup(Guid groupId,Guid memberId,Guid requesterId)
+        {
+            try
+            {
+                Group group = GetGroup(groupId);
+                if (memberId!=requesterId&& group.AdminId!=requesterId)
+                {
+                    throw new UnauthorizedAccessException("Only Admins can remove other members from group");
+                }
+                Member removingMember = new Member(memberId, groupId);
+                _context.Members.Remove(removingMember);
+                await _context.SaveChangesAsync();
+                return true;
+            }catch (Exception e)
+            {
+                throw new Exception(e.Message);
             }
         }
 
