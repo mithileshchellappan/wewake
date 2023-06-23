@@ -53,12 +53,14 @@ namespace WeWakeAPI.DBServices
                 Guid userId = GetUserIdFromJWT();
                 List<GroupMemberResponse> groups = await _context.Members
                     .Where(m => m.MemberId == userId)
-                    .Select(m => new GroupMemberResponse
+                    .Join(_context.Groups,member=>member.GroupId,group=>group.GroupId,(member,group)=>new GroupMemberResponse
                     {
-                        MemberId = m.User.UserId,
-                        GroupId = m.GroupId,
-                        MemberName = m.User.Name,
-                        IsAdmin = m.isAdmin
+                        MemberId = member.User.UserId,
+                        GroupId = member.GroupId,
+                        MemberName = member.User.Name,
+                        IsAdmin = member.isAdmin,
+                        CanSetAlarm = group.CanMemberCreateAlarm
+
                     })
                     .ToListAsync();
 
