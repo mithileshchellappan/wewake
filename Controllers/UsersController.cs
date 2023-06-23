@@ -1,23 +1,27 @@
 ﻿using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using WeWakeAPI.Data;
+using WeWakeAPI.DBServices;
 using WeWakeAPI.Models;
 using WeWakeAPI.RequestModels;
+using WeWakeAPI.ResponseModels;
 using WeWakeAPI.Utils;
 
 namespace WeWakeAPI.Controllers
 {
-    [Route("api/")]
+    [Route("api/User")]
     [ApiController]
     public class UsersController : ControllerBase
     {
         private readonly ApplicationDbContext _context;
+        private readonly UserService _userService;
 
-        public UsersController(ApplicationDbContext context)
+        public UsersController(ApplicationDbContext context, UserService userService)
         {
             _context = context;
+            _userService = userService;
         }
-        [HttpPost("SignUp")]
+        [HttpPost("/api/SignUp")]
         public async Task<ActionResult> SignUp(UserRequest userRequest)
         {
             try
@@ -53,7 +57,7 @@ namespace WeWakeAPI.Controllers
             
         }
 
-        [HttpPost("Login")]
+        [HttpPost("/api/Login")]
         public async Task<ActionResult> Login(UserRequest userRequest)
         {
             try
@@ -71,12 +75,27 @@ namespace WeWakeAPI.Controllers
                 var jwtToken = JWTHasher.GenerateToken(existingUser);
                 var resObj = new
                 {
+                    success=true,
                     jwtToken,
                     Name = existingUser.Name,
                     UserId = existingUser.UserId
                 };
                 return Ok(resObj);
             }catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpGet("Groups")]
+        public async Task<ActionResult> GetGroups()
+        {
+            try
+            {
+               List<GroupMemberResponse> groups = await _userService.GetUserGroups();
+               return Ok(groups);   
+
+            }catch( Exception e )
             {
                 return BadRequest(e.Message);
             }
