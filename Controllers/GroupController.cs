@@ -85,6 +85,21 @@ namespace WeWakeAPI.Controllers
                 return BadRequest(new {success=false,error=e.Message});
             }
         }
+        [HttpPost("RemoveMember")]
+        public async Task<ActionResult> RemoveMemberFromGroup([FromBody] GroupMemberRequest req)
+        {
+            try
+            {
+                console.log(req.MemberId);
+                Guid GroupId = new Guid(req.GroupId);
+                Guid MemberId = new Guid(req.MemberId);
+                return Ok(req);
+
+            }catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
 
     }
 }
