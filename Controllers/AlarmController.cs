@@ -1,5 +1,7 @@
-﻿using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Mvc;
+using WeWakeAPI.Data;
+using WeWakeAPI.DBServices;
+using WeWakeAPI.Models;
 
 namespace WeWakeAPI.Controllers
 {
@@ -7,10 +9,23 @@ namespace WeWakeAPI.Controllers
     [ApiController]
     public class AlarmController : ControllerBase
     {
-        [HttpPost("/Set")]
-        public async Task<ActionResult> SetAlarm()
+        private readonly ApplicationDbContext _context;
+        private readonly AlarmService _alarmService;
+        private readonly UserService _userService;
+
+        public AlarmController(ApplicationDbContext context, AlarmService alarmService, UserService userService)
         {
-            return Ok();
+            _context = context;
+            _alarmService = alarmService;
+            _userService = userService;
+        }
+
+        [HttpPost("Create")]
+        public async Task<ActionResult> SetAlarm(Alarm alarm)
+        {
+            Guid userId = await _userService.CheckIfUserExistsFromJWT();
+            Alarm createdAlarm = await _alarmService.CreateAlarm(alarm, userId);
+            return Ok(createdAlarm);
         }
     }
 }

@@ -15,6 +15,7 @@ builder.Services.AddSwaggerGen();
 builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<GroupService>();
+builder.Services.AddScoped<AlarmService>();
 
 
 builder.Services.AddDbContext<ApplicationDbContext>(
