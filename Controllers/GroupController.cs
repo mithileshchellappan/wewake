@@ -7,6 +7,7 @@ using WeWakeAPI.Data;
 using WeWakeAPI.DBServices;
 using WeWakeAPI.Models;
 using WeWakeAPI.RequestModels;
+using WeWakeAPI.ResponseModels;
 
 namespace WeWakeAPI.Controllers
 {
@@ -115,7 +116,7 @@ namespace WeWakeAPI.Controllers
             try
             {
                 Guid GroupId = Guid.Parse(groupId);
-                List<User> members = await _groupService.GetMembers(GroupId);
+                List<GroupMemberResponse> members = await _groupService.GetMembers(GroupId);
                 return Ok(new { success = true, members });
 
 

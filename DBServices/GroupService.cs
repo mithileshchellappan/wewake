@@ -2,6 +2,7 @@
 using System.ComponentModel;
 using WeWakeAPI.Data;
 using WeWakeAPI.Models;
+using WeWakeAPI.ResponseModels;
 
 namespace WeWakeAPI.DBServices
 {
@@ -104,17 +105,22 @@ namespace WeWakeAPI.DBServices
             }
         }
 
-        public async Task<List<User>> GetMembers(Guid groupId)
+        public async Task<List<GroupMemberResponse>> GetMembers(Guid groupId)
         {
             try
             {
                 Group group = GetGroup(groupId);
-                List<User> members = await _context.Members.Where(g => g.GroupId == groupId)
-                .Select(m => new User
+                List<GroupMemberResponse> members = await _context.Members
+                .Where(m => m.GroupId == groupId)
+                .Select(m => new GroupMemberResponse
                 {
-                    UserId = m.User.UserId,
-                    Name = m.User.Name,
-                }).ToListAsync();
+                    MemberId = m.User.UserId,
+                    GroupId = groupId,
+                    MemberName = m.User.Name,
+                    IsAdmin = m.isAdmin
+                })
+                .ToListAsync();
+
                 return members;
             }
             catch (Exception e)
