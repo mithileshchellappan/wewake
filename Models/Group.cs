@@ -14,5 +14,6 @@ namespace WeWakeAPI.Models
         public string GroupName { get; set; }
         public Guid AdminId { get; set; }
         public DateTime CreatedAt { get; set; }
+        public bool CanMemberCreateAlarm { get; set; } = false;
     }
 }
