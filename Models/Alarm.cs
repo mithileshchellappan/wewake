@@ -11,7 +11,7 @@ namespace WeWakeAPI.Models
         public Guid GroupId { get; set; }
         public Guid CreatedBy { get; set; }
         public DateTime Time { get; set; }
-        public bool IsEnabled { get; set; } = false;
+        public bool IsEnabled { get; set; } = true;
         public bool LoopAudio { get; set; } = false;
         public bool Vibrate { get; set; } = false;
         public String NotificationTitle { get; set; }
@@ -20,12 +20,12 @@ namespace WeWakeAPI.Models
         public bool UseExternalAudio { get; set; } = false;
         public String? AudioURL { get; set; } = null;
 
-        [ForeignKey("GroupId")]
-        public Group Group { get; set; }
+        //[ForeignKey("GroupId")]
+        //public Group Group { get; set; }
 
         public Alarm(Guid groupId,Guid createdBy, DateTime time, bool isEnabled, bool loopAudio, bool vibrate, string notificationTitle, string notificationBody, string internalAudioFile, bool useExternalAudio, string audioURL)
         {
-            AlarmId = new Guid();
+            AlarmId = Guid.NewGuid(); 
             GroupId = groupId;
             CreatedBy = createdBy;
             Time = time;
