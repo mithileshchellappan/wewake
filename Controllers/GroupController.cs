@@ -69,6 +69,36 @@ namespace WeWakeAPI.Controllers
             }
         }
 
+        [HttpPut("Update/{groupId}")]
+        public async Task<ActionResult> UpdateGroup(Guid groupId, [FromBody] GroupRequest groupRequest)
+        {
+            try
+            {
+                Group group = await _groupService.GetGroup(groupId);
+                if (group == null)
+                {
+                   return NotFound("Group does not exist");
+                }
+                if(group.AdminId != _userService.GetUserIdFromJWT())
+                {
+                    return Unauthorized("User is not group admin");
+                }
+                console.log(groupRequest.GroupName);
+                group.CanMemberCreateAlarm = groupRequest?.CanMemberCreateAlarm ?? group.CanMemberCreateAlarm;
+                group.GroupName = groupRequest?.GroupName ?? group.GroupName;
+                group.AdminId = groupRequest.AdminId ?? group.AdminId;
+
+                _context.Groups.Update(group);
+                await _context.SaveChangesAsync();
+
+                return Ok(new { success=true, group });
+
+            }catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
         [HttpPost("AddMember")]
         public async Task<ActionResult> AddMember([FromBody] GroupMemberRequest request)
         {

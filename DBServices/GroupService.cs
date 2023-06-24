@@ -28,11 +28,11 @@ namespace WeWakeAPI.DBServices
         }
 
 
-        public Group GetGroup(Guid groupId)
+        public async Task<Group> GetGroup(Guid groupId)
         {
             try
             {
-                Group group = _context.Groups.FirstOrDefault(m => m.GroupId == groupId);
+                Group group =await _context.Groups.FirstOrDefaultAsync(m => m.GroupId == groupId);
                 return group;
 
             }catch(Exception e)
@@ -75,7 +75,7 @@ namespace WeWakeAPI.DBServices
         {
             try
             {
-                Group group = GetGroup(groupId);
+                Group group = await GetGroup(groupId);
                 if (memberId!=requesterId&& group.AdminId!=requesterId)
                 {
                     throw new UnauthorizedAccessException("Only Admins can remove other members from group");
@@ -94,7 +94,7 @@ namespace WeWakeAPI.DBServices
         {
             try
             {
-                Group group = GetGroup(groupId);
+                Group group = await GetGroup(groupId);
                 List<GroupMemberResponse> members = await _context.Members
                 .Where(m => m.GroupId == groupId)
                 .Select(m => new GroupMemberResponse

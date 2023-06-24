@@ -19,7 +19,7 @@ namespace WeWakeAPI.DBServices
 
         public async Task<Alarm> CreateAlarm(AlarmRequest alarmReq, Guid userId)
         {
-            Group group = _groupService.GetGroup(alarmReq.GroupId);
+            Group group = await _groupService.GetGroup(alarmReq.GroupId);
             
             if (group == null)
             {
