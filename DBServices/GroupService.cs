@@ -15,26 +15,18 @@ namespace WeWakeAPI.DBServices
             _context = context;
         }
 
-        public bool CheckIfMemberAlreadyExists(Guid groupId,Guid memberId,bool throwException=true)
+        public bool CheckIfMemberAlreadyExists(Guid groupId, Guid memberId, bool throwException = true)
         {
-            int count = _context.Members.Where(m=>m.MemberId == memberId && m.GroupId == groupId).Count();
-            if(count >= 1)
+            bool exists = _context.Members.Any(m => m.MemberId == memberId && m.GroupId == groupId);
+
+            if (exists && throwException)
             {
-                if (throwException)
-                {
-                    throw new Exception("User Already Exists in group");
-                }
-                else
-                {
-                    return true;
-                }
-            }
-            else
-            {
-                return false;
+                throw new Exception("User already exists in the group.");
             }
 
+            return exists;
         }
+
 
         public Group GetGroup(Guid groupId)
         {
@@ -50,25 +42,18 @@ namespace WeWakeAPI.DBServices
             }
         }
 
-        public bool CheckIfGroupExists(Guid groupId,bool throwException = true)
+        public bool CheckIfGroupExists(Guid groupId, bool throwException = true)
         {
-            int count = _context.Groups.Where(g => g.GroupId == groupId).Count();
-            if (count >= 1)
+            bool exists = _context.Groups.Any(g => g.GroupId == groupId);
+
+            if (!exists && throwException)
             {
-                return true;
+                throw new Exception("Group does not exist.");
             }
-            else
-            {
-                if (throwException)
-                {
-                    throw new Exception("Group does not exists");
-                }
-                else
-                {
-                    return false;
-                }
-            }
+
+            return exists;
         }
+
 
         public async Task<Member> AddMemberToGroup(Guid groupId,Guid memberId)
         {
@@ -128,7 +113,6 @@ namespace WeWakeAPI.DBServices
                 throw new Exception(e.Message);
             }
         }
-
     
     }
 }

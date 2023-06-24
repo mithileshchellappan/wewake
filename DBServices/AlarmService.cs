@@ -1,4 +1,5 @@
-﻿using WeWakeAPI.Data;
+﻿using Microsoft.EntityFrameworkCore;
+using WeWakeAPI.Data;
 using WeWakeAPI.Exceptions;
 using WeWakeAPI.Models;
 using WeWakeAPI.RequestModels;
@@ -47,9 +48,23 @@ namespace WeWakeAPI.DBServices
                 vibrate: alarmReq.Vibrate, 
                 notificationBody: alarmReq.NotificationBody,
                 notificationTitle: alarmReq.NotificationTitle);
-            
-
+            await _context.Alarms.AddAsync(alarm);
+            await _context.SaveChangesAsync();
             return alarm;
+        }
+
+        public async Task<List<Alarm>> GetAlarms(Guid groupId)
+        {
+            try
+            {
+                List<Alarm> alarms = await _context.Alarms.Where(g => g.GroupId == groupId).ToListAsync();
+                return alarms;
+            }
+            catch (Exception e)
+            {
+                throw new Exception("Error in getting alarms");
+            }
+
         }
 
     }

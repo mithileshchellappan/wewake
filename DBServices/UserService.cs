@@ -53,7 +53,10 @@ namespace WeWakeAPI.DBServices
                 Guid userId = GetUserIdFromJWT();
                 List<GroupMemberResponse> groups = await _context.Members
                     .Where(m => m.MemberId == userId)
-                    .Join(_context.Groups,member=>member.GroupId,group=>group.GroupId,(member,group)=>new GroupMemberResponse
+                    .Join(_context.Groups,
+                    member=>member.GroupId,
+                    group=>group.GroupId,
+                    (member,group)=>new GroupMemberResponse
                     {
                         MemberId = member.User.UserId,
                         GroupId = member.GroupId,
