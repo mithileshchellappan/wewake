@@ -102,6 +102,7 @@ namespace WeWakeAPI.DBServices
                     MemberId = m.User.UserId,
                     GroupId = groupId,
                     MemberName = m.User.Name,
+                    GroupName = m.Group.GroupName,
                     IsAdmin = m.isAdmin
                 })
                 .ToListAsync();

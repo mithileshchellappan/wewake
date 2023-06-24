@@ -61,6 +61,7 @@ namespace WeWakeAPI.DBServices
                         MemberId = member.User.UserId,
                         GroupId = member.GroupId,
                         MemberName = member.User.Name,
+                        GroupName = group.GroupName,
                         IsAdmin = member.isAdmin,
                         CanSetAlarm = group.CanMemberCreateAlarm
 
