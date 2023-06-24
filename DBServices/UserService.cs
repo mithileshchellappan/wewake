@@ -71,5 +71,18 @@ namespace WeWakeAPI.DBServices
                 return groups;
            
        }
+
+        public async Task<dynamic> GetUserAlarms()
+        {
+            Guid userId = GetUserIdFromJWT();
+            var alarms = await (
+                from member in _context.Members
+                join alarm in _context.Alarms on member.GroupId equals alarm.GroupId
+                join grp in _context.Groups on alarm.GroupId equals grp.GroupId
+                where member.MemberId == userId
+                select new {Alarm = alarm,groupName = grp.GroupName}
+                ).ToListAsync();
+            return alarms;
+        }
     }
 }

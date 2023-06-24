@@ -101,6 +101,19 @@ namespace WeWakeAPI.Controllers
             }
         }
 
+        [HttpGet("Alarms")]
+        public async Task<ActionResult> GetAlarms()
+        {
+            try
+            {
+                var alarms = await _userService.GetUserAlarms();
+                return Ok(alarms);
+            }catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
         //// GET: api/Users
         //[HttpGet]
         //public async Task<ActionResult<IEnumerable<User>>> GetUsers()

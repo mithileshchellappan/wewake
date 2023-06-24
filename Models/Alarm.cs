@@ -20,8 +20,8 @@ namespace WeWakeAPI.Models
         public bool UseExternalAudio { get; set; } = false;
         public String? AudioURL { get; set; } = null;
 
-        //[ForeignKey("GroupId")]
-        //public Group Group { get; set; }
+        [ForeignKey("GroupId")]
+        public Group Group { get; set; }
 
         public Alarm(Guid groupId,Guid createdBy, DateTime time, bool isEnabled, bool loopAudio, bool vibrate, string notificationTitle, string notificationBody, string internalAudioFile, bool useExternalAudio, string audioURL)
         {
