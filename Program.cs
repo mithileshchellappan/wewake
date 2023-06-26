@@ -5,6 +5,7 @@ using WeWakeAPI.Middlewares;
 using WeWakeAPI.DBServices;
 
 var builder = WebApplication.CreateBuilder(args);
+;
 
 // Add services to the container.
 
@@ -36,7 +37,10 @@ app.UseHttpsRedirection();
 app.UseAuthorization();
 
 app.MapControllers();
+app.MapGet("/ping", () => "pong");
 
 app.UseJWTMiddleware();
 
+app.Urls.Add("http://192.168.0.130:5022");
+app.Urls.Add("http://localhost:5022");
 app.Run();
