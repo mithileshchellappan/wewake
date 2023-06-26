@@ -1,5 +1,5 @@
 import 'package:alarm_test/screens/signUpScreen.dart';
-import 'package:flutter/material.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:alarm_test/screens/splashScreen.dart';
 
 void main() {
@@ -13,12 +13,11 @@ class WeWake extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
+    return CupertinoApp(
         title: 'WeWake',
-        theme: ThemeData(
-          primarySwatch: Colors.deepPurple,
-        ),
+        theme: CupertinoThemeData(brightness: Brightness.dark),
         initialRoute: SplashScreen.route,
+        home: SplashScreen(),
         routes: {
           SplashScreen.route: (context) => SplashScreen(),
           SignUpScreen.route: (context) => SignUpScreen()

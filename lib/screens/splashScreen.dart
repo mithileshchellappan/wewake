@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:alarm_test/utils/sharedPref.dart';
 
@@ -21,16 +22,15 @@ class _SplashScreenState extends State<SplashScreen> {
       Duration(seconds: 3),
       () => Navigator.pushReplacementNamed(
         context,
-        token == null ? 'signUpScreen' : 'homeScreen',
+        token == null ? 'signUpScreen' : 'signUpScreen',
       ),
     );
   }
 
   @override
   Widget build(BuildContext context) {
-    return const Scaffold(
-      backgroundColor: Colors.deepPurple,
-      body: Center(
+    return CupertinoPageScaffold(
+      child: Center(
         child: Column(
           mainAxisAlignment: MainAxisAlignment.center,
           children: [
@@ -39,7 +39,7 @@ class _SplashScreenState extends State<SplashScreen> {
             ),
             SizedBox(height: 16.0),
             Text(
-              'My App',
+              'WeWake',
               style: TextStyle(
                 fontSize: 24.0,
                 color: Colors.white,
