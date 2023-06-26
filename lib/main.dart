@@ -16,7 +16,7 @@ class WeWake extends StatelessWidget {
     return MaterialApp(
         title: 'WeWake',
         theme: ThemeData(
-          primarySwatch: Colors.grey,
+          primarySwatch: Colors.deepPurple,
         ),
         initialRoute: SplashScreen.route,
         routes: {
