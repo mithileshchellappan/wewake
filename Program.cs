@@ -1,11 +1,12 @@
 using Microsoft.EntityFrameworkCore;
 using WeWakeAPI.Data;
-using WeWakeAPI.Controllers;
 using WeWakeAPI.Middlewares;
+using System.Net;
 using WeWakeAPI.DBServices;
+using System.Net;
+using WeWakeAPI.Utils;
 
 var builder = WebApplication.CreateBuilder(args);
-;
 
 // Add services to the container.
 
@@ -40,7 +41,10 @@ app.MapControllers();
 app.MapGet("/ping", () => "pong");
 
 app.UseJWTMiddleware();
-
-app.Urls.Add("http://192.168.0.130:5022");
+String internalIp = IpAddr.GetIp();
+console.log(internalIp);
+app.Urls.Add($"http://{internalIp}:5022");
 app.Urls.Add("http://localhost:5022");
 app.Run();
+
+

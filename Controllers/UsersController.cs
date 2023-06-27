@@ -49,7 +49,7 @@ namespace WeWakeAPI.Controllers
                     Name = user.Name,
                     UserId = user.UserId
                 };
-                return CreatedAtAction("SignUp", new { UserId = user.UserId }, resObj);
+                return Ok(resObj);
             }catch (Exception e)
             {
                 return BadRequest(e.Message);
