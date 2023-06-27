@@ -156,5 +156,44 @@ namespace WeWakeAPI.Controllers
             }
         }
 
+        [HttpGet("GetInviteLink/{groupId}")]
+        public async Task<IActionResult> GetInviteLink(string groupId)
+        {
+            try
+            {
+                Guid GroupId = Guid.Parse(groupId);
+                Guid userId = _userService.GetUserIdFromJWT();
+                Guid inviteId = await _groupService.CreateInviteLink(GroupId, userId);
+                return Ok(new {success=true,inviteId});
+
+            }catch(Exception e)
+            {
+                console.log(e);
+                return NotFound(e.Message);
+            }
+        }
+
+        [HttpGet("Join/{inviteId}")]
+        public async Task<IActionResult> JoinFromInviteId(string inviteId)
+        {
+            try
+            {
+                Guid InviteId = Guid.Parse(inviteId);
+                InviteLink link = await _context.InviteLinks.FirstOrDefaultAsync(i=>i.InviteLinkId == InviteId);
+                if (link==null)
+                {
+                    return NotFound("Invite Link Invalid");
+                }
+
+                await _groupService.AddMemberToGroup(link.GroupId, _userService.GetUserIdFromJWT());
+
+                return Ok(new { success = true });
+
+            }catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
     }
 }

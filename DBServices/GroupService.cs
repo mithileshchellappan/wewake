@@ -59,6 +59,7 @@ namespace WeWakeAPI.DBServices
         {
             try
             {
+                CheckIfMemberAlreadyExists(groupId, memberId);
                 Member member = new Member(memberId, groupId);
                 _context.Members.Add(member);
                 var result = await _context.SaveChangesAsync();
@@ -110,6 +111,23 @@ namespace WeWakeAPI.DBServices
                 return members;
             }
             catch (Exception e)
+            {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task<Guid> CreateInviteLink(Guid groupId,Guid inviterId)
+        {
+            try
+            {
+                InviteLink invite = new InviteLink(groupId, inviterId);
+                Group group = await GetGroup(groupId);
+                if (group.AdminId != inviterId) throw new Exception("Only Admin can create invite link");
+                _context.InviteLinks.Add(invite);
+                await _context.SaveChangesAsync();
+                return invite.InviteLinkId;
+
+            }catch(Exception e)
             {
                 throw new Exception(e.Message);
             }
