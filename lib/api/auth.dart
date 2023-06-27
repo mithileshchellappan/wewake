@@ -1,3 +1,4 @@
+import 'package:alarm_test/api/api.dart';
 import 'package:alarm_test/constants/api.dart';
 import 'package:alarm_test/models/User.dart';
 import 'package:alarm_test/utils/sharedPref.dart';
@@ -61,5 +62,22 @@ Future<Map<String, dynamic>> login(String email, String password) async {
   } catch (e) {
     print(e);
     return {"success": false, "message": errorText};
+  }
+}
+
+Future<bool> verify() async {
+  try {
+    API api = new API();
+    Uri url = Uri.parse("$apiRoute/User/Verify");
+    final res = await api.get(url);
+    print(res.statusCode);
+    if (res.statusCode == 200) {
+      return true;
+    } else {
+      SharedPreferencesHelper.clear();
+      return false;
+    }
+  } catch (e) {
+    return false;
   }
 }

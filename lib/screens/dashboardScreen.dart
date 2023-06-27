@@ -29,6 +29,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
       floatingActionButton: FloatingAction(),
       floatingActionButtonLocation: FloatingActionButtonLocation.endDocked,
       bottomNavigationBar: CupertinoTabBar(
+        backgroundColor: Colors.black,
         height: 60,
         items: const <BottomNavigationBarItem>[
           BottomNavigationBarItem(

@@ -1,9 +1,7 @@
 import 'dart:convert';
-
 import 'package:alarm_test/api/api.dart';
 import 'package:alarm_test/constants/api.dart';
 import 'package:alarm_test/models/Group.dart';
-import 'package:alarm_test/utils/sharedPref.dart';
 
 Future<void> getUserGroups() async {
   try {
@@ -14,6 +12,7 @@ Future<void> getUserGroups() async {
     if (res.statusCode <= 299 && res.statusCode >= 200) {
       List<dynamic> response = jsonDecode(res.body.toString());
       print(response);
+      api.close();
     }
   } catch (e) {
     print(e);

@@ -2,6 +2,7 @@ import 'package:alarm_test/api/auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
 class SignUpScreen extends StatefulWidget {
@@ -49,39 +50,39 @@ class _SignUpScreenState extends State<SignUpScreen> {
             msg: res['message'],
             backgroundColor: Colors.white,
             textColor: Colors.black);
-        Timer(
-          Duration(seconds: 1),
-          () => Navigator.pushReplacementNamed(
-            context,
-            'dashboardScreen',
-          ),
-        );
+        if (res['success']) {
+          Timer(
+            Duration(seconds: 1),
+            () => Navigator.pushReplacementNamed(
+              context,
+              'dashboardScreen',
+            ),
+          );
+        }
       } else {
         var res = await login(_email, _password);
         Fluttertoast.showToast(
             msg: res['message'],
             backgroundColor: Colors.white,
             textColor: Colors.black);
-
-        Timer(
-          Duration(seconds: 1),
-          () => Navigator.pushReplacementNamed(
-            context,
-            'dashboardScreen',
-          ),
-        );
+        if (res['success']) {
+          Timer(
+            Duration(seconds: 1),
+            () => Navigator.pushReplacementNamed(
+              context,
+              'dashboardScreen',
+            ),
+          );
+        }
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoPageScaffold(
-      navigationBar: const CupertinoNavigationBar(
-        automaticallyImplyLeading: true,
-        middle: Text('WeWake'),
-      ),
-      child: Container(
+    return Scaffold(
+      body: Container(
+        decoration: BoxDecoration(color: Colors.black),
         // padding: const EdgeInsets.all(16.0),
         child: Form(
           key: _formKey,
@@ -89,7 +90,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
             mainAxisAlignment: MainAxisAlignment.center,
             crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              SizedBox(height: 40),
+              SizedBox(height: 60),
               Text(
                   "${_formType == FormType.register ? "Sign Up to WeWake" : "Login into your WeWake account"}",
                   style: TextStyle(fontSize: 21, fontWeight: FontWeight.bold)),
@@ -101,7 +102,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                       prefix: const Text("Name"),
                       keyboardType: TextInputType.name,
                       keyboardAppearance: Brightness.dark,
-                      style: TextStyle(fontSize: 20.0),
+                      style: TextStyle(fontSize: 20.0, color: Colors.white),
                       validator: (value) =>
                           value!.isEmpty ? "Name can't be empty" : null,
                       onSaved: (value) => _name = value!,
@@ -109,7 +110,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   CupertinoTextFormFieldRow(
                     prefix: const Text("Email"),
                     keyboardType: TextInputType.emailAddress,
-                    style: TextStyle(fontSize: 20.0),
+                    style: TextStyle(fontSize: 20.0, color: Colors.white),
                     validator: (value) =>
                         value!.isEmpty ? "Email can't be empty" : null,
                     onSaved: (value) => _email = value!,
@@ -117,7 +118,7 @@ class _SignUpScreenState extends State<SignUpScreen> {
                   CupertinoTextFormFieldRow(
                     prefix: const Text("Password"),
                     keyboardType: TextInputType.visiblePassword,
-                    style: TextStyle(fontSize: 20.0),
+                    style: TextStyle(fontSize: 20.0, color: Colors.white),
                     obscureText: true,
                     validator: (value) =>
                         value!.isEmpty ? "Password can't be empty" : null,

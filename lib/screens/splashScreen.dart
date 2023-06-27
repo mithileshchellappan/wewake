@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'package:alarm_test/api/auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:alarm_test/utils/sharedPref.dart';
@@ -17,12 +18,12 @@ class _SplashScreenState extends State<SplashScreen> {
   }
 
   Future<void> loadScreen() async {
-    String? token = await SharedPreferencesHelper.getString('jwtToken');
+    bool userExists = await verify();
     Timer(
       Duration(seconds: 3),
       () => Navigator.pushReplacementNamed(
         context,
-        token == null ? 'signUpScreen' : 'dashboardScreen',
+        !userExists ? 'signUpScreen' : 'dashboardScreen',
       ),
     );
   }
