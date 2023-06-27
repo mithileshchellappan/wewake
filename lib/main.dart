@@ -2,6 +2,7 @@ import 'package:alarm_test/screens/dashboardScreen.dart';
 import 'package:alarm_test/screens/signUpScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:alarm_test/screens/splashScreen.dart';
+import 'package:flutter/material.dart';
 
 void main() {
   // await Alarm.init();
@@ -14,9 +15,10 @@ class WeWake extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return CupertinoApp(
+    return MaterialApp(
         title: 'WeWake',
-        theme: CupertinoThemeData(brightness: Brightness.dark),
+        theme: ThemeData(
+            brightness: Brightness.dark, focusColor: Colors.blue[700]),
         initialRoute: SplashScreen.route,
         home: SplashScreen(),
         routes: {
