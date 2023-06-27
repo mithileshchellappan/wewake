@@ -15,6 +15,8 @@ namespace WeWakeAPI.Data
         public DbSet<Alarm> Alarms { get; set; }
         public DbSet<Member> Members { get; set; }
 
+        public DbSet<InviteLink> InviteLinks { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

@@ -114,6 +114,24 @@ namespace WeWakeAPI.Controllers
             }
         }
 
+        [HttpGet("Verify")]
+        public async Task<ActionResult> VerifyUser()
+        {
+            try
+            {
+                Guid userId = await _userService.CheckIfUserExistsFromJWT();
+                if (userId == null)
+                {
+                    return Unauthorized("User unauthorized. Login again");
+                }
+                return Ok(new {success=true});
+
+            }catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
         //// GET: api/Users
         //[HttpGet]
         //public async Task<ActionResult<IEnumerable<User>>> GetUsers()

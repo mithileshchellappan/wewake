@@ -23,7 +23,7 @@ namespace WeWakeAPI.Utils
                   new Claim(ClaimTypes.Sid,user.UserId.ToString()),
                   new Claim(ClaimTypes.GivenName,user.Name.ToString())
                  }),
-                    Expires = now.AddHours(24),
+                    Expires = now.AddDays(30),
                     SigningCredentials = new SigningCredentials(
                     new SymmetricSecurityKey(symmetricKey), SecurityAlgorithms.HmacSha256Signature)
                 };
