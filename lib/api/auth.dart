@@ -55,6 +55,8 @@ Future<Map<String, dynamic>> login(String email, String password) async {
       SharedPreferencesHelper.setString('userName', response['name']);
       SharedPreferencesHelper.setString('userId', response['userId']);
       return {"success": true, "message": "Welcome back ${response['name']}"};
+    } else if (res.statusCode == 401) {
+      return {"success": false, "message": "Incorrect Credentials. Try again!"};
     } else {
       print(res.body.toString());
       return {"success": false, "message": errorText};
@@ -79,5 +81,13 @@ Future<bool> verify() async {
     }
   } catch (e) {
     return false;
+  }
+}
+
+Future<void> logout() async {
+  try {
+    await SharedPreferencesHelper.clear();
+  } catch (e) {
+    print(e);
   }
 }
