@@ -1,5 +1,6 @@
 import 'package:alarm_test/api/auth.dart';
 import 'package:flutter/cupertino.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 
@@ -44,10 +45,31 @@ class _SignUpScreenState extends State<SignUpScreen> {
     if (validateAndSave()) {
       if (_formType == FormType.register) {
         var res = await signUp(_name, _email, _password);
-        Fluttertoast.showToast(msg: res['message']);
+        Fluttertoast.showToast(
+            msg: res['message'],
+            backgroundColor: Colors.white,
+            textColor: Colors.black);
+        Timer(
+          Duration(seconds: 1),
+          () => Navigator.pushReplacementNamed(
+            context,
+            'dashboardScreen',
+          ),
+        );
       } else {
         var res = await login(_email, _password);
-        Fluttertoast.showToast(msg: res['message']);
+        Fluttertoast.showToast(
+            msg: res['message'],
+            backgroundColor: Colors.white,
+            textColor: Colors.black);
+
+        Timer(
+          Duration(seconds: 1),
+          () => Navigator.pushReplacementNamed(
+            context,
+            'dashboardScreen',
+          ),
+        );
       }
     }
   }

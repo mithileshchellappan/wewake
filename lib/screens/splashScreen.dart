@@ -22,7 +22,7 @@ class _SplashScreenState extends State<SplashScreen> {
       Duration(seconds: 3),
       () => Navigator.pushReplacementNamed(
         context,
-        token == null ? 'signUpScreen' : 'signUpScreen',
+        token == null ? 'signUpScreen' : 'dashboardScreen',
       ),
     );
   }

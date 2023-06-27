@@ -1,3 +1,4 @@
+import 'package:alarm_test/screens/dashboardScreen.dart';
 import 'package:alarm_test/screens/signUpScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:alarm_test/screens/splashScreen.dart';
@@ -20,7 +21,8 @@ class WeWake extends StatelessWidget {
         home: SplashScreen(),
         routes: {
           SplashScreen.route: (context) => SplashScreen(),
-          SignUpScreen.route: (context) => SignUpScreen()
+          SignUpScreen.route: (context) => SignUpScreen(),
+          DashboardScreen.route: (context) => DashboardScreen()
         });
   }
 }
