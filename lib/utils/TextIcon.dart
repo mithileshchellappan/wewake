@@ -1,20 +1,20 @@
-import 'dart:math';
 
 import 'package:flutter/material.dart';
+
 
 class TextIcon extends StatelessWidget {
   final String text;
   final double size;
+  final Color backgroundColor;
 
-  TextIcon({required this.text, this.size = 48.0});
+  TextIcon({required this.text, required this.backgroundColor,this.size = 48.0});
 
   @override
   Widget build(BuildContext context) {
     final String initials = _getInitials(text);
-    final Color randomColor = _getRandomDarkColor();
 
     return CircleAvatar(
-      backgroundColor: randomColor,
+      backgroundColor: backgroundColor,
       radius: size / 2,
       child: Text(
         initials,
@@ -34,16 +34,9 @@ class TextIcon extends StatelessWidget {
     } else if (words.length == 1 && words[0].length >= 2) {
       return words[0].substring(0, 2).toUpperCase();
     } else {
-      return text.substring(0, min(2, text.length)).toUpperCase();
+      return text.substring(0, 2).toUpperCase();
     }
   }
 
-  Color _getRandomDarkColor() {
-    final random = Random();
-    final darkIntesity = 150;
-    final red = random.nextInt(darkIntesity);
-    final green = random.nextInt(darkIntesity);
-    final blue = random.nextInt(darkIntesity);
-    return Color.fromARGB(255, red, green, blue);
-  }
+
 }
