@@ -4,7 +4,7 @@ class Group {
   String? AdminId;
   DateTime CreatedAt = DateTime.now();
   bool? CanMemberCreateAlarm;
-  int? MemberCount;
+  int? MemberCount = 1;
 
   Group.fromJson(Map<String, dynamic> json) {
     GroupId = json['groupId'];

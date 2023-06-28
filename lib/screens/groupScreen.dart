@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:alarm_test/models/Group.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:alarm_test/api/auth.dart';
 
 class GroupScreen extends StatefulWidget {
   const GroupScreen({Key? key}) : super(key: key);
@@ -34,8 +35,9 @@ class _GroupScreenState extends State<GroupScreen> {
     }
   }
 
-  Future<void> createGroupAndRefreshList(String name) async {
-    var res = await createGroup(name);
+  Future<void> createGroupAndRefreshList(String name, Function callback) async {
+    var res = await callback(name);
+    print(res);
     if (res['success']) {
       setState(() {
         userGroups.add(res['group']);
@@ -49,16 +51,43 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      appBar: CupertinoNavigationBar(
+          brightness: Theme.of(context).brightness,
+          backgroundColor: Theme.of(context).backgroundColor,
+          transitionBetweenRoutes: false,
+          automaticallyImplyLeading: false,
+          trailing: CupertinoButton(
+            child: Icon(Icons.logout),
+            onPressed: () => showDialog(
+              context: context,
+              builder: (context) => YNPopUp(
+                "Logout?",
+                () {
+                  logout();
+                  Navigator.pushReplacementNamed(context, 'signUpScreen');
+                },
+                yesText: "Logout",
+                noText: "Cancel",
+              ),
+            ),
+          )),
       floatingActionButton: GroupFloatingActionButton(
         onCreateGroup: () => showDialog(
           context: context,
           builder: (context) => PopUpDialog(
             "Enter Group Name",
-            (name) => createGroupAndRefreshList(name),
+            (name) async => await createGroupAndRefreshList(name, createGroup),
             yesText: 'Create',
           ),
         ),
-        onJoinGroup: () async => await getUserGroups(),
+        onJoinGroup: () => showDialog(
+          context: context,
+          builder: (context) => PopUpDialog(
+            "Enter Invite Link",
+            (name) async => await createGroupAndRefreshList(name, joinGroup),
+            yesText: 'Join',
+          ),
+        ),
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
       body: Container(
