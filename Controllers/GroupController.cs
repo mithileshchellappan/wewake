@@ -61,6 +61,20 @@ namespace WeWakeAPI.Controllers
             }
         }
 
+        [HttpGet("{groupId}")]
+        public async Task<ActionResult> GetGroup (Guid groupId){
+            try
+            {
+                GroupMemberResponse group = await _groupService.GetGroupMemberObject(groupId, _userService.GetUserIdFromJWT());
+                return Ok(new { success = true, group}) ;
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+        }
+
         [HttpPut("Update/{groupId}")]
         public async Task<ActionResult> UpdateGroup(Guid groupId, [FromBody] GroupRequest groupRequest)
         {
