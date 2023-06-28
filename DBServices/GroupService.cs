@@ -139,19 +139,17 @@ namespace WeWakeAPI.DBServices
             }
         }
 
-        public async Task<List<GroupMemberResponse>> GetMembers(Guid groupId)
+        public async Task<List<GroupMemberListResponse>> GetMembers(Guid groupId)
         {
             try
             {
                 Group group = await GetGroup(groupId);
-                List<GroupMemberResponse> members = await _context.Members
+                List<GroupMemberListResponse> members = await _context.Members
                 .Where(m => m.GroupId == groupId)
-                .Select(m => new GroupMemberResponse
+                .Select(m => new GroupMemberListResponse
                 {
                     MemberId = m.User.UserId,
-                    GroupId = groupId,
                     MemberName = m.User.Name,
-                    GroupName = m.Group.GroupName,
                     IsAdmin = m.isAdmin
                 })
                 .ToListAsync();

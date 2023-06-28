@@ -151,7 +151,7 @@ namespace WeWakeAPI.Controllers
             try
             {
                 Guid GroupId = Guid.Parse(groupId);
-                List<GroupMemberResponse> members = await _groupService.GetMembers(GroupId);
+                List<GroupMemberListResponse> members = await _groupService.GetMembers(GroupId);
                 return Ok(new { success = true, members });
 
 
