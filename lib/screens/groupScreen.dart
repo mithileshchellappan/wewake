@@ -1,6 +1,10 @@
+import 'package:alarm_test/api/group.dart';
+import 'package:alarm_test/utils/PopUps.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
+import 'package:alarm_test/models/Group.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class GroupScreen extends StatefulWidget {
   const GroupScreen({Key? key}) : super(key: key);
@@ -10,6 +14,23 @@ class GroupScreen extends StatefulWidget {
 }
 
 class _GroupScreenState extends State<GroupScreen> {
+  List<Group> userGroups = [];
+
+  void initState() {
+    super.initState();
+    setGroups();
+  }
+
+  void setGroups() async {
+    var res = await getUserGroups();
+    if (res['success']) {
+      userGroups = res['groups'];
+      print(userGroups.length);
+    } else {
+      Fluttertoast.showToast(msg: res['message']);
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -26,71 +47,26 @@ class _GroupScreenState extends State<GroupScreen> {
             label: 'Create Group',
             onTap: () => showDialog(
                 context: context,
-                builder: (context) =>
-                    PopUpDialog("Enter Group Name", (res) => {print(res)})),
+                builder: (context) => PopUpDialog("Enter Group Name",
+                        yesText: 'Create', (name) async {
+                      var res = await createGroup(name);
+                      if (res['success']) {
+                        setState(() {
+                          userGroups.add(res['group']);
+                        });
+                        print(userGroups.length);
+                      } else {
+                        Fluttertoast.showToast(msg: res['message']);
+                      }
+                    })),
           ),
           SpeedDialChild(
-              child: const Icon(Icons.group_add_outlined), label: 'Join Group'),
+              child: const Icon(Icons.group_add_outlined),
+              label: 'Join Group',
+              onTap: () async => {await getUserGroups()}),
         ],
       ),
       floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-    );
-  }
-}
-
-class PopUpDialog extends StatefulWidget {
-  final String title;
-  final Function(String) onOkay;
-
-  const PopUpDialog(this.title, this.onOkay);
-
-  @override
-  _PopUpDialogState createState() => _PopUpDialogState();
-}
-
-class _PopUpDialogState extends State<PopUpDialog> {
-  TextEditingController _textFieldController = TextEditingController();
-
-  @override
-  void dispose() {
-    _textFieldController.dispose();
-    super.dispose();
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Center(
-      child: CupertinoAlertDialog(
-        title: Text(
-          widget.title,
-          style: TextStyle(fontWeight: FontWeight.normal),
-        ),
-        content: Column(
-          children: [
-            SizedBox(height: 20),
-            CupertinoTextField(
-              style: TextStyle(color: Colors.white),
-              controller: _textFieldController,
-            ),
-          ],
-        ),
-        actions: [
-          CupertinoDialogAction(
-            child: Text('Cancel'),
-            onPressed: () {
-              Navigator.of(context).pop();
-            },
-          ),
-          CupertinoDialogAction(
-            child: Text('OK'),
-            onPressed: () {
-              String enteredText = _textFieldController.text;
-              Navigator.of(context).pop();
-              widget.onOkay(enteredText);
-            },
-          ),
-        ],
-      ),
     );
   }
 }
