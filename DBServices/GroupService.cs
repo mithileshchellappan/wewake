@@ -10,7 +10,7 @@ namespace WeWakeAPI.DBServices
     {
         private readonly ApplicationDbContext _context;
 
-        public GroupService (ApplicationDbContext context)
+        public GroupService(ApplicationDbContext context)
         {
             _context = context;
         }
@@ -32,10 +32,11 @@ namespace WeWakeAPI.DBServices
         {
             try
             {
-                Group group =await _context.Groups.FirstOrDefaultAsync(m => m.GroupId == groupId);
+                Group group = await _context.Groups.FirstOrDefaultAsync(m => m.GroupId == groupId);
                 return group;
 
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 throw new Exception(e.Message);
 
@@ -56,12 +57,52 @@ namespace WeWakeAPI.DBServices
 
         public async Task<int> GetGroupMemberCount(Guid groupId)
         {
-            int count = await _context.Members.CountAsync(m=>m.GroupId == groupId);
+            int count = await _context.Members.CountAsync(m => m.GroupId == groupId);
             return count;
         }
 
+        public async Task<GroupMemberResponse> GetGroupMemberObject(Guid groupId, Guid userId)
+        {
+            GroupMemberResponse? group = await _context.Members
+            .Where(m => m.MemberId == userId && m.GroupId == groupId)
+            .Join(_context.Groups,
+                member => member.GroupId,
+                group => group.GroupId,
+                (member, group) => new
+                {
+                    MemberId = member.User.UserId,
+                    GroupId = member.GroupId,
+                    MemberName = member.User.Name,
+                    GroupName = group.GroupName,
+                    IsAdmin = member.isAdmin,
+                    CreatedAt = group.CreatedAt,
+                    CanSetAlarm = group.CanMemberCreateAlarm
+                })
+            .GroupJoin(_context.Members,
+                g => g.GroupId,
+                member => member.GroupId,
+                (g, members) => new GroupMemberResponse
+                {
+                    MemberId = g.MemberId,
+                    GroupId = g.GroupId,
+                    MemberName = g.MemberName,
+                    GroupName = g.GroupName,
+                    IsAdmin = g.IsAdmin,
+                    CreatedAt = g.CreatedAt,
+                    CanSetAlarm = g.CanSetAlarm,
+                    MemberCount = members.Count()
+                })
+                .FirstOrDefaultAsync();
+            if (group == null)
+            {
+                throw new Exception("Group Not Found");
+            }
+            return group;
 
-        public async Task<Member> AddMemberToGroup(Guid groupId,Guid memberId)
+        }
+
+
+        public async Task<Member> AddMemberToGroup(Guid groupId, Guid memberId)
         {
             try
             {
@@ -72,18 +113,18 @@ namespace WeWakeAPI.DBServices
                 console.log(result);
                 return member;
             }
-            catch(Exception ex)
+            catch (Exception ex)
             {
                 throw new Exception(ex.Message);
             }
         }
 
-        public async Task<bool> RemoveMemberFromGroup(Guid groupId,Guid memberId,Guid requesterId)
+        public async Task<bool> RemoveMemberFromGroup(Guid groupId, Guid memberId, Guid requesterId)
         {
             try
             {
                 Group group = await GetGroup(groupId);
-                if (memberId!=requesterId&& group.AdminId!=requesterId)
+                if (memberId != requesterId && group.AdminId != requesterId)
                 {
                     throw new UnauthorizedAccessException("Only Admins can remove other members from group");
                 }
@@ -91,7 +132,8 @@ namespace WeWakeAPI.DBServices
                 _context.Members.Remove(removingMember);
                 await _context.SaveChangesAsync();
                 return true;
-            }catch (Exception e)
+            }
+            catch (Exception e)
             {
                 throw new Exception(e.Message);
             }
@@ -122,22 +164,27 @@ namespace WeWakeAPI.DBServices
             }
         }
 
-        public async Task<Guid> CreateInviteLink(Guid groupId,Guid inviterId)
+        public async Task<Guid> CreateInviteLink(Guid groupId, Guid inviterId)
         {
             try
             {
-                InviteLink invite = new InviteLink(groupId, inviterId);
                 Group group = await GetGroup(groupId);
-                if (group.AdminId != inviterId) throw new Exception("Only Admin can create invite link");
+                if (group.AdminId != inviterId) throw new Exception("Only Admin can create or get invite link");
+                InviteLink alreadyExistingId = await _context.InviteLinks.FirstOrDefaultAsync(t=>t.GroupId==groupId);
+                if(alreadyExistingId!=null){
+                    return alreadyExistingId.InviteLinkId;
+                }
+                InviteLink invite = new InviteLink(groupId, inviterId);
                 _context.InviteLinks.Add(invite);
                 await _context.SaveChangesAsync();
                 return invite.InviteLinkId;
 
-            }catch(Exception e)
+            }
+            catch (Exception e)
             {
                 throw new Exception(e.Message);
             }
         }
-    
+
     }
 }

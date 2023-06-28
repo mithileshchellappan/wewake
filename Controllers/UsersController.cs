@@ -124,7 +124,7 @@ namespace WeWakeAPI.Controllers
                 {
                     return Unauthorized("User unauthorized. Login again");
                 }
-                return Ok(new {success=true});
+                return Ok(new {success=true,userId});
 
             }catch(Exception e)
             {

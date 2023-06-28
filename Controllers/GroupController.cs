@@ -49,19 +49,11 @@ namespace WeWakeAPI.Controllers
                 Guid UserId = _userService.GetUserIdFromJWT();
                 group.AdminId = UserId;
                 group.CreatedAt = DateTime.Now;
-                var resObj = new
-                {
-                    GroupId = group.GroupId,
-                    GroupName = group.GroupName,
-                    AdminId = group.AdminId
-                };
-
                 _context.Groups.Add(group);
                 Member member = new Member(UserId, group.GroupId, true);
                 _context.Members.Add(member);
                 await _context.SaveChangesAsync();
-
-                return Ok(resObj);
+                return Ok(new {success=true,group = group});
             }
             catch (Exception e)
             {
@@ -183,10 +175,11 @@ namespace WeWakeAPI.Controllers
                 {
                     return NotFound("Invite Link Invalid");
                 }
+                Guid UserId = _userService.GetUserIdFromJWT();
+                await _groupService.AddMemberToGroup(link.GroupId,UserId );
+                GroupMemberResponse res = await _groupService.GetGroupMemberObject(link.GroupId,UserId);
 
-                await _groupService.AddMemberToGroup(link.GroupId, _userService.GetUserIdFromJWT());
-
-                return Ok(new { success = true });
+                return Ok(new { success = true,group = res });
 
             }catch(Exception e)
             {
