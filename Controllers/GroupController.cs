@@ -104,11 +104,10 @@ namespace WeWakeAPI.Controllers
         {
             try
             {
-                Guid GroupId = new(request.GroupId);
+                Guid GroupId = Guid.Parse(request.GroupId);
+                Guid MemberId = Guid.Parse(request.MemberId);
                  _groupService.CheckIfGroupExists(GroupId);
-                Guid UserId = await _userService.CheckIfUserExistsFromJWT();
-                 _groupService.CheckIfMemberAlreadyExists(GroupId, UserId);
-                Member member = await _groupService.AddMemberToGroup(GroupId, UserId);
+                Member member = await _groupService.AddMemberToGroup(GroupId,MemberId);
                 return Ok(new {success=true,member});
             }
             catch (Exception e)

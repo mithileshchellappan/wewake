@@ -54,6 +54,12 @@ namespace WeWakeAPI.DBServices
             return exists;
         }
 
+        public async Task<int> GetGroupMemberCount(Guid groupId)
+        {
+            int count = await _context.Members.CountAsync(m=>m.GroupId == groupId);
+            return count;
+        }
+
 
         public async Task<Member> AddMemberToGroup(Guid groupId,Guid memberId)
         {

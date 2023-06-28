@@ -47,30 +47,47 @@ namespace WeWakeAPI.DBServices
                 throw new Exception("User doesn't exist");
             }
         }
-        
+
         public async Task<List<GroupMemberResponse>> GetUserGroups()
         {
-                Guid userId = GetUserIdFromJWT();
-                List<GroupMemberResponse> groups = await _context.Members
-                    .Where(m => m.MemberId == userId)
-                    .Join(_context.Groups,
-                    member=>member.GroupId,
-                    group=>group.GroupId,
-                    (member,group)=>new GroupMemberResponse
+            Guid userId = GetUserIdFromJWT();
+            List<GroupMemberResponse> groups = await _context.Members
+                .Where(m => m.MemberId == userId)
+                .Join(_context.Groups,
+                    member => member.GroupId,
+                    group => group.GroupId,
+                    (member, group) => new
                     {
                         MemberId = member.User.UserId,
                         GroupId = member.GroupId,
                         MemberName = member.User.Name,
                         GroupName = group.GroupName,
                         IsAdmin = member.isAdmin,
+                        CreatedAt = group.CreatedAt,
                         CanSetAlarm = group.CanMemberCreateAlarm
-
                     })
-                    .ToListAsync();
+                .GroupJoin(_context.Members,
+                    g => g.GroupId,
+                    member => member.GroupId,
+                    (g, members) => new GroupMemberResponse
+                    {
+                        MemberId = g.MemberId,
+                        GroupId = g.GroupId,
+                        MemberName = g.MemberName,
+                        GroupName = g.GroupName,
+                        IsAdmin = g.IsAdmin,
+                        CreatedAt = g.CreatedAt,
+                        CanSetAlarm = g.CanSetAlarm,
+                        MemberCount = members.Count()
+                    })
+                .ToListAsync();
 
-                return groups;
-           
-       }
+
+
+
+            return groups;
+
+        }
 
         public async Task<dynamic> GetUserAlarms()
         {
@@ -80,7 +97,7 @@ namespace WeWakeAPI.DBServices
                 join alarm in _context.Alarms on member.GroupId equals alarm.GroupId
                 join grp in _context.Groups on alarm.GroupId equals grp.GroupId
                 where member.MemberId == userId
-                select new {Alarm = alarm,groupName = grp.GroupName}
+                select new { Alarm = alarm, groupName = grp.GroupName }
                 ).ToListAsync();
             return alarms;
         }
