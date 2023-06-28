@@ -1,20 +1,26 @@
 class Member {
-  String? MemberGroupId;
+  String? MemberName;
   String? MemberId;
-  String? GroupId;
-  bool? IsAdmin;
+  bool IsAdmin = false;
 
   Member.fromJson(Map<String, dynamic> json) {
-    MemberGroupId = json['MemberGroupId'];
-    MemberId = json['MemberId'];
-    GroupId = json['GroupId'];
-    IsAdmin = json['IsAdmin'];
+    MemberName = json['memberName'];
+    MemberId = json['meberId'];
+    IsAdmin = json['isAdmin'];
   }
 
   Map<String, dynamic> toJson() => {
-        'MemberGroupId': MemberGroupId,
+        'MemberName': MemberName,
         'MemberId': MemberId,
-        'GroupId': GroupId,
         'IsAdmin': IsAdmin,
       };
+  static List<Member> fromListJson(List<dynamic> arr) {
+    List<Member> members = [];
+    for (var json in arr) {
+      Member member = Member.fromJson(json);
+      members.add(member);
+    }
+    members.sort((a, b) => b.IsAdmin ? 1 : -1);
+    return members;
+  }
 }

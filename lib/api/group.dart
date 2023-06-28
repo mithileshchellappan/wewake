@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:alarm_test/api/api.dart';
 import 'package:alarm_test/constants/api.dart';
 import 'package:alarm_test/models/Group.dart';
+import 'package:alarm_test/models/Member.dart';
 
 Future<dynamic> getUserGroups() async {
   try {
@@ -57,6 +58,25 @@ Future<dynamic> joinGroup(String inviteCode) async {
       return {"success": true, "group": group};
     } else {
       throw new Exception("Unable to create group");
+    }
+  } catch (e) {
+    return {"success": false, "message": e};
+  }
+}
+
+Future<dynamic> getMembers(String groupId) async {
+  try {
+    API api = new API();
+    Uri url = Uri.parse("$apiRoute/Group/Members/$groupId");
+    final res = await api.get(url);
+    print(res.body.toString() + res.statusCode.toString());
+
+    if (res.statusCode <= 299 && res.statusCode >= 200) {
+      List<Member> members =
+          Member.fromListJson((jsonDecode(res.body.toString()))['members']);
+      return {"success": true, "members": members};
+    } else {
+      throw new Exception("Unable to fetch members");
     }
   } catch (e) {
     return {"success": false, "message": e};
