@@ -2,15 +2,17 @@ class Group {
   String? GroupId;
   String? GroupName;
   String? AdminId;
-  DateTime? CreatedAt;
+  DateTime CreatedAt = DateTime.now();
   bool? CanMemberCreateAlarm;
+  int? MemberCount;
 
   Group.fromJson(Map<String, dynamic> json) {
     GroupId = json['groupId'];
     GroupName = json['groupName'];
     AdminId = json['adminId'];
-    CreatedAt = json['createdAt'];
+    CreatedAt = DateTime.parse(json['createdAt']);
     CanMemberCreateAlarm = json['canMemberCreateAlarm'];
+    MemberCount = json['memberCount'];
   }
 
   Map<String, dynamic> toJson() {
@@ -20,6 +22,7 @@ class Group {
     data['adminId'] = this.AdminId;
     data['createdAt'] = this.CreatedAt;
     data['canMemberCreateAlarm'] = this.CanMemberCreateAlarm;
+    data['memberCount'] = this.MemberCount;
     return data;
   }
 

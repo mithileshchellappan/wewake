@@ -21,6 +21,7 @@ class API extends http.BaseClient {
 
   Future<void> initialize() async {
     jwtToken = await SharedPreferencesHelper.getString('jwtToken');
+    print(jwtToken);
     if (jwtToken != null) {
       _setHeader();
     }

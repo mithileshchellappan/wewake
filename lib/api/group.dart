@@ -11,6 +11,7 @@ Future<dynamic> getUserGroups() async {
     print(res.statusCode);
     if (res.statusCode <= 299 && res.statusCode >= 200) {
       List<dynamic> response = jsonDecode(res.body.toString());
+      print(response);
       List<Group> groups = Group.fromListJson(response);
       return {"success": true, "groups": groups};
     } else {
