@@ -1,5 +1,6 @@
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class YNPopUp extends StatelessWidget {
   final String title;
@@ -77,8 +78,12 @@ class PopUpDialog extends StatelessWidget {
             child: Text(yesText),
             onPressed: () {
               String enteredText = _textFieldController.text;
-              Navigator.of(context).pop();
-              onOkay(enteredText);
+              if (enteredText.isEmpty) {
+                Fluttertoast.showToast(msg: "Value can't be empty");
+              } else {
+                Navigator.of(context).pop();
+                onOkay(enteredText);
+              }
             },
           ),
         ],
