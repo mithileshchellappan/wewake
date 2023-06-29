@@ -2,7 +2,7 @@ import 'package:alarm_test/screens/groupViewScreen.dart';
 import 'package:alarm_test/utils/TextIcon.dart';
 import 'package:alarm_test/utils/helpers.dart';
 import 'package:flutter/material.dart';
-import '../models/Group.dart';
+import '../../models/Group.dart';
 
 class GroupCard extends StatelessWidget {
   final Group group;

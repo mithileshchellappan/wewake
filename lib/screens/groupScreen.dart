@@ -1,5 +1,5 @@
 import 'package:alarm_test/api/group.dart';
-import 'package:alarm_test/cards/groupCard.dart';
+import 'package:alarm_test/widgets/cards/groupCard.dart';
 import 'package:alarm_test/utils/PopUps.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';

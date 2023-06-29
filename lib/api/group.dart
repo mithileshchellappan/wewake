@@ -9,11 +9,10 @@ Future<dynamic> getUserGroups() async {
     API api = new API();
     Uri url = Uri.parse('$apiRoute/User/Groups');
     final res = await api.get(url);
-    // print(res.statusCode);
+    // print(res.body.toString());
     if (res.statusCode <= 299 && res.statusCode >= 200) {
-      List<dynamic> response = jsonDecode(res.body.toString());
-      // print(response);
-      List<Group> groups = Group.fromListJson(response);
+      Map<String, dynamic> parseGroup = jsonDecode(res.body.toString());
+      List<Group> groups = Group.fromListJson(parseGroup['groups']);
       return {"success": true, "groups": groups};
     } else {
       throw new Exception("Unable to get groups");
@@ -30,9 +29,6 @@ Future<dynamic> createGroup(String groupName) async {
     Uri url = Uri.parse('$apiRoute/Group/Create');
     final res =
         await api.post(url, body: json.encode({"groupName": groupName}));
-    print('here in createGroup' +
-        res.body.toString() +
-        res.statusCode.toString());
     if (res.statusCode <= 299 && res.statusCode >= 200) {
       Map<String, dynamic> parseGroup = jsonDecode(res.body.toString());
       Group group = Group.fromJson(parseGroup['group']);

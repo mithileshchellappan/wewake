@@ -5,6 +5,7 @@ class Group {
   DateTime CreatedAt = DateTime.now();
   bool? CanMemberCreateAlarm;
   int? MemberCount = 1;
+  bool IsAdmin = false;
 
   Group.fromJson(Map<String, dynamic> json) {
     GroupId = json['groupId'];
@@ -13,6 +14,7 @@ class Group {
     CreatedAt = DateTime.parse(json['createdAt']);
     CanMemberCreateAlarm = json['canMemberCreateAlarm'];
     MemberCount = json['memberCount'];
+    IsAdmin = json['isAdmin'];
   }
 
   Map<String, dynamic> toJson() {

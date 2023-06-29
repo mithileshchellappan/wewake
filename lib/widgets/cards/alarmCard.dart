@@ -3,7 +3,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:just_audio/just_audio.dart';
 
-import '../models/Alarm.dart';
+import '../../models/Alarm.dart';
 
 class AlarmCard extends StatefulWidget {
   final Alarm alarm;
@@ -21,19 +21,23 @@ class _AlarmCardState extends State<AlarmCard> {
   void initState() {
     super.initState();
     time = formatTimeDifference(
-        widget.alarm.Time.difference(DateTime.now().add(Duration(hours: 1))));
+        widget.alarm.Time.difference(DateTime.now().add(Duration(hours: 1))),
+        widget);
     timeText = DateFormat('dd MMMM yy \nhh:mm a').format(widget.alarm.Time);
   }
 
-  static String formatTimeDifference(Duration difference) {
-    if (difference.inSeconds < 60) {
+  static String formatTimeDifference(Duration difference, widget) {
+    if (difference.inSeconds < 0) {
+      widget.alarm.IsEnabled = false;
+      return "Alarm Expired";
+    } else if (difference.inSeconds < 60 && difference.inSeconds > 0) {
       return "just now";
     } else if (difference.inMinutes < 60) {
-      return "In ${difference.inMinutes} minutes";
+      return "In ${difference.inMinutes} ${difference.inMinutes == 1 ? 'minute' : 'minutes'}";
     } else if (difference.inHours < 24) {
-      return "In ${difference.inHours} hours";
+      return "In ${difference.inHours} ${difference.inHours == 1 ? 'hour' : 'hours'}";
     } else if (difference.inDays < 30) {
-      return "In ${difference.inDays} days";
+      return "In ${difference.inDays} ${difference.inDays == 1 ? 'day' : 'days'}";
     } else if (difference.inDays < 365) {
       int months = (difference.inDays / 30).floor();
       return "In $months ${months == 1 ? 'month' : 'months'}";

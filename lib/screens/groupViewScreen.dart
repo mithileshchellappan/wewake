@@ -1,9 +1,11 @@
 import 'package:alarm_test/api/alarm.dart';
 import 'package:alarm_test/api/group.dart';
-import 'package:alarm_test/cards/alarmCard.dart';
-import 'package:alarm_test/cards/memberCard.dart';
+import 'package:alarm_test/widgets/buttons/AddAlarmButton.dart';
+import 'package:alarm_test/widgets/cards/alarmCard.dart';
+import 'package:alarm_test/widgets/cards/memberCard.dart';
 import 'package:alarm_test/utils/TextIcon.dart';
 import 'package:alarm_test/utils/helpers.dart';
+import 'package:alarm_test/utils/sharedPref.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
@@ -56,7 +58,9 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    print(widget.group.IsAdmin);
     return Scaffold(
+      floatingActionButton: widget.group.IsAdmin ? AddAlarmButton() : null,
       appBar: CupertinoNavigationBar(
         brightness: Theme.of(context).brightness,
         backgroundColor: Theme.of(context).backgroundColor,
@@ -76,6 +80,13 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
               isAlarmsLoading
                   ? Center(child: CupertinoActivityIndicator())
                   : Container(),
+              if (alarms.length == 0)
+                SizedBox(
+                  height: 60,
+                  child: Center(
+                    child: Text("No Alarms set in group"),
+                  ),
+                ),
               ...alarms.map((e) => AlarmCard(
                     alarm: e,
                   )),
