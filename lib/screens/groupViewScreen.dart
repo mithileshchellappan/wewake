@@ -1,4 +1,6 @@
+import 'package:alarm_test/api/alarm.dart';
 import 'package:alarm_test/api/group.dart';
+import 'package:alarm_test/cards/alarmCard.dart';
 import 'package:alarm_test/cards/memberCard.dart';
 import 'package:alarm_test/utils/TextIcon.dart';
 import 'package:alarm_test/utils/helpers.dart';
@@ -45,6 +47,7 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
           children: [
             getTopDash(context),
             if (isExpanded) buildMemberList(),
+            AlarmCard()
           ],
         ),
       ),
@@ -88,6 +91,8 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
                   text: "Invite Code",
                   onTap: () async {
                     var res = await getInviteCode(widget.group.GroupId);
+                    var res2 = await getGroupAlarms(widget.group.GroupId);
+                    print(res2);
                     if (res['success']) {
                       await Clipboard.setData(
                           ClipboardData(text: res['inviteId']));
@@ -161,21 +166,22 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
 
   Widget buildMemberList() {
     if (isLoading) {
-      return Expanded(child: Center(child: CupertinoActivityIndicator()));
+      return const Center(child: CupertinoActivityIndicator());
     }
 
     if (members.isEmpty) {
-      return Expanded(child: Center(child: Text("No members found.")));
+      return const Center(child: Text("No members found."));
     }
 
-    return Expanded(
+    return SizedBox(
+      height: members.length * 50,
       child: Padding(
         padding: const EdgeInsets.all(8.0),
         child: ListView(
           addAutomaticKeepAlives: true,
           children: [
             ...members.map((e) => MemberCard(member: e)),
-            SizedBox(height: 64)
+            // SizedBox(height: 64)
           ],
         ),
       ),

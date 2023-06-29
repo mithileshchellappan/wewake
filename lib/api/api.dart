@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:alarm_test/constants/api.dart';
 import 'package:http/http.dart' as http;
+import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utils/sharedPref.dart';
 
@@ -21,7 +22,9 @@ class API extends http.BaseClient {
 
   Future<void> initialize() async {
     jwtToken = await SharedPreferencesHelper.getString('jwtToken');
+    String? name = await SharedPreferencesHelper.getString('userName');
     print(jwtToken);
+    print(name);
     if (jwtToken != null) {
       _setHeader();
     }

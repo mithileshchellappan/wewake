@@ -13,34 +13,43 @@ class Alarm {
   String? AudioURL;
 
   Alarm.fromJson(Map<String, dynamic> json) {
-    AlarmId = json['AlarmId'];
-    GroupId = json['GroupId'];
-    CreatedBy = json['CreatedBy'];
-    Time = json['Time'];
-    IsEnabled = json['IsEnabled'];
-    LoopAudio = json['LoopAudio'];
-    Vibrate = json['Vibrate'];
-    NotificationTitle = json['NotificationTitle'];
-    NotificationBody = json['NotificationBody'];
-    InternalAudioFIle = json['InternalAudioFIle'];
-    UseExternalAudio = json['UseExternalAudio'];
-    AudioURL = json['AudioURL'];
+    AlarmId = json['alarmId'];
+    GroupId = json['groupId'];
+    CreatedBy = json['createdBy'];
+    Time = DateTime.parse(json['time']);
+    IsEnabled = json['isEnabled'];
+    LoopAudio = json['loopAudio'];
+    Vibrate = json['vibrate'];
+    NotificationTitle = json['notificationTitle'];
+    NotificationBody = json['notificationBody'];
+    InternalAudioFIle = json['internalAudioFIle'];
+    UseExternalAudio = json['useExternalAudio'];
+    AudioURL = json['audioURL'];
   }
 
   Map<String, dynamic> toJson() {
     final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['AlarmId'] = this.AlarmId;
-    data['GroupId'] = this.GroupId;
-    data['CreatedBy'] = this.CreatedBy;
-    data['Time'] = this.Time;
-    data['IsEnabled'] = this.IsEnabled;
-    data['LoopAudio'] = this.LoopAudio;
-    data['Vibrate'] = this.Vibrate;
-    data['NotificationTitle'] = this.NotificationTitle;
-    data['NotificationBody'] = this.NotificationBody;
-    data['InternalAudioFIle'] = this.InternalAudioFIle;
-    data['UseExternalAudio'] = this.UseExternalAudio;
-    data['AudioURL'] = this.AudioURL;
+    data['alarmId'] = this.AlarmId;
+    data['groupId'] = this.GroupId;
+    data['createdBy'] = this.CreatedBy;
+    data['time'] = this.Time;
+    data['isEnabled'] = this.IsEnabled;
+    data['loopAudio'] = this.LoopAudio;
+    data['vibrate'] = this.Vibrate;
+    data['notificationTitle'] = this.NotificationTitle;
+    data['notificationBody'] = this.NotificationBody;
+    data['internalAudioFIle'] = this.InternalAudioFIle;
+    data['useExternalAudio'] = this.UseExternalAudio;
+    data['audioURL'] = this.AudioURL;
     return data;
+  }
+
+  static List<Alarm> fromListJson(List<dynamic> arr) {
+    List<Alarm> alarms = [];
+    for (var json in arr) {
+      Alarm alarm = Alarm.fromJson(json);
+      alarms.add(alarm);
+    }
+    return alarms;
   }
 }
