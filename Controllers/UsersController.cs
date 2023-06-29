@@ -93,7 +93,7 @@ namespace WeWakeAPI.Controllers
             try
             {
                List<GroupMemberResponse> groups = await _userService.GetUserGroups();
-               return Ok(groups);   
+               return Ok(new {success=true,groups=groups});   
 
             }catch( Exception e )
             {

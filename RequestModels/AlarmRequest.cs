@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc.ModelBinding;
+﻿using System.Text.Json.Serialization;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Microsoft.Build.Framework;
 
 namespace WeWakeAPI.RequestModels
@@ -19,7 +20,6 @@ namespace WeWakeAPI.RequestModels
 
         public AlarmRequest(Guid groupId, DateTime time, bool isEnabled, bool loopAudio, bool vibrate, string? notificationTitle, string? notificationBody, string? internalAudioFile, bool useExternalAudio, string? audioUrl)
         {
-            console.log("before"+isEnabled+IsEnabled);
             GroupId = groupId;
             Time = time;
             IsEnabled = isEnabled;
@@ -30,7 +30,6 @@ namespace WeWakeAPI.RequestModels
             InternalAudioFile = internalAudioFile ??="nokia.mp3";
             UseExternalAudio = useExternalAudio;
             AudioUrl = audioUrl;
-            console.log("after" + isEnabled + IsEnabled);
 
         }
     }

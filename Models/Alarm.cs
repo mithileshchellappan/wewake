@@ -9,6 +9,8 @@ namespace WeWakeAPI.Models
         public Guid AlarmId { get; set; }
         [Required]
         public Guid GroupId { get; set; }
+        [Required]
+        public int AlarmAppId {get;set;} = new Random().Next(000000001, 999999999);
         public Guid CreatedBy { get; set; }
         public DateTime Time { get; set; }
         public bool IsEnabled { get; set; } = true;

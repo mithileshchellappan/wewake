@@ -30,7 +30,7 @@ namespace WeWakeAPI.Controllers
             try
             {
                 _groupService.CheckIfGroupExists(groupId);
-                bool userExists = _groupService.CheckIfMemberAlreadyExists(groupId, await _userService.CheckIfUserExistsFromJWT(),false);
+                bool userExists = _groupService.CheckIfMemberAlreadyExists(groupId, await _userService.CheckIfUserExistsFromJWT(), false);
                 if (!userExists) throw new UnauthorizedAccessException("User not in group");
                 List<Alarm> alarms = await _alarmService.GetAlarms(groupId);
                 return Ok(new { success = true, alarms });
@@ -47,30 +47,37 @@ namespace WeWakeAPI.Controllers
         }
 
         [HttpPost("Create")]
-        public async Task<ActionResult> SetAlarm(AlarmRequest alarm)
+        public async Task<ActionResult> SetAlarm([FromBody] AlarmRequest alarm)
         {
             try
             {
+                // console.log(alarm["groupId"]+alarm["time"]+alarm["isEnabled"]+alarm["loopAudio"]+alarm["vibrate"]+alarm["notificationTitle"]+alarm["notificationBody"]+alarm["internalAudioFile"]+alarm["useExternalAudio"]+alarm["audioUrl"]);
+                // AlarmRequest ar = new(Guid.Parse(alarm["groupId"]), DateTime.Parse(alarm["time"]), alarm["isEnabled"], alarm["loopAudio"], alarm["vibrate"], alarm["notificationTitle"], alarm["notificationBody"], alarm["internalAudioFile"], alarm["useExternalAudio"], alarm["audioUrl"]);
                 Guid userId = await _userService.CheckIfUserExistsFromJWT();
                 Alarm createdAlarm = await _alarmService.CreateAlarm(alarm, userId);
-                return Ok(createdAlarm);
+                return Ok(new { success = true,alarm = createdAlarm });
 
             }
             catch (UnauthorizedAccessException e)
             {
+                console.log(e);
                 return Unauthorized(e.Message);
             }
             catch (NotFoundException e)
             {
+                console.log(e);
                 return NotFound(e.Message);
             }
-            catch(BadRequestException e)
+            catch (BadRequestException e)
             {
+                console.log(e);
                 return BadRequest(e.Message);
             }
             catch (Exception e)
             {
-                return StatusCode(StatusCodes.Status500InternalServerError,e.Message);
+                console.log(e);
+
+                return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
         }
     }
