@@ -24,7 +24,7 @@ class GroupCard extends StatelessWidget {
                 text: group.GroupName ?? 'Group', backgroundColor: iconColor),
             title: Text(group.GroupName ?? ''),
             subtitle: Text('👥x ${group.MemberCount ?? 0}'),
-            trailing: Text(group.CreatedAt.toLocal().toString()),
+            trailing: Text(group.CreatedAt.toString()),
             onTap: () => {
               Navigator.push(
                   context,

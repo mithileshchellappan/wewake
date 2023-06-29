@@ -18,6 +18,26 @@ Future<dynamic> getGroupAlarms(groupId) async {
     }
   } catch (e) {
     print(e);
-    return {"success": false, "message": e};
+    return {"success": false, "message": e.toString()};
+  }
+}
+
+Future<dynamic> addAlarm(Alarm alarm) async {
+  try {
+    API api = new API();
+    Uri url = Uri.parse('$apiRoute/Alarm/Create');
+    final res = await api.post(url, body: json.encode(alarm.toJson()));
+    print((alarm.toJson()).runtimeType);
+    if (res.statusCode <= 299 && res.statusCode >= 200) {
+      print(res.body.toString());
+      Alarm alarm = Alarm.fromJson(jsonDecode(res.body.toString())['alarm']);
+      return {"success": true, "alarm": alarm};
+    } else {
+      print(res.body.toString());
+      return {"success": false, "message": res.body.toString()};
+    }
+  } catch (e) {
+    print(e);
+    return {"success": false, "message": e.toString()};
   }
 }

@@ -56,11 +56,27 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
     });
   }
 
+  void onAlarmCreate(dynamic data) {
+    if (data == null) {
+      print("no data");
+    } else if (data.runtimeType == Alarm) {
+      setState(() {
+        print(data.Time);
+        alarms.add(data);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     print(widget.group.IsAdmin);
     return Scaffold(
-      floatingActionButton: widget.group.IsAdmin ? AddAlarmButton() : null,
+      floatingActionButton: widget.group.IsAdmin
+          ? AddAlarmButton(
+              callback: onAlarmCreate,
+              groupId: widget.group.GroupId,
+            )
+          : null,
       appBar: CupertinoNavigationBar(
         brightness: Theme.of(context).brightness,
         backgroundColor: Theme.of(context).backgroundColor,

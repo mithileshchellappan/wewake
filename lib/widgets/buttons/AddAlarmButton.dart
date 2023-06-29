@@ -1,11 +1,18 @@
+import 'package:alarm_test/api/alarm.dart';
 import 'package:alarm_test/constants/app.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:cupertino_text_button/cupertino_text_button.dart';
 import 'package:just_audio/just_audio.dart';
 
+import '../../models/Alarm.dart';
+
 class AddAlarmButton extends StatefulWidget {
+  final Function callback;
+  String? groupId;
+  AddAlarmButton({required this.callback, required this.groupId});
   @override
   _AddAlarmButtonState createState() => _AddAlarmButtonState();
 }
@@ -23,7 +30,7 @@ class _AddAlarmButtonState extends State<AddAlarmButton> {
   DateTime selectedDateTime = DateTime.now();
   bool _isPlaying = false;
   final player = AudioPlayer();
-
+  late Alarm alarm;
   @override
   void dispose() {
     IsEnabledSwitch.dispose();
@@ -46,11 +53,13 @@ class _AddAlarmButtonState extends State<AddAlarmButton> {
           content: Column(
             children: [
               CupertinoTextField(
+                style: TextStyle(color: Colors.white),
                 controller: notificationTitleController,
                 placeholder: 'Alarm Title',
               ),
               SizedBox(height: 12),
               CupertinoTextField(
+                style: TextStyle(color: Colors.white),
                 controller: notificationBodyController,
                 placeholder: 'Alarm Body',
               ),
@@ -59,7 +68,7 @@ class _AddAlarmButtonState extends State<AddAlarmButton> {
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   const Text(
-                    'Enable Alarm?',
+                    'Enable Alarm',
                     style: TextStyle(fontSize: 18),
                   ),
                   ValueListenableBuilder<bool>(
@@ -184,7 +193,9 @@ class _AddAlarmButtonState extends State<AddAlarmButton> {
                         ),
                       ),
                     );
-                  })
+                  }),
+              Text("Long Press on Alarm Tone to play",
+                  style: TextStyle(fontSize: 12))
             ],
           ),
           actions: [
@@ -198,16 +209,54 @@ class _AddAlarmButtonState extends State<AddAlarmButton> {
             ),
             CupertinoDialogAction(
               child: Text('Submit'),
-              onPressed: () {
+              onPressed: () async {
                 final NotificationTitle = notificationTitleController.text;
                 final NotificationBody = notificationBodyController.text;
                 final IsEnabled = IsEnabledSwitch.value;
                 final Vibrate = VibrateSwitch.value;
+                final LoopAudio = LoopAudioSwitch.value;
                 final Time = selectedDateTime;
+                final InternalAudioFile = alarmToneNotifier.value['location'];
+                //         var req = {
+                //   "groupId": widget.groupId,
+                //   "time": selectedDateTime.toString(),
+                //   "isEnabled": IsEnabled,
+                //   "loopAudio": LoopAudio,
+                //   "vibrate": Vibrate,
+                //   "notificationTitle": NotificationTitle,
+                //   "notificationBody": NotificationBody,
+                //   "internalAudioFile": InternalAudioFile,
+                //   "useExternaAudio": alarm.UseExternalAudio,
+                //   "audioUrl": alarm.AudioURL
+                // }
                 print(Time);
                 player.stop();
                 player.dispose();
-                // Navigator.of(context).pop();
+                if (NotificationTitle.isEmpty || NotificationBody.isEmpty) {
+                  Fluttertoast.showToast(msg: "Please enter all fields.");
+                } else if (dateTimeNotifier.value == "Select Date and Time") {
+                  Fluttertoast.showToast(
+                      msg: "Please select date and time for alarm.");
+                } else {
+                  alarm = Alarm(
+                      widget.groupId,
+                      NotificationTitle,
+                      NotificationBody,
+                      IsEnabled,
+                      Vibrate,
+                      LoopAudio,
+                      Time.toLocal(),
+                      InternalAudioFile);
+                  var res = await addAlarm(alarm);
+                  if (res['success']) {
+                    widget.callback(res['alarm']);
+                    Fluttertoast.showToast(msg: "Created Alarm Successfully");
+                    Navigator.of(context).pop();
+                  } else {
+                    Fluttertoast.showToast(msg: res['message']);
+                    Navigator.of(context).pop();
+                  }
+                }
               },
             ),
           ],

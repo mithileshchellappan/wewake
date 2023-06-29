@@ -8,9 +8,19 @@ class Alarm {
   bool Vibrate = false; //done
   String NotificationTitle = "Alarm Title"; //done
   String NotificationBody = "Alarm Body"; //done
-  String InternalAudioFile = 'nokia.mp3'; //done
-  bool? UseExternalAudio;
-  String? AudioURL;
+  String? InternalAudioFile; //done
+  bool UseExternalAudio = false;
+  String AudioURL = "";
+
+  Alarm(
+      this.GroupId,
+      this.NotificationTitle,
+      this.NotificationBody,
+      this.IsEnabled,
+      this.Vibrate,
+      this.LoopAudio,
+      this.Time,
+      this.InternalAudioFile);
 
   Alarm.fromJson(Map<String, dynamic> json) {
     AlarmId = json['alarmId'];
@@ -24,21 +34,21 @@ class Alarm {
     NotificationBody = json['notificationBody'];
     InternalAudioFile = json['internalAudioFile'];
     UseExternalAudio = json['useExternalAudio'];
-    AudioURL = json['audioURL'];
+    AudioURL = json['audioURL'] ?? "";
   }
 
-  Map<String, dynamic> toJson() {
-    final Map<String, dynamic> data = new Map<String, dynamic>();
-    data['alarmId'] = this.AlarmId;
-    data['groupId'] = this.GroupId;
-    data['createdBy'] = this.CreatedBy;
-    data['time'] = this.Time;
+  Map toJson() {
+    Map data = {};
+    // data['alarmId'] = this.AlarmId;
+    data['groupId'] = this.GroupId ?? "";
+    // data['createdBy'] = this.CreatedBy;
+    data['time'] = this.Time.toIso8601String();
     data['isEnabled'] = this.IsEnabled;
     data['loopAudio'] = this.LoopAudio;
     data['vibrate'] = this.Vibrate;
     data['notificationTitle'] = this.NotificationTitle;
     data['notificationBody'] = this.NotificationBody;
-    data['internalAudioFile'] = this.InternalAudioFile;
+    data['internalAudioFile'] = this.InternalAudioFile ?? "nokia.mp3";
     data['useExternalAudio'] = this.UseExternalAudio;
     data['audioURL'] = this.AudioURL;
     return data;
@@ -50,7 +60,22 @@ class Alarm {
       Alarm alarm = Alarm.fromJson(json);
       alarms.add(alarm);
     }
-    alarms.sort((a, b) => a.Time.compareTo(b.Time));
+    alarms.sort((a, b) {
+      print(" " + a.Time.toString() + b.Time.toString());
+
+      if (a.Time.isAfter(DateTime.now()) && b.Time.isAfter(DateTime.now())) {
+        return a.Time.compareTo(b.Time);
+      } else if (a.Time.isAfter(DateTime.now()) &&
+          b.Time.isBefore(DateTime.now())) {
+        return -1;
+      } else if (a.Time.isBefore(DateTime.now()) &&
+          b.Time.isAfter(DateTime.now())) {
+        return 1;
+      } else {
+        return a.Time.compareTo(b.Time);
+      }
+    });
+
     return alarms;
   }
 }

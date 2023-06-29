@@ -21,35 +21,46 @@ class _AlarmCardState extends State<AlarmCard> {
   void initState() {
     super.initState();
     time = formatTimeDifference(
-        widget.alarm.Time.difference(DateTime.now().add(Duration(hours: 1))),
-        widget);
+        widget.alarm.Time.difference(DateTime.now()), widget);
     timeText = DateFormat('dd MMMM yy \nhh:mm a').format(widget.alarm.Time);
   }
 
   static String formatTimeDifference(Duration difference, widget) {
-    if (difference.inSeconds < 0) {
-      widget.alarm.IsEnabled = false;
-      return "Alarm Expired";
-    } else if (difference.inSeconds < 60 && difference.inSeconds > 0) {
+    print(difference.inMinutes);
+    if (difference.inSeconds < 60 && difference.inSeconds > 0) {
       return "just now";
     } else if (difference.inMinutes < 60) {
+      if (difference.inMinutes < 0) {
+        widget.alarm.IsEnabled = false;
+        return "Alarm Expired";
+      }
+
       return "In ${difference.inMinutes} ${difference.inMinutes == 1 ? 'minute' : 'minutes'}";
     } else if (difference.inHours < 24) {
+      if (difference.inHours < 0) {
+        widget.alarm.IsEnabled = false;
+        return "Alarm Expired";
+      }
       return "In ${difference.inHours} ${difference.inHours == 1 ? 'hour' : 'hours'}";
     } else if (difference.inDays < 30) {
+      if (difference.inDays < 0) {
+        widget.alarm.IsEnabled = false;
+        return "Alarm Expired";
+      }
       return "In ${difference.inDays} ${difference.inDays == 1 ? 'day' : 'days'}";
-    } else if (difference.inDays < 365) {
-      int months = (difference.inDays / 30).floor();
-      return "In $months ${months == 1 ? 'month' : 'months'}";
     } else {
-      int years = (difference.inDays / 365).floor();
-      return "In $years ${years == 1 ? 'year' : 'years'}";
+      int months = (difference.inDays / 30).floor();
+      if (months < 0) {
+        widget.alarm.IsEnabled = false;
+        return "Alarm Expired";
+      }
+      return "In $months ${months == 1 ? 'month' : 'months'}";
     }
   }
 
   @override
   Widget build(BuildContext context) {
-    String audioLink = widget.alarm.InternalAudioFile;
+    String? audioLink = widget.alarm.InternalAudioFile;
 
     return Padding(
       padding: const EdgeInsets.only(top: 10, left: 8, right: 8),
@@ -74,8 +85,8 @@ class _AlarmCardState extends State<AlarmCard> {
                   ),
                   Expanded(child: Container()),
                   PlayButton(
-                    url: audioLink,
-                    isExpanded: false,
+                    url: audioLink ?? "nokia.mp3",
+                    isExpanded: true,
                   ),
                   SizedBox(width: 5),
                 ],
