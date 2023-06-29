@@ -89,6 +89,14 @@ packages:
       url: "https://pub.dev"
     source: hosted
     version: "1.0.5"
+  cupertino_text_button:
+    dependency: "direct main"
+    description:
+      name: cupertino_text_button
+      sha256: a73709a7109bbf111f16af58b67c35886b78dac03a47829e6d5e1881566738f8
+      url: "https://pub.dev"
+    source: hosted
+    version: "0.0.5"
   dbus:
     dependency: transitive
     description:
@@ -126,14 +134,6 @@ packages:
     description: flutter
     source: sdk
     version: "0.0.0"
-  flutter_cupertino_datetime_picker:
-    dependency: "direct main"
-    description:
-      name: flutter_cupertino_datetime_picker
-      sha256: "631fbd3abed4d1151888e053d2153d905663a3b33ff24bdfa64afbcf750682cb"
-      url: "https://pub.dev"
-    source: hosted
-    version: "3.0.0"
   flutter_fgbg:
     dependency: transitive
     description:

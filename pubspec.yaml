@@ -43,7 +43,7 @@ dependencies:
   intl: ^0.18.1
   just_audio: ^0.9.34
   font_awesome_flutter: ^10.5.0
-  flutter_cupertino_datetime_picker: ^3.0.0
+  cupertino_text_button: ^0.0.5
 dev_dependencies:
   flutter_test:
     sdk: flutter

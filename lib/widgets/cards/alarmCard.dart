@@ -73,7 +73,10 @@ class _AlarmCardState extends State<AlarmCard> {
                     ),
                   ),
                   Expanded(child: Container()),
-                  PlayButton(url: audioLink),
+                  PlayButton(
+                    url: audioLink,
+                    isExpanded: false,
+                  ),
                   SizedBox(width: 5),
                 ],
               ),
@@ -158,10 +161,8 @@ class _AlarmCardState extends State<AlarmCard> {
 
 class PlayButton extends StatefulWidget {
   String url;
-  PlayButton({
-    super.key,
-    required this.url,
-  });
+  bool isExpanded;
+  PlayButton({super.key, required this.url, this.isExpanded = true});
 
   @override
   State<PlayButton> createState() => _PlayButtonState();
@@ -172,11 +173,15 @@ class _PlayButtonState extends State<PlayButton> {
   final player = AudioPlayer();
 
   @override
+  void dispose() {
+    player.dispose();
+  }
+
+  @override
   Widget build(BuildContext context) {
     return InkWell(
         onTap: () async {
           await player.setAsset("assets/${widget.url}");
-
           if (player.playing) {
             await player.stop();
             setState(() {
@@ -200,7 +205,8 @@ class _PlayButtonState extends State<PlayButton> {
             decoration: BoxDecoration(
                 color: Colors.white, borderRadius: BorderRadius.circular(20)),
             child: Padding(
-              padding: EdgeInsets.all(2.0),
+              padding:
+                  widget.isExpanded ? EdgeInsets.all(2.0) : EdgeInsets.all(0.0),
               child: Row(
                 children: [
                   Icon(
@@ -209,12 +215,13 @@ class _PlayButtonState extends State<PlayButton> {
                         : Icons.play_circle_fill,
                     color: Colors.black,
                   ),
-                  SizedBox(width: 5),
-                  Text(
-                    _isPlaying ? "Pause" : "Play",
-                    style: TextStyle(color: Colors.black),
-                  ),
-                  SizedBox(width: 5),
+                  if (widget.isExpanded) SizedBox(width: 5),
+                  if (widget.isExpanded)
+                    Text(
+                      _isPlaying ? "Pause" : "Play",
+                      style: TextStyle(color: Colors.black),
+                    ),
+                  if (widget.isExpanded) SizedBox(width: 5),
                 ],
               ),
             )));

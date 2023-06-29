@@ -1,14 +1,14 @@
 class Alarm {
   String? AlarmId;
   String? GroupId;
-  String? CreatedBy;
-  DateTime Time = DateTime.now();
-  bool IsEnabled = true;
-  bool LoopAudio = false;
-  bool Vibrate = false;
-  String NotificationTitle = "Alarm Title";
-  String NotificationBody = "Alarm Body";
-  String InternalAudioFile = 'nokia.mp3';
+  String? CreatedBy; //done
+  DateTime Time = DateTime.now(); //done
+  bool IsEnabled = true; //done
+  bool LoopAudio = false; //done
+  bool Vibrate = false; //done
+  String NotificationTitle = "Alarm Title"; //done
+  String NotificationBody = "Alarm Body"; //done
+  String InternalAudioFile = 'nokia.mp3'; //done
   bool? UseExternalAudio;
   String? AudioURL;
 

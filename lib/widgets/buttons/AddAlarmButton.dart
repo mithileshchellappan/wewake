@@ -1,8 +1,9 @@
+import 'package:alarm_test/constants/app.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter_cupertino_datetime_picker/flutter_cupertino_datetime_picker.dart';
-// import 'package:flutter_cupertino_datetime_picker/src/'
 import 'package:intl/intl.dart';
+import 'package:cupertino_text_button/cupertino_text_button.dart';
+import 'package:just_audio/just_audio.dart';
 
 class AddAlarmButton extends StatefulWidget {
   @override
@@ -10,26 +11,33 @@ class AddAlarmButton extends StatefulWidget {
 }
 
 class _AddAlarmButtonState extends State<AddAlarmButton> {
-  String selectedOption = 'Option 1';
+  TextEditingController notificationTitleController = TextEditingController();
+  TextEditingController notificationBodyController = TextEditingController();
   ValueNotifier<bool> IsEnabledSwitch = ValueNotifier<bool>(true);
   ValueNotifier<bool> VibrateSwitch = ValueNotifier<bool>(true);
   ValueNotifier<bool> LoopAudioSwitch = ValueNotifier<bool>(true);
-  TextEditingController notificationTitleController = TextEditingController();
-  TextEditingController notificationBodyController = TextEditingController();
-  ValueNotifier<String> dateTimeController =
+  ValueNotifier<Map<String, String>> alarmToneNotifier =
+      ValueNotifier<Map<String, String>>(alarmTones[0]);
+  ValueNotifier<String> dateTimeNotifier =
       ValueNotifier<String>("Select Date and Time");
   DateTime selectedDateTime = DateTime.now();
+  bool _isPlaying = false;
+  final player = AudioPlayer();
 
   @override
   void dispose() {
     IsEnabledSwitch.dispose();
     VibrateSwitch.dispose();
+    alarmToneNotifier.dispose();
+    dateTimeNotifier.dispose();
     notificationTitleController.dispose();
     notificationBodyController.dispose();
+    player.dispose();
     super.dispose();
   }
 
   void _showFormDialog(BuildContext context) {
+    print(alarmTones);
     showCupertinoDialog(
       context: context,
       builder: (BuildContext context) {
@@ -50,7 +58,10 @@ class _AddAlarmButtonState extends State<AddAlarmButton> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Enable Alarm?'),
+                  const Text(
+                    'Enable Alarm?',
+                    style: TextStyle(fontSize: 18),
+                  ),
                   ValueListenableBuilder<bool>(
                     valueListenable: IsEnabledSwitch,
                     builder: (context, value, child) {
@@ -67,7 +78,10 @@ class _AddAlarmButtonState extends State<AddAlarmButton> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Vibrate'),
+                  const Text(
+                    'Vibrate',
+                    style: TextStyle(fontSize: 18),
+                  ),
                   ValueListenableBuilder<bool>(
                     valueListenable: VibrateSwitch,
                     builder: (context, value, child) {
@@ -84,7 +98,10 @@ class _AddAlarmButtonState extends State<AddAlarmButton> {
               Row(
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
-                  Text('Loop Audio'),
+                  const Text(
+                    'Loop Audio',
+                    style: TextStyle(fontSize: 18),
+                  ),
                   ValueListenableBuilder<bool>(
                     valueListenable: LoopAudioSwitch,
                     builder: (context, value, child) {
@@ -98,40 +115,70 @@ class _AddAlarmButtonState extends State<AddAlarmButton> {
                   ),
                 ],
               ),
-              SizedBox(height: 12),
-              Text('Dropdown'),
-              CupertinoPicker(
-                itemExtent: 32.0,
-                onSelectedItemChanged: (int index) {
-                  setState(() {
-                    selectedOption = 'Option ${index + 1}';
-                  });
-                },
-                children: [
-                  Text('Option 1'),
-                  Text('Option 2'),
-                  Text('Option 3'),
-                ],
-              ),
-              SizedBox(height: 12),
-              Text("Date and Time"),
+              SizedBox(height: 5),
               ValueListenableBuilder(
-                  valueListenable: dateTimeController,
+                  valueListenable: alarmToneNotifier,
+                  builder: (context, value, child) {
+                    return CupertinoTextButton(
+                        color: Theme.of(context).highlightColor,
+                        style: TextStyle(
+                            fontSize: 17, fontWeight: FontWeight.bold),
+                        onLongPress: () async {
+                          await player.setAsset(
+                              "assets/${alarmToneNotifier.value['location']}");
+                          if (player.playing) {
+                            await player.stop();
+                            setState(() {
+                              _isPlaying = false;
+                            });
+                          } else {
+                            setState(() {
+                              _isPlaying = true;
+                            });
+                            await player.play();
+                          }
+                          player.playerStateStream.listen((event) {
+                            if (event.processingState ==
+                                ProcessingState.completed) {
+                              setState(() {
+                                _isPlaying = false;
+                              });
+                            }
+                          });
+                        },
+                        onTap: () => _showDialog(
+                              CupertinoPicker(
+                                itemExtent: 32.0,
+                                onSelectedItemChanged: (int index) {
+                                  alarmToneNotifier.value = alarmTones[index];
+                                },
+                                children: [
+                                  ...alarmTones
+                                      .map((e) => Text(e['name'] ?? 'Tone'))
+                                ],
+                              ),
+                            ),
+                        text: "Alarm Tone: ${alarmToneNotifier.value['name']}");
+                  }),
+              ValueListenableBuilder(
+                  valueListenable: dateTimeNotifier,
                   builder: (context, value, child) {
                     return CupertinoButton(
                       onPressed: () async {
                         _showDialog(CupertinoDatePicker(
+                          minimumDate: DateTime.now(),
+                          showDayOfWeek: true,
                           onDateTimeChanged: (res) {
                             setState(() {
                               this.selectedDateTime = res;
-                              dateTimeController.value =
+                              dateTimeNotifier.value =
                                   DateFormat('dd MMMM yy hh:mm a').format(res);
                             });
                           },
                         ));
                       },
                       child: Text(
-                        dateTimeController.value,
+                        dateTimeNotifier.value,
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                         ),
@@ -144,6 +191,8 @@ class _AddAlarmButtonState extends State<AddAlarmButton> {
             CupertinoDialogAction(
               child: Text('Cancel'),
               onPressed: () {
+                player.stop();
+                player.dispose();
                 Navigator.of(context).pop();
               },
             ),
@@ -156,6 +205,8 @@ class _AddAlarmButtonState extends State<AddAlarmButton> {
                 final Vibrate = VibrateSwitch.value;
                 final Time = selectedDateTime;
                 print(Time);
+                player.stop();
+                player.dispose();
                 // Navigator.of(context).pop();
               },
             ),
