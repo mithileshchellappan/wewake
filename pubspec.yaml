@@ -41,7 +41,7 @@ dependencies:
   fluttertoast: ^8.2.2
   flutter_speed_dial: ^7.0.0
   intl: ^0.18.1
-
+  just_audio: ^0.9.34
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -19,8 +19,8 @@ class _GroupScreenState extends State<GroupScreen> {
   List<Group> userGroups = [];
 
   void initState() {
-    super.initState();
     setGroups();
+    super.initState();
   }
 
   void setGroups() async {

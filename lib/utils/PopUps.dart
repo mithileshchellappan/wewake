@@ -59,6 +59,8 @@ class PopUpDialog extends StatelessWidget {
           children: [
             SizedBox(height: 20),
             CupertinoTextField(
+              keyboardType: TextInputType.text,
+              textCapitalization: TextCapitalization.sentences,
               style: TextStyle(color: Colors.white),
               controller: _textFieldController,
             ),

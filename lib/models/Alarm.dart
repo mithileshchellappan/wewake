@@ -2,13 +2,13 @@ class Alarm {
   String? AlarmId;
   String? GroupId;
   String? CreatedBy;
-  DateTime? Time;
-  bool? IsEnabled;
-  bool? LoopAudio;
-  bool? Vibrate;
-  String? NotificationTitle;
-  String? NotificationBody;
-  String? InternalAudioFIle;
+  DateTime Time = DateTime.now();
+  bool IsEnabled = true;
+  bool LoopAudio = false;
+  bool Vibrate = false;
+  String NotificationTitle = "Alarm Title";
+  String NotificationBody = "Alarm Body";
+  String InternalAudioFile = 'nokia.mp3';
   bool? UseExternalAudio;
   String? AudioURL;
 
@@ -16,13 +16,13 @@ class Alarm {
     AlarmId = json['alarmId'];
     GroupId = json['groupId'];
     CreatedBy = json['createdBy'];
-    Time = DateTime.parse(json['time']);
+    Time = DateTime.parse(json['time']).toLocal();
     IsEnabled = json['isEnabled'];
     LoopAudio = json['loopAudio'];
     Vibrate = json['vibrate'];
     NotificationTitle = json['notificationTitle'];
     NotificationBody = json['notificationBody'];
-    InternalAudioFIle = json['internalAudioFIle'];
+    InternalAudioFile = json['internalAudioFile'];
     UseExternalAudio = json['useExternalAudio'];
     AudioURL = json['audioURL'];
   }
@@ -38,7 +38,7 @@ class Alarm {
     data['vibrate'] = this.Vibrate;
     data['notificationTitle'] = this.NotificationTitle;
     data['notificationBody'] = this.NotificationBody;
-    data['internalAudioFIle'] = this.InternalAudioFIle;
+    data['internalAudioFile'] = this.InternalAudioFile;
     data['useExternalAudio'] = this.UseExternalAudio;
     data['audioURL'] = this.AudioURL;
     return data;
@@ -50,6 +50,7 @@ class Alarm {
       Alarm alarm = Alarm.fromJson(json);
       alarms.add(alarm);
     }
+    alarms.sort((a, b) => a.Time.compareTo(b.Time));
     return alarms;
   }
 }

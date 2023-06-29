@@ -9,9 +9,6 @@ Future<dynamic> getGroupAlarms(groupId) async {
     API api = new API();
     Uri url = Uri.parse('$apiRoute/Alarm/Group/$groupId');
     final res = await api.get(url);
-    print('here in createGroup' +
-        res.body.toString() +
-        res.statusCode.toString());
     if (res.statusCode <= 299 && res.statusCode >= 200) {
       List<Alarm> alarms =
           Alarm.fromListJson((jsonDecode(res.body.toString()))['alarms']);

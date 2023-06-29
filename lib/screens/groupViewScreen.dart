@@ -29,7 +29,7 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
   bool isLoading = false;
   List<Member> members = [];
   List<Alarm> alarms = [];
-
+  bool isAlarmsLoading = false;
   @override
   void initState() {
     super.initState();
@@ -37,6 +37,9 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
   }
 
   void setAlarms() async {
+    setState(() {
+      isAlarmsLoading = true;
+    });
     var res = await getGroupAlarms(widget.group.GroupId);
     if (res['success']) {
       setState(() {
@@ -46,6 +49,9 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
     } else {
       Fluttertoast.showToast(msg: res['message']);
     }
+    setState(() {
+      isAlarmsLoading = false;
+    });
   }
 
   @override
@@ -67,6 +73,9 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
             children: [
               getTopDash(context),
               if (isExpanded) buildMemberList(),
+              isAlarmsLoading
+                  ? Center(child: CupertinoActivityIndicator())
+                  : Container(),
               ...alarms.map((e) => AlarmCard(
                     alarm: e,
                   )),

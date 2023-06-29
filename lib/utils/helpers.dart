@@ -18,7 +18,13 @@ int _getRandomNumber(int max) {
 class LoadingButton extends StatefulWidget {
   String text;
   Function onTap;
-  LoadingButton({super.key, required this.text, required this.onTap});
+  bool useColor;
+  LoadingButton({
+    super.key,
+    required this.text,
+    required this.onTap,
+    this.useColor = false,
+  });
   @override
   State<LoadingButton> createState() => _LoadingButtonState();
 }
@@ -30,9 +36,19 @@ class _LoadingButtonState extends State<LoadingButton> {
     return Padding(
       padding: const EdgeInsets.only(right: 8.0),
       child: MaterialButton(
-          color: Theme.of(context).focusColor,
-          child: isLoading ? CupertinoActivityIndicator() : Text(widget.text),
-          onPressed: isLoading ? null : () => _onPress()),
+          color: widget.useColor
+              ? Theme.of(context).focusColor
+              : Colors.transparent,
+          onPressed: isLoading ? null : () => _onPress(),
+          child: isLoading
+              ? const CupertinoActivityIndicator()
+              : Text(widget.text,
+                  style: TextStyle(
+                      decoration: widget.useColor
+                          ? TextDecoration.none
+                          : TextDecoration.underline,
+                      decorationStyle: TextDecorationStyle.dotted,
+                      decorationThickness: 3))),
     );
   }
 
