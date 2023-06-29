@@ -9,6 +9,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import '../models/Alarm.dart';
 import '../models/Group.dart';
 import '../models/Member.dart';
 
@@ -27,28 +28,51 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
   bool isExpanded = false;
   bool isLoading = false;
   List<Member> members = [];
+  List<Alarm> alarms = [];
+
+  @override
+  void initState() {
+    super.initState();
+    setAlarms();
+  }
+
+  void setAlarms() async {
+    var res = await getGroupAlarms(widget.group.GroupId);
+    if (res['success']) {
+      setState(() {
+        alarms = res['alarms'];
+      });
+      print(alarms.length);
+    } else {
+      Fluttertoast.showToast(msg: res['message']);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
-    return SafeArea(
-      child: Scaffold(
-        appBar: CupertinoNavigationBar(
-          brightness: Theme.of(context).brightness,
-          backgroundColor: Theme.of(context).backgroundColor,
-          transitionBetweenRoutes: true,
-          automaticallyImplyLeading: true,
-          middle: Text(
-            widget.group.GroupName ?? 'Group',
-            style: TextStyle(color: Colors.white),
-          ),
+    return Scaffold(
+      appBar: CupertinoNavigationBar(
+        brightness: Theme.of(context).brightness,
+        backgroundColor: Theme.of(context).backgroundColor,
+        transitionBetweenRoutes: true,
+        automaticallyImplyLeading: true,
+        middle: Text(
+          widget.group.GroupName ?? 'Group',
+          style: TextStyle(color: Colors.white),
         ),
-        body: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            getTopDash(context),
-            if (isExpanded) buildMemberList(),
-            AlarmCard()
-          ],
+      ),
+      body: Container(
+        child: SingleChildScrollView(
+          child: Column(
+            children: [
+              getTopDash(context),
+              if (isExpanded) buildMemberList(),
+              ...alarms.map((e) => AlarmCard(
+                    alarm: e,
+                  )),
+              SizedBox(height: 20)
+            ],
+          ),
         ),
       ),
     );
@@ -91,8 +115,6 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
                   text: "Invite Code",
                   onTap: () async {
                     var res = await getInviteCode(widget.group.GroupId);
-                    var res2 = await getGroupAlarms(widget.group.GroupId);
-                    print(res2);
                     if (res['success']) {
                       await Clipboard.setData(
                           ClipboardData(text: res['inviteId']));
@@ -139,6 +161,33 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
     );
   }
 
+  Widget buildMemberList() {
+    if (isLoading) {
+      return const Center(child: CupertinoActivityIndicator());
+    }
+
+    if (members.isEmpty) {
+      return const Center(child: Text("No members found."));
+    }
+
+    return
+        // SizedBox(
+        //   height: members.length * 50,
+        //   child: Padding(
+        //     padding: const EdgeInsets.all(8.0),
+        //     child:
+        ListView(
+      shrinkWrap: true,
+      addAutomaticKeepAlives: true,
+      children: [
+        ...members.map((e) => MemberCard(member: e)),
+        // SizedBox(height: 64)
+      ],
+      // ),
+      // ),
+    );
+  }
+
   void _toggleExpanded() async {
     if (isExpanded) {
       setState(() {
@@ -162,29 +211,5 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
         }
       });
     }
-  }
-
-  Widget buildMemberList() {
-    if (isLoading) {
-      return const Center(child: CupertinoActivityIndicator());
-    }
-
-    if (members.isEmpty) {
-      return const Center(child: Text("No members found."));
-    }
-
-    return SizedBox(
-      height: members.length * 50,
-      child: Padding(
-        padding: const EdgeInsets.all(8.0),
-        child: ListView(
-          addAutomaticKeepAlives: true,
-          children: [
-            ...members.map((e) => MemberCard(member: e)),
-            // SizedBox(height: 64)
-          ],
-        ),
-      ),
-    );
   }
 }
