@@ -47,6 +47,21 @@ Future<dynamic> createGroup(String groupName) async {
   }
 }
 
+Future<dynamic> getInviteCode(groupId) async {
+  try {
+    API api = new API();
+    Uri url = Uri.parse('$apiRoute/Group/GetInviteLink/$groupId');
+    final res = await api.get(url);
+    if (res.statusCode <= 299 && res.statusCode >= 200) {
+      return jsonDecode(res.body.toString());
+    } else {
+      return {"success": false, "message": res.body.toString()};
+    }
+  } catch (e) {
+    return {"success": false, "message": e};
+  }
+}
+
 Future<dynamic> joinGroup(String inviteCode) async {
   try {
     API api = new API();
@@ -57,7 +72,7 @@ Future<dynamic> joinGroup(String inviteCode) async {
       Group group = Group.fromJson((jsonDecode(res.body.toString()))['group']);
       return {"success": true, "group": group};
     } else {
-      throw new Exception("Unable to create group");
+      throw new Exception(res.body.toString());
     }
   } catch (e) {
     return {"success": false, "message": e};

@@ -1,8 +1,10 @@
 import 'package:alarm_test/api/group.dart';
 import 'package:alarm_test/cards/memberCard.dart';
 import 'package:alarm_test/utils/TextIcon.dart';
+import 'package:alarm_test/utils/helpers.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
+import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import '../models/Group.dart';
@@ -82,21 +84,39 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
                 style: TextStyle(fontSize: 20),
               ),
               Expanded(child: Container()),
+              LoadingButton(
+                  text: "Invite Code",
+                  onTap: () async {
+                    var res = await getInviteCode(widget.group.GroupId);
+                    if (res['success']) {
+                      await Clipboard.setData(
+                          ClipboardData(text: res['inviteId']));
+                      Fluttertoast.showToast(
+                          msg: "Invite Code has been copied to your clipboard");
+                    } else {
+                      Fluttertoast.showToast(msg: res['message']);
+                    }
+                  })
+            ],
+          ),
+          Row(
+            children: [
+              Padding(
+                padding: const EdgeInsets.only(left: 8.0),
+                child: Align(
+                  alignment: Alignment.centerLeft,
+                  child: Text(
+                    "Created On: $createdOn",
+                    style: TextStyle(color: Colors.white38),
+                  ),
+                ),
+              ),
+              Expanded(child: Container()),
               Padding(
                 padding: const EdgeInsets.only(right: 8.0),
                 child: Text("👥x ${widget.group.MemberCount}"),
               ),
             ],
-          ),
-          Padding(
-            padding: const EdgeInsets.only(left: 8.0),
-            child: Align(
-              alignment: Alignment.centerLeft,
-              child: Text(
-                "Created On: $createdOn",
-                style: TextStyle(color: Colors.white38),
-              ),
-            ),
           ),
           SizedBox(height: 8),
           Align(
