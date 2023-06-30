@@ -45,7 +45,7 @@ app.MapGet("/ping", () => "pong");
 app.UseJWTMiddleware();
 String internalIp = IpAddr.GetIp();
 console.log(internalIp);
-app.Urls.Add($"http://{internalIp}:5022");
+// app.Urls.Add($"http://{internalIp}:5022");
 // app.Urls.Add("http://localhost:5022");
 app.Urls.Add("http://0.0.0.0:5022");
 app.Run();
