@@ -30,8 +30,8 @@ namespace WeWakeAPI.Controllers
             try
             {
                 _groupService.CheckIfGroupExists(groupId);
-                bool userExists = _groupService.CheckIfMemberAlreadyExists(groupId, await _userService.CheckIfUserExistsFromJWT(), false);
-                if (!userExists) throw new UnauthorizedAccessException("User not in group");
+                Member userExists = await _groupService.CheckIfMemberAlreadyExists(groupId, await _userService.CheckIfUserExistsFromJWT(), false);
+                if (userExists == null) throw new UnauthorizedAccessException("User not in group");
                 List<Alarm> alarms = await _alarmService.GetAlarms(groupId);
                 return Ok(new { success = true, alarms });
 
@@ -80,5 +80,6 @@ namespace WeWakeAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
         }
+        
     }
 }

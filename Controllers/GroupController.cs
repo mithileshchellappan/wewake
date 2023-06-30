@@ -50,14 +50,15 @@ namespace WeWakeAPI.Controllers
                 group.AdminId = UserId;
                 group.CreatedAt = DateTime.Now;
                 _context.Groups.Add(group);
-                Member member = new Member(UserId, group.GroupId, true);
+                Member member = new Member(Guid.NewGuid(),UserId, group.GroupId, true);
                 _context.Members.Add(member);
                 await _context.SaveChangesAsync();
                 return Ok(new {success=true,group = group});
             }
             catch (Exception e)
             {
-                return BadRequest(e.Message);
+                console.log(e);
+                return BadRequest(e);
             }
         }
 

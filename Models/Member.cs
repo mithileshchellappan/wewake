@@ -16,9 +16,9 @@ namespace WeWakeAPI.Models
         [ForeignKey("GroupId")]
         public Group Group { get; set; }
 
-        public Member(Guid memberId, Guid groupId, bool isAdmin = false)
+        public Member(Guid memberGroupId,Guid memberId, Guid groupId, bool isAdmin = false)
         {
-            this.MemberGroupId = Guid.NewGuid();
+            this.MemberGroupId = memberGroupId;
             this.MemberId = memberId;
             this.GroupId = groupId;
             this.isAdmin = isAdmin;

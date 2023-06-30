@@ -15,11 +15,11 @@ namespace WeWakeAPI.DBServices
             _context = context;
         }
 
-        public bool CheckIfMemberAlreadyExists(Guid groupId, Guid memberId, bool throwException = true)
+        public async Task<Member> CheckIfMemberAlreadyExists(Guid groupId, Guid memberId, bool throwException = true)
         {
-            bool exists = _context.Members.Any(m => m.MemberId == memberId && m.GroupId == groupId);
+            Member exists = await _context.Members.FirstOrDefaultAsync(m => m.MemberId == memberId && m.GroupId == groupId);
 
-            if (exists && throwException)
+            if (exists!=null && throwException)
             {
                 throw new Exception("User already exists in the group.");
             }
@@ -106,8 +106,8 @@ namespace WeWakeAPI.DBServices
         {
             try
             {
-                CheckIfMemberAlreadyExists(groupId, memberId);
-                Member member = new Member(memberId, groupId);
+                await CheckIfMemberAlreadyExists(groupId, memberId);
+                Member member = new Member(Guid.NewGuid(), memberId, groupId);
                 _context.Members.Add(member);
                 var result = await _context.SaveChangesAsync();
                 console.log(result);
@@ -128,7 +128,8 @@ namespace WeWakeAPI.DBServices
                 {
                     throw new UnauthorizedAccessException("Only Admins can remove other members from group");
                 }
-                Member removingMember = new Member(memberId, groupId);
+                Member removingMember = await CheckIfMemberAlreadyExists(groupId, memberId,false);
+                if (removingMember.isAdmin) throw new Exception("Cannot remove admin. Delete group instead!");
                 _context.Members.Remove(removingMember);
                 await _context.SaveChangesAsync();
                 return true;
@@ -148,6 +149,7 @@ namespace WeWakeAPI.DBServices
                 .Where(m => m.GroupId == groupId)
                 .Select(m => new GroupMemberListResponse
                 {
+                    GroupId = groupId,
                     MemberId = m.User.UserId,
                     MemberName = m.User.Name,
                     IsAdmin = m.isAdmin

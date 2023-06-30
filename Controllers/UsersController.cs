@@ -107,7 +107,7 @@ namespace WeWakeAPI.Controllers
             try
             {
                 var alarms = await _userService.GetUserAlarms();
-                return Ok(alarms);
+                return Ok(new {success=true,alarms});
             }catch(Exception e)
             {
                 return BadRequest(e.Message);
