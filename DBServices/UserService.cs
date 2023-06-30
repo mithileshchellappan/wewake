@@ -60,6 +60,7 @@ namespace WeWakeAPI.DBServices
                     {
                         MemberId = member.User.UserId,
                         GroupId = member.GroupId,
+                        AdminId = group.AdminId,
                         MemberName = member.User.Name,
                         GroupName = group.GroupName,
                         IsAdmin = member.isAdmin,
@@ -73,6 +74,7 @@ namespace WeWakeAPI.DBServices
                     {
                         MemberId = g.MemberId,
                         GroupId = g.GroupId,
+                        AdminId = g.AdminId,
                         MemberName = g.MemberName,
                         GroupName = g.GroupName,
                         IsAdmin = g.IsAdmin,
