@@ -1,5 +1,8 @@
 import 'package:alarm_test/api/alarm.dart';
 import 'package:alarm_test/api/group.dart';
+import 'package:alarm_test/providers/userProvider.dart';
+import 'package:alarm_test/screens/dashboardScreen.dart';
+import 'package:alarm_test/utils/PopUps.dart';
 import 'package:alarm_test/widgets/buttons/AddAlarmButton.dart';
 import 'package:alarm_test/widgets/cards/alarmCard.dart';
 import 'package:alarm_test/widgets/cards/memberCard.dart';
@@ -11,6 +14,7 @@ import 'package:flutter/cupertino.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
+import 'package:provider/provider.dart';
 import '../models/Alarm.dart';
 import '../models/Group.dart';
 import '../models/Member.dart';
@@ -92,7 +96,32 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    void leaveGroup() {}
+    void leaveGroup() {
+      final userProvider = Provider.of<UserProvider>(context, listen: false);
+      final user = userProvider.user;
+      bool isCurrUserAdmin = user?.UserId == widget.group.AdminId;
+      if (isCurrUserAdmin) {
+        showDialog(
+            context: context,
+            builder: (context) => YNPopUp(
+                "Admin cannot leave group. Delete group instead",
+                yesText: "Dismiss",
+                () => null));
+      } else {
+        showDialog(
+            context: context,
+            builder: (context) =>
+                YNPopUp("Leave Group?", yesText: "Leave", () async {
+                  var res = await removeMember(
+                      (widget.group.GroupId ?? ""), (user?.UserId ?? ""));
+                  if (res['success']) {
+                    Navigator.of(context).pushNamed(DashboardScreen.route);
+                  } else {
+                    Fluttertoast.showToast(msg: res['message']);
+                  }
+                }));
+      }
+    }
 
     return Scaffold(
       floatingActionButton: widget.group.IsAdmin
@@ -106,7 +135,8 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
         backgroundColor: Theme.of(context).backgroundColor,
         transitionBetweenRoutes: true,
         automaticallyImplyLeading: true,
-        // trailing: CupertinoButton(child: Icon(Icons.logout), onPressed: onPressed),
+        trailing:
+            CupertinoButton(child: Icon(Icons.logout), onPressed: leaveGroup),
         middle: Text(
           widget.group.GroupName ?? 'Group',
           style: TextStyle(color: Colors.white),
