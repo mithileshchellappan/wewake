@@ -61,8 +61,23 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
       print("no data");
     } else if (data.runtimeType == Alarm) {
       setState(() {
-        print(data.Time);
         alarms.add(data);
+        alarms.sort((a, b) {
+          print(" " + a.Time.toString() + b.Time.toString());
+
+          if (a.Time.isAfter(DateTime.now()) &&
+              b.Time.isAfter(DateTime.now())) {
+            return a.Time.compareTo(b.Time);
+          } else if (a.Time.isAfter(DateTime.now()) &&
+              b.Time.isBefore(DateTime.now())) {
+            return -1;
+          } else if (a.Time.isBefore(DateTime.now()) &&
+              b.Time.isAfter(DateTime.now())) {
+            return 1;
+          } else {
+            return a.Time.compareTo(b.Time);
+          }
+        });
       });
     }
   }

@@ -93,8 +93,10 @@ class _GroupScreenState extends State<GroupScreen> {
       body: Container(
           child: SingleChildScrollView(
               child: Column(
-        children:
-            userGroups.map((element) => GroupCard(group: element)).toList(),
+        children: userGroups
+            .map((element) =>
+                GroupCard(group: element, key: ObjectKey(element.GroupId)))
+            .toList(),
       ))),
     );
   }

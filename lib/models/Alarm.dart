@@ -2,6 +2,7 @@ class Alarm {
   String? AlarmId;
   String? GroupId;
   String? CreatedBy; //done
+  int AlarmAppId = 1;
   DateTime Time = DateTime.now(); //done
   bool IsEnabled = true; //done
   bool LoopAudio = false; //done
@@ -25,6 +26,7 @@ class Alarm {
   Alarm.fromJson(Map<String, dynamic> json) {
     AlarmId = json['alarmId'];
     GroupId = json['groupId'];
+    AlarmAppId = json['alarmAppId'];
     CreatedBy = json['createdBy'];
     Time = DateTime.parse(json['time']).toLocal();
     IsEnabled = json['isEnabled'];

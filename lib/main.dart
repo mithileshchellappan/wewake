@@ -1,12 +1,15 @@
 import 'package:alarm_test/screens/dashboardScreen.dart';
 import 'package:alarm_test/screens/signUpScreen.dart';
+import 'package:alarm_test/utils/alarmService.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:alarm_test/screens/splashScreen.dart';
 import 'package:flutter/material.dart';
 
-void main() {
-  // await Alarm.init();
+void main() async {
+  WidgetsFlutterBinding.ensureInitialized();
 
+  await AlarmService.initAlarm();
+  AlarmService.getAlarmsInSystem();
   runApp(const WeWake());
 }
 

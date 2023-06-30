@@ -1,5 +1,6 @@
 import 'package:alarm_test/api/alarm.dart';
 import 'package:alarm_test/constants/app.dart';
+import 'package:alarm_test/utils/alarmService.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -245,10 +246,12 @@ class _AddAlarmButtonState extends State<AddAlarmButton> {
                       IsEnabled,
                       Vibrate,
                       LoopAudio,
-                      Time.toLocal(),
+                      Time,
                       InternalAudioFile);
+                  print(alarm.Time);
                   var res = await addAlarm(alarm);
                   if (res['success']) {
+                    await AlarmService.setAlarm(alarm);
                     widget.callback(res['alarm']);
                     Fluttertoast.showToast(msg: "Created Alarm Successfully");
                     Navigator.of(context).pop();

@@ -19,12 +19,9 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> loadScreen() async {
     bool userExists = await verify();
-    Timer(
-      Duration(seconds: 3),
-      () => Navigator.pushReplacementNamed(
-        context,
-        !userExists ? 'signUpScreen' : 'dashboardScreen',
-      ),
+    Navigator.pushReplacementNamed(
+      context,
+      !userExists ? 'signUpScreen' : 'dashboardScreen',
     );
   }
 
