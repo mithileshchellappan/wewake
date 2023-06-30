@@ -92,7 +92,8 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    print(widget.group.IsAdmin);
+    void leaveGroup() {}
+
     return Scaffold(
       floatingActionButton: widget.group.IsAdmin
           ? AddAlarmButton(
@@ -105,6 +106,7 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
         backgroundColor: Theme.of(context).backgroundColor,
         transitionBetweenRoutes: true,
         automaticallyImplyLeading: true,
+        // trailing: CupertinoButton(child: Icon(Icons.logout), onPressed: onPressed),
         middle: Text(
           widget.group.GroupName ?? 'Group',
           style: TextStyle(color: Colors.white),

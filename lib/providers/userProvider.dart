@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class UserProvider extends ChangeNotifier {
-  late User _user;
-  User get user => _user;
+  User? _user;
+  User? get user => _user;
 
   void setUser(User user) {
     _user = user;

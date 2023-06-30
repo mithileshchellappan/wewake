@@ -1,8 +1,11 @@
 import 'dart:async';
 import 'package:alarm_test/api/auth.dart';
+import 'package:alarm_test/models/User.dart';
+import 'package:alarm_test/providers/userProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:alarm_test/utils/sharedPref.dart';
+import 'package:provider/provider.dart';
 
 class SplashScreen extends StatefulWidget {
   static String route = 'SplashScreen';
@@ -19,6 +22,12 @@ class _SplashScreenState extends State<SplashScreen> {
 
   Future<void> loadScreen() async {
     bool userExists = await verify();
+    String? jwtToken = await SharedPreferencesHelper.getString('jwtToken');
+    String? userName = await SharedPreferencesHelper.getString('userName');
+    String? userId = await SharedPreferencesHelper.getString('userId');
+    User user = User(userId, userName, jwtToken, "");
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    userProvider.setUser(user);
     Navigator.pushReplacementNamed(
       context,
       !userExists ? 'signUpScreen' : 'dashboardScreen',

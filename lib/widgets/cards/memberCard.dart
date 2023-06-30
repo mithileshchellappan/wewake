@@ -23,7 +23,7 @@ class MemberCard extends StatelessWidget {
     String name = member.IsAdmin ? "${memberName} 👑" : memberName;
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     final user = userProvider.user;
-    bool isCurrUserAdmin = user.UserId == adminId;
+    bool isCurrUserAdmin = user?.UserId == adminId;
     return Container(
       child: InkWell(
         onLongPress: isCurrUserAdmin
@@ -57,7 +57,7 @@ class MemberCard extends StatelessWidget {
               padding:
                   const EdgeInsets.symmetric(horizontal: 12.0, vertical: 4),
               child: Text(
-                "$name  ${member.MemberId}",
+                "$name",
                 style: TextStyle(fontSize: 20),
               ),
             )),

@@ -63,7 +63,7 @@ class _GroupScreenState extends State<GroupScreen> {
           leading: Padding(
             padding: const EdgeInsets.only(top: 8.0),
             child: Text(
-              "Hello ${userProvider.user.Name}",
+              "Hello ${userProvider.user?.Name}",
               style: TextStyle(color: Colors.white),
             ),
           ),
@@ -141,7 +141,7 @@ class GroupFloatingActionButton extends StatelessWidget {
             final userProvider =
                 Provider.of<UserProvider>(context, listen: false);
             final user = userProvider.user;
-            print(user.UserId);
+            print(user?.UserId);
           },
         ),
         SpeedDialChild(

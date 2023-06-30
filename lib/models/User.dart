@@ -1,8 +1,15 @@
 class User {
   String? UserId;
-  String? Email;
   String? Name;
   String? JwtToken;
+  String? Email;
+
+  User(
+    this.UserId,
+    this.Name,
+    this.JwtToken,
+    this.Email,
+  );
 
   User.fromJson(Map<String, dynamic> json) {
     UserId = json['userId'];
