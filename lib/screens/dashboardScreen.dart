@@ -19,8 +19,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
   int _navBarIndex = 0;
   @override
   void initState() {
-    setAlarms();
     super.initState();
+    setAlarms();
     userNameFuture = getUserName();
   }
 

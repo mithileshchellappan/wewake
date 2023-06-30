@@ -1,5 +1,6 @@
 import 'package:alarm_test/api/group.dart';
 import 'package:alarm_test/models/User.dart';
+import 'package:alarm_test/utils/alarmService.dart';
 import 'package:alarm_test/widgets/cards/groupCard.dart';
 import 'package:alarm_test/utils/PopUps.dart';
 import 'package:flutter/cupertino.dart';
@@ -73,9 +74,9 @@ class _GroupScreenState extends State<GroupScreen> {
               context: context,
               builder: (context) => YNPopUp(
                 "Logout?",
-                () {
+                () async {
                   logout();
-
+                  await AlarmService.cancelAllAlarms();
                   userProvider.removeUser();
                   Navigator.pushReplacementNamed(context, 'signUpScreen');
                 },

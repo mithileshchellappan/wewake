@@ -106,7 +106,8 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
             builder: (context) => YNPopUp(
                 "Admin cannot leave group. Delete group instead",
                 yesText: "Dismiss",
-                () => null));
+                noText: "Cancel",
+                () => Navigator.of(context).pop()));
       } else {
         showDialog(
             context: context,

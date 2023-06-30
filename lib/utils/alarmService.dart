@@ -25,6 +25,8 @@ class AlarmService {
       notificationTitle: alarm.NotificationTitle,
       notificationBody: alarm.NotificationBody,
       assetAudioPath: 'assets/${alarm.InternalAudioFile}',
+      enableNotificationOnKill: true,
+      stopOnNotificationOpen: true,
     );
     if (alarm.IsEnabled &&
         alarm.Time.compareTo(DateTime.now()) > 0 &&
@@ -63,6 +65,14 @@ class AlarmService {
       if (!isAlarmSet) {
         await setAlarm(serverAlarms[i]);
       }
+    }
+  }
+
+  static Future<void> cancelAllAlarms() async {
+    List<AlarmSettings> deviceAlarms = getAlarmsInSystem();
+
+    for (int i = 0; i < deviceAlarms.length; i++) {
+      await cancelAlarm(deviceAlarms[i].id);
     }
   }
 }
