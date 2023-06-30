@@ -93,3 +93,27 @@ Future<dynamic> getMembers(String groupId) async {
     return {"success": false, "message": e};
   }
 }
+
+Future<dynamic> removeMember(String groupId, String memberId) async {
+  try {
+    API api = new API();
+    Uri url = Uri.parse("$apiRoute/Group/RemoveMember");
+    var data = {"GroupId": groupId, "MemberId": memberId};
+    final res = await api.post(url, body: jsonEncode(data));
+    if (res.statusCode <= 299 && res.statusCode >= 200) {
+      return {"success": true, "message": "Member Removed successfully"};
+    } else {
+      print(res.body.toString());
+      return {
+        "success": false,
+        "message": "Unable to remove member ${res.body.toString()}"
+      };
+    }
+  } catch (e) {
+    print(e.toString());
+    return {
+      "success": false,
+      "message": "Unable to remove member ${e.toString()}"
+    };
+  }
+}

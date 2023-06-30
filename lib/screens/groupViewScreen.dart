@@ -56,7 +56,7 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
     });
   }
 
-  void onAlarmCreate(dynamic data) {
+  void onAlarmCreateCallback(dynamic data) {
     if (data == null) {
       print("no data");
     } else if (data.runtimeType == Alarm) {
@@ -82,13 +82,21 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
     }
   }
 
+  void removeMemberCallback(dynamic data) {
+    if (data != null && data['success']) {
+      setState(() {
+        members.remove(data['member']);
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     print(widget.group.IsAdmin);
     return Scaffold(
       floatingActionButton: widget.group.IsAdmin
           ? AddAlarmButton(
-              callback: onAlarmCreate,
+              callback: onAlarmCreateCallback,
               groupId: widget.group.GroupId,
             )
           : null,
@@ -231,7 +239,10 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
       shrinkWrap: true,
       addAutomaticKeepAlives: true,
       children: [
-        ...members.map((e) => MemberCard(member: e)),
+        ...members.map((e) => MemberCard(
+              member: e,
+              callback: removeMemberCallback,
+            )),
         // SizedBox(height: 64)
       ],
       // ),

@@ -29,8 +29,6 @@ Future<dynamic> getUserAlarms() async {
     final res = await api.get(url);
     if (res.statusCode <= 299 && res.statusCode >= 200) {
       List<dynamic> result = (jsonDecode(res.body.toString()))['alarms'];
-      print(result);
-      print(result[0].runtimeType);
       List<Map<String, dynamic>> alarmWithGrp = [];
       for (int i = 0; i < result.length; i++) {
         var alarmObj = result[i];
@@ -53,7 +51,6 @@ Future<dynamic> addAlarm(Alarm alarm) async {
     API api = new API();
     Uri url = Uri.parse('$apiRoute/Alarm/Create');
     final res = await api.post(url, body: json.encode(alarm.toJson()));
-    print((alarm.toJson()).runtimeType);
     if (res.statusCode <= 299 && res.statusCode >= 200) {
       print(res.body.toString());
       Alarm alarm = Alarm.fromJson(jsonDecode(res.body.toString())['alarm']);

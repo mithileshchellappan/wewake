@@ -1,11 +1,13 @@
 class Member {
-  String? MemberName;
-  String? MemberId;
+  late String MemberName;
+  late String MemberId;
+  late String GroupId;
   bool IsAdmin = false;
 
   Member.fromJson(Map<String, dynamic> json) {
     MemberName = json['memberName'];
-    MemberId = json['meberId'];
+    MemberId = json['memberId'];
+    GroupId = json['groupId'];
     IsAdmin = json['isAdmin'];
   }
 
