@@ -25,9 +25,11 @@ Future<Map<String, dynamic>> signUp(
       SharedPreferencesHelper.setString('jwtToken', response['jwtToken']);
       SharedPreferencesHelper.setString('userName', response['name']);
       SharedPreferencesHelper.setString('userId', response['userId']);
+      User user = User.fromJson(response);
       return {
         "success": true,
-        "message": "Great to have you ${response['Name']}"
+        "message": "Great to have you ${response['name']}",
+        "user": user
       };
     } else {
       return {"success": false, "message": errorText};
@@ -54,7 +56,12 @@ Future<Map<String, dynamic>> login(String email, String password) async {
       SharedPreferencesHelper.setString('jwtToken', response['jwtToken']);
       SharedPreferencesHelper.setString('userName', response['name']);
       SharedPreferencesHelper.setString('userId', response['userId']);
-      return {"success": true, "message": "Welcome back ${response['name']}"};
+      User user = User.fromJson(response);
+      return {
+        "success": true,
+        "message": "Welcome back ${response['name']}",
+        "user": user
+      };
     } else if (res.statusCode == 401) {
       return {"success": false, "message": "Incorrect Credentials. Try again!"};
     } else {

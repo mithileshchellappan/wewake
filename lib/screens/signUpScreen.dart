@@ -1,9 +1,11 @@
 import 'package:alarm_test/api/auth.dart';
+import 'package:alarm_test/providers/userProvider.dart';
 import 'package:flutter/cupertino.dart';
 import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:provider/provider.dart';
 
 class SignUpScreen extends StatefulWidget {
   static String route = "signUpScreen";
@@ -18,7 +20,6 @@ class _SignUpScreenState extends State<SignUpScreen> {
   String _email = "", _password = "", _name = "";
   FormType _formType = FormType.login;
   final GlobalKey<FormState> _formKey = GlobalKey<FormState>();
-
   void moveToSignUp() {
     _formKey.currentState?.reset();
     setState(() {
@@ -51,6 +52,9 @@ class _SignUpScreenState extends State<SignUpScreen> {
             backgroundColor: Colors.white,
             textColor: Colors.black);
         if (res['success']) {
+          final userProvider =
+              Provider.of<UserProvider>(context, listen: false);
+          userProvider.setUser(res['user']);
           Timer(
             Duration(seconds: 1),
             () => Navigator.pushReplacementNamed(
@@ -66,6 +70,10 @@ class _SignUpScreenState extends State<SignUpScreen> {
             backgroundColor: Colors.white,
             textColor: Colors.black);
         if (res['success']) {
+          print(res['user']);
+          final userProvider =
+              Provider.of<UserProvider>(context, listen: false);
+          userProvider.setUser(res['user']);
           Timer(
             Duration(seconds: 1),
             () => Navigator.pushReplacementNamed(

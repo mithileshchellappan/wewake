@@ -1,16 +1,21 @@
+import 'package:alarm_test/providers/userProvider.dart';
 import 'package:alarm_test/screens/dashboardScreen.dart';
 import 'package:alarm_test/screens/signUpScreen.dart';
 import 'package:alarm_test/utils/alarmService.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:alarm_test/screens/splashScreen.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await AlarmService.initAlarm();
   AlarmService.getAlarmsInSystem();
-  runApp(const WeWake());
+  runApp(ChangeNotifierProvider(
+    create: (_) => UserProvider(),
+    child: const WeWake(),
+  ));
 }
 
 class WeWake extends StatelessWidget {

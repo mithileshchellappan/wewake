@@ -7,6 +7,8 @@ import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:alarm_test/models/Group.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:alarm_test/api/auth.dart';
+import 'package:provider/provider.dart';
+import 'package:alarm_test/providers/userProvider.dart';
 
 class GroupScreen extends StatefulWidget {
   const GroupScreen({Key? key}) : super(key: key);
@@ -64,6 +66,8 @@ class _GroupScreenState extends State<GroupScreen> {
                 "Logout?",
                 () {
                   logout();
+                  final userProvider =
+                      Provider.of<UserProvider>(context, listen: false);
                   Navigator.pushReplacementNamed(context, 'signUpScreen');
                 },
                 yesText: "Logout",
