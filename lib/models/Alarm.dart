@@ -28,7 +28,7 @@ class Alarm {
     GroupId = json['groupId'];
     AlarmAppId = json['alarmAppId'];
     CreatedBy = json['createdBy'];
-    Time = DateTime.parse(json['time']).toLocal();
+    Time = DateTime.parse(json['time']);
     IsEnabled = json['isEnabled'];
     LoopAudio = json['loopAudio'];
     Vibrate = json['vibrate'];

@@ -1,3 +1,4 @@
+import 'package:alarm_test/models/Alarm.dart';
 import 'package:alarm_test/screens/groupScreen.dart';
 import 'package:alarm_test/utils/alarmService.dart';
 import 'package:alarm_test/utils/sharedPref.dart';
@@ -27,9 +28,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     var res = await getUserAlarms();
     if (res['success']) {
       List<dynamic> alarms = res['alarms'];
+      List<Alarm> serverAlarms = [];
       for (int i = 0; i < alarms.length; i++) {
-        await AlarmService.setAlarm(alarms[i]['alarm']);
+        serverAlarms.add(alarms[i]['alarm']);
       }
+      await AlarmService.syncAlarms(serverAlarms);
     } else {
       Fluttertoast.showToast(msg: "Error retrieving alarms");
     }

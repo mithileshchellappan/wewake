@@ -35,11 +35,34 @@ class AlarmService {
     }
   }
 
+  static Future<void> cancelAlarm(int alarmId) async {
+    print("Cancelled alarm $alarmId");
+    await AP.Alarm.stop(alarmId);
+  }
+
   static Future<bool> checkAlarm(alarmId) async {
     List<AlarmSettings> alarms = getAlarmsInSystem();
     for (int i = 0; i < alarms.length; i++) {
       if (alarms[i].id == alarmId) return true;
     }
     return false;
+  }
+
+  static Future<void> syncAlarms(List<Alarm> serverAlarms) async {
+    List<AlarmSettings> deviceAlarms = getAlarmsInSystem();
+
+    for (int i = 0; i < deviceAlarms.length; i++) {
+      if (!serverAlarms
+          .any((alarm) => alarm.AlarmAppId == deviceAlarms[i].id)) {
+        await cancelAlarm(deviceAlarms[i].id);
+      }
+    }
+
+    for (int i = 0; i < serverAlarms.length; i++) {
+      bool isAlarmSet = await checkAlarm(serverAlarms[i].AlarmAppId);
+      if (!isAlarmSet) {
+        await setAlarm(serverAlarms[i]);
+      }
+    }
   }
 }

@@ -23,7 +23,7 @@ class _AddAlarmButtonState extends State<AddAlarmButton> {
   TextEditingController notificationBodyController = TextEditingController();
   ValueNotifier<bool> IsEnabledSwitch = ValueNotifier<bool>(true);
   ValueNotifier<bool> VibrateSwitch = ValueNotifier<bool>(true);
-  ValueNotifier<bool> LoopAudioSwitch = ValueNotifier<bool>(true);
+  ValueNotifier<bool> LoopAudioSwitch = ValueNotifier<bool>(false);
   ValueNotifier<Map<String, String>> alarmToneNotifier =
       ValueNotifier<Map<String, String>>(alarmTones[0]);
   ValueNotifier<String> dateTimeNotifier =
@@ -251,7 +251,7 @@ class _AddAlarmButtonState extends State<AddAlarmButton> {
                   print(alarm.Time);
                   var res = await addAlarm(alarm);
                   if (res['success']) {
-                    await AlarmService.setAlarm(alarm);
+                    await AlarmService.setAlarm(res['alarm']);
                     widget.callback(res['alarm']);
                     Fluttertoast.showToast(msg: "Created Alarm Successfully");
                     Navigator.of(context).pop();
