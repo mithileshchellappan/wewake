@@ -3,8 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:provider/provider.dart';
 
 class UserProvider extends ChangeNotifier {
-  User? _user;
-  User? get user => _user;
+  late User _user;
+  User get user => _user;
 
   void setUser(User user) {
     _user = user;
@@ -12,7 +12,7 @@ class UserProvider extends ChangeNotifier {
   }
 
   void removeUser() {
-    _user = null;
+    _user = User.empty();
     notifyListeners();
   }
 }

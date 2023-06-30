@@ -73,6 +73,8 @@ class _SignUpScreenState extends State<SignUpScreen> {
           print(res['user']);
           final userProvider =
               Provider.of<UserProvider>(context, listen: false);
+          print(res['user'].UserId);
+
           userProvider.setUser(res['user']);
           Timer(
             Duration(seconds: 1),

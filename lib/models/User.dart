@@ -2,11 +2,20 @@ class User {
   String? UserId;
   String? Email;
   String? Name;
+  String? JwtToken;
 
   User.fromJson(Map<String, dynamic> json) {
-    UserId = json['UserId'];
-    Email = json['Email'];
-    Name = json['Name'];
+    UserId = json['userId'];
+    Email = json['email'];
+    Name = json['name'];
+    JwtToken = json['jwtToken'];
+  }
+
+  User.empty() {
+    UserId = "";
+    Email = "";
+    Name = "";
+    JwtToken = "";
   }
 
   Map<String, dynamic> toJson() {

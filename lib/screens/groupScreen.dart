@@ -1,4 +1,5 @@
 import 'package:alarm_test/api/group.dart';
+import 'package:alarm_test/models/User.dart';
 import 'package:alarm_test/widgets/cards/groupCard.dart';
 import 'package:alarm_test/utils/PopUps.dart';
 import 'package:flutter/cupertino.dart';
@@ -52,12 +53,20 @@ class _GroupScreenState extends State<GroupScreen> {
 
   @override
   Widget build(BuildContext context) {
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
     return Scaffold(
       appBar: CupertinoNavigationBar(
           brightness: Theme.of(context).brightness,
           backgroundColor: Theme.of(context).backgroundColor,
           transitionBetweenRoutes: false,
           automaticallyImplyLeading: false,
+          leading: Padding(
+            padding: const EdgeInsets.only(top: 8.0),
+            child: Text(
+              "Hello ${userProvider.user.Name}",
+              style: TextStyle(color: Colors.white),
+            ),
+          ),
           trailing: CupertinoButton(
             child: Icon(Icons.logout),
             onPressed: () => showDialog(
@@ -66,8 +75,8 @@ class _GroupScreenState extends State<GroupScreen> {
                 "Logout?",
                 () {
                   logout();
-                  final userProvider =
-                      Provider.of<UserProvider>(context, listen: false);
+
+                  userProvider.removeUser();
                   Navigator.pushReplacementNamed(context, 'signUpScreen');
                 },
                 yesText: "Logout",
@@ -125,6 +134,16 @@ class GroupFloatingActionButton extends StatelessWidget {
       animationCurve: Curves.elasticInOut,
       backgroundColor: Theme.of(context).focusColor,
       children: [
+        SpeedDialChild(
+          child: const Icon(Icons.nat),
+          label: 'Debugging Button',
+          onTap: () {
+            final userProvider =
+                Provider.of<UserProvider>(context, listen: false);
+            final user = userProvider.user;
+            print(user.UserId);
+          },
+        ),
         SpeedDialChild(
           child: const Icon(Icons.add),
           label: 'Create Group',

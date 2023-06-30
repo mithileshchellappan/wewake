@@ -29,8 +29,10 @@ Future<dynamic> createGroup(String groupName) async {
     Uri url = Uri.parse('$apiRoute/Group/Create');
     final res =
         await api.post(url, body: json.encode({"groupName": groupName}));
+    print(res.body.toString());
     if (res.statusCode <= 299 && res.statusCode >= 200) {
       Map<String, dynamic> parseGroup = jsonDecode(res.body.toString());
+      print(parseGroup);
       Group group = Group.fromJson(parseGroup['group']);
       // print('in success');
       return {"success": true, "group": group};

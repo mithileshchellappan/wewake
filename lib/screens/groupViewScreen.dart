@@ -241,6 +241,7 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
       children: [
         ...members.map((e) => MemberCard(
               member: e,
+              adminId: widget.group.AdminId ?? "",
               callback: removeMemberCallback,
             )),
         // SizedBox(height: 64)
