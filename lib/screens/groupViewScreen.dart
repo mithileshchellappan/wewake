@@ -37,6 +37,7 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
   List<Member> members = [];
   List<Alarm> alarms = [];
   bool isAlarmsLoading = false;
+  var alarmProvider;
   @override
   void initState() {
     super.initState();
@@ -50,7 +51,7 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
     var res = await getGroupAlarms(widget.group.GroupId);
     if (res['success']) {
       setState(() {
-        alarms = res['alarms'];
+        // alarms = res['alarms'];
       });
       print(alarms.length);
     } else {
@@ -65,8 +66,9 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
     if (data == null) {
       print("no data");
     } else if (data.runtimeType == Alarm) {
+      // alarmProvider.appendAlarm(data);
       setState(() {
-        alarms.add(data);
+        // alarms.add(data);
         alarms.sort((a, b) {
           print(" " + a.Time.toString() + b.Time.toString());
 
@@ -97,9 +99,10 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
 
   @override
   Widget build(BuildContext context) {
+    alarmProvider = Provider.of<AlarmProvider>(context, listen: true);
+    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    alarms = alarmProvider.alarms;
     void leaveGroup() {
-      final userProvider = Provider.of<UserProvider>(context, listen: false);
-      final alarmProvider = Provider.of<AlarmProvider>(context, listen: false);
       alarms = alarmProvider.getAlarmsWithGroupId(widget.group.GroupId);
       // print(widget.group.GroupId)
       final user = userProvider.user;
@@ -165,6 +168,8 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
                 ),
               ...alarms.map((e) => AlarmCard(
                     alarm: e,
+                    isAdmin: widget.group.IsAdmin,
+                    alarmProvider: alarmProvider,
                   )),
               SizedBox(height: 20)
             ],

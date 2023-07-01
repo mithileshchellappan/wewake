@@ -19,6 +19,7 @@ class UserAlarmsScreen extends StatefulWidget {
 
 class _UserAlarmsScreenState extends State<UserAlarmsScreen> {
   Map<String, List<Alarm>> groupedAlarms = {};
+  var alarmProvider;
   var groupProvider;
   @override
   void initState() {
@@ -48,6 +49,8 @@ class _UserAlarmsScreenState extends State<UserAlarmsScreen> {
 
   @override
   Widget build(BuildContext context) {
+    alarmProvider = Provider.of<AlarmProvider>(context, listen: true);
+
     return Scaffold(
         appBar: CupertinoNavigationBar(
           brightness: Theme.of(context).brightness,
@@ -105,7 +108,11 @@ class _UserAlarmsScreenState extends State<UserAlarmsScreen> {
                   itemBuilder: (context, index) {
                     Alarm alarm = alarms[index];
 
-                    return AlarmCard(alarm: alarm);
+                    return AlarmCard(
+                      alarm: alarm,
+                      isAdmin: false,
+                      alarmProvider: alarmProvider,
+                    );
                   },
                 ),
               ],

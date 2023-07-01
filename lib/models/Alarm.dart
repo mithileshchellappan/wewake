@@ -1,5 +1,5 @@
 class Alarm {
-  String? AlarmId;
+  late String AlarmId;
   String? GroupId;
   String? CreatedBy; //done
   int AlarmAppId = 1;

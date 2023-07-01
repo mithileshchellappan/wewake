@@ -64,3 +64,18 @@ Future<dynamic> addAlarm(Alarm alarm) async {
     return {"success": false, "message": e.toString()};
   }
 }
+
+Future<dynamic> deleteAlarm(String alarmId) async {
+  try {
+    API api = new API();
+    Uri url = Uri.parse('$apiRoute/Alarm/Delete/$alarmId');
+    final res = await api.delete(url);
+    if (res.statusCode <= 299 && res.statusCode >= 200) {
+      return {"success": true};
+    } else {
+      return {"success": false, "message": res.body.toString()};
+    }
+  } catch (e) {
+    return {"success": false, "message": e.toString()};
+  }
+}

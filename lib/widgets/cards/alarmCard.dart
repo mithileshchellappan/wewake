@@ -1,4 +1,8 @@
+import 'package:alarm_test/api/alarm.dart';
+import 'package:alarm_test/providers/alarmsProvider.dart';
+import 'package:alarm_test/utils/alarmService.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_swipe_action_cell/core/cell.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:just_audio/just_audio.dart';
@@ -7,8 +11,14 @@ import '../../models/Alarm.dart';
 
 class AlarmCard extends StatefulWidget {
   final Alarm alarm;
-
-  AlarmCard({required this.alarm, Key? key}) : super(key: key);
+  final bool isAdmin;
+  final AlarmProvider alarmProvider;
+  AlarmCard(
+      {required this.alarm,
+      required this.isAdmin,
+      Key? key,
+      required this.alarmProvider})
+      : super(key: key);
 
   @override
   _AlarmCardState createState() => _AlarmCardState();
@@ -61,54 +71,87 @@ class _AlarmCardState extends State<AlarmCard> {
   @override
   Widget build(BuildContext context) {
     String? audioLink = widget.alarm.InternalAudioFile;
-
+    // AlarmProvider alarmProvider = Provider.of
     return Padding(
-      padding: const EdgeInsets.only(top: 10, left: 8, right: 8),
-      child: Container(
-        width: MediaQuery.of(context).size.width,
-        decoration: BoxDecoration(
-            color: Theme.of(context).focusColor,
-            borderRadius: BorderRadius.all(Radius.circular(5))),
+      padding: EdgeInsets.only(top: 2),
+      child: SwipeActionCell(
+        key: ObjectKey(widget.alarm.AlarmAppId),
+        trailingActions: [
+          SwipeAction(
+              icon: Icon(Icons.exit_to_app),
+              color: Colors.green,
+              backgroundRadius: 5,
+              onTap: (CompletionHandler handler) async {},
+              title: "  Opt Out"),
+        ],
+        leadingActions: widget.isAdmin
+            ? [
+                SwipeAction(
+                    icon: const Icon(Icons.delete_forever),
+                    backgroundRadius: 5,
+                    onTap: (CompletionHandler handler) async {
+                      var res = await deleteAlarm(widget.alarm.AlarmId);
+                      print(res);
+                      if (res['success']) {
+                        AlarmService.cancelAlarm(widget.alarm.AlarmAppId);
+                        widget.alarmProvider.removeAlarm(widget.alarm);
+                        Fluttertoast.showToast(msg: "Delete Alarm!");
+                      } else {
+                        Fluttertoast.showToast(msg: res['message']);
+                      }
+                    },
+                    title: "  Delete"),
+              ]
+            : [],
         child: Padding(
-          padding: const EdgeInsets.only(top: 6.0),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Row(
+          padding: const EdgeInsets.only(top: 10, left: 8, right: 8),
+          child: Container(
+            width: MediaQuery.of(context).size.width,
+            decoration: BoxDecoration(
+                color: Theme.of(context).focusColor,
+                borderRadius: BorderRadius.all(Radius.circular(5))),
+            child: Padding(
+              padding: const EdgeInsets.only(top: 6.0),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
+                  Row(
+                    children: [
+                      Padding(
+                        padding: const EdgeInsets.only(left: 4.0),
+                        child: Text(
+                          widget.alarm.NotificationTitle,
+                          style: TextStyle(fontSize: 15),
+                        ),
+                      ),
+                      Expanded(child: Container()),
+                      PlayButton(
+                        url: audioLink ?? "nokia.mp3",
+                        isExpanded: true,
+                      ),
+                      SizedBox(width: 5),
+                    ],
+                  ),
                   Padding(
                     padding: const EdgeInsets.only(left: 4.0),
                     child: Text(
-                      widget.alarm.NotificationTitle,
-                      style: TextStyle(fontSize: 15),
+                      widget.alarm.NotificationBody,
+                      style: TextStyle(fontSize: 12, color: Colors.white60),
                     ),
                   ),
-                  Expanded(child: Container()),
-                  PlayButton(
-                    url: audioLink ?? "nokia.mp3",
-                    isExpanded: true,
+                  Padding(
+                    padding: const EdgeInsets.only(left: 4.0),
+                    child: Text(
+                      "$timeText",
+                      style: TextStyle(fontSize: 11, color: Colors.white60),
+                    ),
                   ),
-                  SizedBox(width: 5),
+                  // Text(widget.alarm.AlarmAppId.toString()),
+                  SizedBox(height: 10),
+                  bottomBar(),
                 ],
               ),
-              Padding(
-                padding: const EdgeInsets.only(left: 4.0),
-                child: Text(
-                  widget.alarm.NotificationBody,
-                  style: TextStyle(fontSize: 12, color: Colors.white60),
-                ),
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 4.0),
-                child: Text(
-                  "$timeText",
-                  style: TextStyle(fontSize: 11, color: Colors.white60),
-                ),
-              ),
-              // Text(widget.alarm.AlarmAppId.toString()),
-              SizedBox(height: 10),
-              bottomBar(),
-            ],
+            ),
           ),
         ),
       ),
