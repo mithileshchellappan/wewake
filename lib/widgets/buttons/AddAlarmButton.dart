@@ -59,12 +59,14 @@ class _AddAlarmButtonState extends State<AddAlarmButton> {
               CupertinoTextField(
                 style: TextStyle(color: Colors.white),
                 controller: notificationTitleController,
+                textCapitalization: TextCapitalization.sentences,
                 placeholder: 'Alarm Title',
               ),
               SizedBox(height: 12),
               CupertinoTextField(
                 style: TextStyle(color: Colors.white),
                 controller: notificationBodyController,
+                textCapitalization: TextCapitalization.sentences,
                 placeholder: 'Alarm Body',
               ),
               SizedBox(height: 12),

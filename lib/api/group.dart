@@ -61,6 +61,21 @@ Future<dynamic> getInviteCode(groupId) async {
   }
 }
 
+Future<dynamic> deleteGroup(String groupId) async {
+  try {
+    API api = new API();
+    Uri url = Uri.parse('$apiRoute/Group/Delete/$groupId');
+    final res = await api.delete(url);
+    if (res.statusCode <= 299 && res.statusCode >= 200) {
+      return {"success": true};
+    } else {
+      return {"success": false, "message": res.body.toString()};
+    }
+  } catch (e) {
+    return {"success": false, "message": e};
+  }
+}
+
 Future<dynamic> joinGroup(String inviteCode) async {
   try {
     API api = new API();

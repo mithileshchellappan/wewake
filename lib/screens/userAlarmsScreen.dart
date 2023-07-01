@@ -54,8 +54,8 @@ class _UserAlarmsScreenState extends State<UserAlarmsScreen> {
           backgroundColor: Theme.of(context).backgroundColor,
           transitionBetweenRoutes: false,
           automaticallyImplyLeading: false,
-          leading: Padding(
-            padding: const EdgeInsets.only(top: 15.0),
+          leading: const Padding(
+            padding: EdgeInsets.only(top: 15.0),
             child: Text(
               "Your Alarms",
               style: TextStyle(color: Colors.white),

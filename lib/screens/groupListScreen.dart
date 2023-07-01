@@ -2,6 +2,7 @@ import 'dart:math';
 
 import 'package:alarm_test/api/group.dart';
 import 'package:alarm_test/models/User.dart';
+import 'package:alarm_test/providers/alarmsProvider.dart';
 import 'package:alarm_test/providers/groupProvider.dart';
 import 'package:alarm_test/utils/alarmService.dart';
 import 'package:alarm_test/widgets/cards/groupCard.dart';
@@ -25,11 +26,12 @@ class GroupScreen extends StatefulWidget {
 class _GroupScreenState extends State<GroupScreen> {
   List<Group> userGroups = [];
   var groupProvider;
+  var userProvider;
 
   @override
   void initState() {
     super.initState();
-    groupProvider = Provider.of<GroupProvider>(context, listen: false);
+
     setGroups();
   }
 
@@ -62,7 +64,9 @@ class _GroupScreenState extends State<GroupScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final userProvider = Provider.of<UserProvider>(context, listen: false);
+    // final userProvider = Provider.of<UserProvider>(context, listen: false);
+    groupProvider = Provider.of<GroupProvider>(context, listen: true);
+    userProvider = Provider.of<UserProvider>(context, listen: true);
     return Scaffold(
       appBar: CupertinoNavigationBar(
           brightness: Theme.of(context).brightness,
@@ -118,6 +122,10 @@ class _GroupScreenState extends State<GroupScreen> {
         children: userGroups
             .map((element) => GroupCard(
                   group: element,
+                  groupProvider: groupProvider,
+                  userId: userProvider.user!.UserId!,
+
+                  // callback: ,
                 ))
             .toList(),
       ))),

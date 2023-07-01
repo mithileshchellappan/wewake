@@ -25,4 +25,18 @@ class AlarmProvider extends ChangeNotifier {
     _alarms = [];
     notifyListeners();
   }
+
+  List<Alarm> getAlarmsWithGroupId(String groupId) {
+    List<Alarm> alarms =
+        _alarms!.where((element) => element.GroupId == groupId).toList();
+    return alarms;
+  }
+
+  void removeAlarmsWithGroupId(String groupId) {
+    _alarms?.forEach((element) {
+      if (element.GroupId == groupId) {
+        removeAlarm(element);
+      }
+    });
+  }
 }

@@ -68,6 +68,12 @@ class AlarmService {
     }
   }
 
+  static Future<void> cancelMultipleAlarms(List<Alarm> alarms) async {
+    for (var alarm in alarms) {
+      await cancelAlarm(alarm.AlarmAppId);
+    }
+  }
+
   static Future<void> cancelAllAlarms() async {
     List<AlarmSettings> deviceAlarms = getAlarmsInSystem();
 

@@ -79,7 +79,7 @@ class _AlarmCardState extends State<AlarmCard> {
                   Padding(
                     padding: const EdgeInsets.only(left: 4.0),
                     child: Text(
-                      "${widget.alarm.IsEnabled ? "🟢" : "🔴"}${widget.alarm.NotificationTitle}",
+                      widget.alarm.NotificationTitle,
                       style: TextStyle(fontSize: 15),
                     ),
                   ),
@@ -127,6 +127,10 @@ class _AlarmCardState extends State<AlarmCard> {
                     bottomRight: Radius.circular(5))),
             child: Row(
               children: [
+                SizedBox(
+                  width: 10,
+                ),
+                Text(widget.alarm.IsEnabled ? "🟢" : "🔴"),
                 SizedBox(
                   width: 10,
                 ),
