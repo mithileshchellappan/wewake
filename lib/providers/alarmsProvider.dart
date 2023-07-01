@@ -33,10 +33,11 @@ class AlarmProvider extends ChangeNotifier {
   }
 
   void removeAlarmsWithGroupId(String groupId) {
-    _alarms?.forEach((element) {
-      if (element.GroupId == groupId) {
-        removeAlarm(element);
-      }
+    List<Alarm> alarmsToRemove =
+        _alarms!.where((element) => element.GroupId == groupId).toList();
+
+    alarmsToRemove.forEach((element) {
+      removeAlarm(element);
     });
   }
 }

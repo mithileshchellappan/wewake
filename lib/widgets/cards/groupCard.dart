@@ -48,15 +48,17 @@ class GroupCard extends StatelessWidget {
                           if (res['success']) {
                             Fluttertoast.showToast(
                                 msg: "Left ${group.GroupName}");
-                            groupProvider.removeGroup(group);
                             var alarmProvider = Provider.of<AlarmProvider>(
                                 context,
                                 listen: false);
                             var alarms = alarmProvider
                                 .getAlarmsWithGroupId(group.GroupId);
-                            AlarmService.cancelMultipleAlarms(alarms);
-                            alarmProvider
-                                .removeAlarmsWithGroupId(group.GroupId);
+                            await AlarmService.cancelMultipleAlarms(alarms)
+                                .then((value) {
+                              alarmProvider
+                                  .removeAlarmsWithGroupId(group.GroupId);
+                              groupProvider.removeGroup(group);
+                            });
                           } else {
                             Fluttertoast.showToast(msg: res['message']);
                           }

@@ -1,5 +1,6 @@
 import 'package:alarm_test/api/alarm.dart';
 import 'package:alarm_test/api/group.dart';
+import 'package:alarm_test/providers/alarmsProvider.dart';
 import 'package:alarm_test/providers/userProvider.dart';
 import 'package:alarm_test/screens/dashboardScreen.dart';
 import 'package:alarm_test/utils/PopUps.dart';
@@ -98,6 +99,9 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
   Widget build(BuildContext context) {
     void leaveGroup() {
       final userProvider = Provider.of<UserProvider>(context, listen: false);
+      final alarmProvider = Provider.of<AlarmProvider>(context, listen: false);
+      alarms = alarmProvider.getAlarmsWithGroupId(widget.group.GroupId);
+      // print(widget.group.GroupId)
       final user = userProvider.user;
       bool isCurrUserAdmin = user?.UserId == widget.group.AdminId;
       if (isCurrUserAdmin) {
