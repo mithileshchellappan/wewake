@@ -55,7 +55,7 @@ namespace WeWakeAPI.Controllers
                 // AlarmRequest ar = new(Guid.Parse(alarm["groupId"]), DateTime.Parse(alarm["time"]), alarm["isEnabled"], alarm["loopAudio"], alarm["vibrate"], alarm["notificationTitle"], alarm["notificationBody"], alarm["internalAudioFile"], alarm["useExternalAudio"], alarm["audioUrl"]);
                 Guid userId = await _userService.CheckIfUserExistsFromJWT();
                 Alarm createdAlarm = await _alarmService.CreateAlarm(alarm, userId);
-                return Ok(new { success = true,alarm = createdAlarm });
+                return Ok(new { success = true, alarm = createdAlarm });
 
             }
             catch (UnauthorizedAccessException e)
@@ -80,6 +80,23 @@ namespace WeWakeAPI.Controllers
                 return StatusCode(StatusCodes.Status500InternalServerError, e.Message);
             }
         }
-        
+
+        [HttpDelete("Delete/{alarmId}")]
+        public async Task<ActionResult> DeleteAlarm(Guid alarmId)
+        {
+            try
+            {
+                Guid userId = await _userService.CheckIfUserExistsFromJWT();
+                bool success = await _alarmService.DeleteAlarm(alarmId, userId);
+                return Ok(new { success });
+            }
+            catch (Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+
+        }
+
+
     }
 }

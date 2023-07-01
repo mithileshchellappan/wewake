@@ -100,6 +100,7 @@ namespace WeWakeAPI.DBServices
                 join grp in _context.Groups on alarm.GroupId equals grp.GroupId
                 where member.MemberId == userId
                 select new {
+                    alarmId = alarm.AlarmId,
                     groupId=alarm.GroupId,
                     createdBy=alarm.CreatedBy,
                     alarmAppId = alarm.AlarmAppId,

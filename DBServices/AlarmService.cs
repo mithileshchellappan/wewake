@@ -17,6 +17,11 @@ namespace WeWakeAPI.DBServices
             _groupService = groupService;
         }
 
+        public async Task<Alarm> GetAlarm(Guid alarmId)
+        {
+            return await _context.Alarms.FirstAsync(x => x.AlarmId == alarmId);
+        }
+
         public async Task<Alarm> CreateAlarm(AlarmRequest alarmReq, Guid userId)
         {
             try
@@ -58,6 +63,18 @@ namespace WeWakeAPI.DBServices
             {
                 throw new Exception($"Exception: {e.Message}");
             }
+        }
+
+        public async Task<bool> DeleteAlarm(Guid alarmId, Guid userId)
+        {
+            Alarm alarm = await GetAlarm(alarmId);
+            if (alarm.CreatedBy != userId)
+            {
+                throw new UnauthorizedAccessException("Only members who created the alarm can delete it.");
+            }
+            _context.Alarms.Remove(alarm);
+            await _context.SaveChangesAsync();
+            return true;
         }
 
         public async Task<List<Alarm>> GetAlarms(Guid groupId)
