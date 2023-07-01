@@ -46,6 +46,7 @@ namespace WeWakeAPI.Controllers
                 var group = new Group();
                 group.GroupId = Guid.NewGuid();
                 group.GroupName = gr.GroupName;
+                group.CanMemberCreateAlarm = gr.CanMemberCreateAlarm;
                 Guid UserId = _userService.GetUserIdFromJWT();
                 group.AdminId = UserId;
                 group.CreatedAt = DateTime.Now;
