@@ -1,5 +1,5 @@
 class Group {
-  String? GroupId;
+  late String GroupId;
   String? GroupName;
   String? AdminId;
   DateTime CreatedAt = DateTime.now();
@@ -35,5 +35,15 @@ class Group {
       groups.add(group);
     }
     return groups;
+  }
+
+  Group.empty() {
+    GroupId = "";
+    GroupName = "";
+    AdminId = "";
+    CreatedAt = DateTime.now();
+    CanMemberCreateAlarm = false;
+    MemberCount = 0;
+    IsAdmin = false;
   }
 }

@@ -1,6 +1,6 @@
 import 'package:alarm_test/models/Alarm.dart';
 import 'package:alarm_test/providers/alarmsProvider.dart';
-import 'package:alarm_test/screens/groupScreen.dart';
+import 'package:alarm_test/screens/groupListScreen.dart';
 import 'package:alarm_test/screens/userAlarmsScreen.dart';
 import 'package:alarm_test/utils/alarmService.dart';
 import 'package:alarm_test/utils/sharedPref.dart';

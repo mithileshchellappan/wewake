@@ -1,5 +1,6 @@
 import 'package:alarm_test/api/alarm.dart';
 import 'package:alarm_test/constants/app.dart';
+import 'package:alarm_test/providers/alarmsProvider.dart';
 import 'package:alarm_test/utils/alarmService.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -7,6 +8,7 @@ import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:cupertino_text_button/cupertino_text_button.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/Alarm.dart';
 import '../../models/Group.dart';
@@ -254,6 +256,9 @@ class _AddAlarmButtonState extends State<AddAlarmButton> {
                   var res = await addAlarm(alarm);
                   if (res['success']) {
                     await AlarmService.setAlarm(res['alarm']);
+                    final alarmProvider =
+                        Provider.of<AlarmProvider>(context, listen: false);
+                    alarmProvider.appendAlarm(alarm);
                     widget.callback(res['alarm']);
                     Fluttertoast.showToast(msg: "Created Alarm Successfully");
                     Navigator.of(context).pop();

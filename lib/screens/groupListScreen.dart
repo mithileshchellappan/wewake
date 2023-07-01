@@ -1,5 +1,8 @@
+import 'dart:math';
+
 import 'package:alarm_test/api/group.dart';
 import 'package:alarm_test/models/User.dart';
+import 'package:alarm_test/providers/groupProvider.dart';
 import 'package:alarm_test/utils/alarmService.dart';
 import 'package:alarm_test/widgets/cards/groupCard.dart';
 import 'package:alarm_test/utils/PopUps.dart';
@@ -21,18 +24,23 @@ class GroupScreen extends StatefulWidget {
 
 class _GroupScreenState extends State<GroupScreen> {
   List<Group> userGroups = [];
+  var groupProvider;
 
+  @override
   void initState() {
-    setGroups();
     super.initState();
+    groupProvider = Provider.of<GroupProvider>(context, listen: false);
+    setGroups();
   }
 
   void setGroups() async {
     var res = await getUserGroups();
     if (res['success']) {
+      groupProvider.setGroup(res['groups']);
       setState(() {
         userGroups = res['groups'];
       });
+
       print(userGroups.length);
     } else {
       Fluttertoast.showToast(msg: res['message']);
@@ -43,9 +51,9 @@ class _GroupScreenState extends State<GroupScreen> {
     var res = await callback(name);
     print(res);
     if (res['success']) {
-      setState(() {
-        userGroups.add(res['group']);
-      });
+      groupProvider.appendGroup(res['group']);
+      setState(() {});
+
       print(userGroups.length);
     } else {
       Fluttertoast.showToast(msg: res['message']);
@@ -108,8 +116,9 @@ class _GroupScreenState extends State<GroupScreen> {
           child: SingleChildScrollView(
               child: Column(
         children: userGroups
-            .map((element) =>
-                GroupCard(group: element, key: ObjectKey(element.GroupId)))
+            .map((element) => GroupCard(
+                  group: element,
+                ))
             .toList(),
       ))),
     );

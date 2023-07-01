@@ -1,4 +1,5 @@
 import 'package:alarm_test/providers/alarmsProvider.dart';
+import 'package:alarm_test/providers/groupProvider.dart';
 import 'package:alarm_test/providers/userProvider.dart';
 import 'package:alarm_test/screens/dashboardScreen.dart';
 import 'package:alarm_test/screens/signUpScreen.dart';
@@ -15,7 +16,8 @@ void main() async {
   runApp(MultiProvider(
     providers: [
       ChangeNotifierProvider(create: (_) => UserProvider()),
-      ChangeNotifierProvider(create: (_) => AlarmProvider())
+      ChangeNotifierProvider(create: (_) => AlarmProvider()),
+      ChangeNotifierProvider(create: (_) => GroupProvider())
     ],
     child: const WeWake(),
   ));

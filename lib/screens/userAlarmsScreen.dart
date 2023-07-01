@@ -1,3 +1,4 @@
+import 'package:alarm_test/screens/groupViewScreen.dart';
 import 'package:alarm_test/widgets/cards/alarmCard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -64,17 +65,25 @@ class _UserAlarmsScreenState extends State<UserAlarmsScreen> {
                 // SizedBox(width: 5),
                 Padding(
                   padding: const EdgeInsets.all(8.0),
-                  child: Row(
-                    children: [
-                      Text(
-                        groupName.toUpperCase(),
-                        style: TextStyle(
-                          fontWeight: FontWeight.bold,
-                          fontSize: 16,
+                  child: InkWell(
+                    // onTap: ()=>Navigator.push(context,MaterialPageRoute(
+                    //     builder: (context) => GroupViewScreen(
+                    //           group: group,
+                    //           iconColor: iconColor,
+                    //         )),
+                    // ),
+                    child: Row(
+                      children: [
+                        Text(
+                          groupName.toUpperCase(),
+                          style: TextStyle(
+                            fontWeight: FontWeight.bold,
+                            fontSize: 16,
+                          ),
                         ),
-                      ),
-                      Icon(Icons.arrow_right)
-                    ],
+                        Icon(Icons.arrow_right)
+                      ],
+                    ),
                   ),
                 ),
                 ListView.builder(

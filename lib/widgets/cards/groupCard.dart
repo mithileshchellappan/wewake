@@ -7,8 +7,7 @@ import '../../models/Group.dart';
 
 class GroupCard extends StatelessWidget {
   final Group group;
-  final Key key;
-  GroupCard({required this.group, required this.key});
+  GroupCard({required this.group});
   final iconColor = getRandomDarkColor();
   @override
   Widget build(BuildContext context) {
@@ -22,7 +21,7 @@ class GroupCard extends StatelessWidget {
               onTap: (CompletionHandler handler) async {},
               color: Colors.red),
         ],
-        key: key,
+        key: ObjectKey(group.GroupId),
         child: Card(
           shape: RoundedRectangleBorder(
             borderRadius: BorderRadius.circular(10.0),
@@ -31,10 +30,11 @@ class GroupCard extends StatelessWidget {
             padding: EdgeInsets.symmetric(vertical: 2),
             child: ListTile(
               leading: TextIcon(
-                  text: group.GroupName ?? 'Group', backgroundColor: iconColor),
+                  text: group.GroupName?.trim() ?? 'Group',
+                  backgroundColor: iconColor),
               title: Text(group.GroupName ?? ''),
               subtitle: Text('👥x ${group.MemberCount ?? 0}'),
-              trailing: Text(group.CreatedAt.toString()),
+              trailing: Text(group.IsAdmin ? "👑" : ""),
               onTap: () => {
                 Navigator.push(
                     context,

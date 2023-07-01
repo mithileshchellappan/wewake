@@ -32,6 +32,7 @@ Future<dynamic> createGroup(String groupName) async {
     print(res.body.toString());
     if (res.statusCode <= 299 && res.statusCode >= 200) {
       Map<String, dynamic> parseGroup = jsonDecode(res.body.toString());
+      parseGroup['group']['isAdmin'] = true;
       print(parseGroup);
       Group group = Group.fromJson(parseGroup['group']);
       // print('in success');
