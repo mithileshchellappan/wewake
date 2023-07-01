@@ -132,12 +132,13 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
     }
 
     return Scaffold(
-      floatingActionButton: widget.group.IsAdmin
-          ? AddAlarmButton(
-              callback: onAlarmCreateCallback,
-              group: widget.group,
-            )
-          : null,
+      floatingActionButton:
+          (widget.group.IsAdmin || widget.group.CanMemberCreateAlarm)
+              ? AddAlarmButton(
+                  callback: onAlarmCreateCallback,
+                  group: widget.group,
+                )
+              : null,
       appBar: CupertinoNavigationBar(
         brightness: Theme.of(context).brightness,
         backgroundColor: Theme.of(context).backgroundColor,

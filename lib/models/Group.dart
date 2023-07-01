@@ -3,7 +3,7 @@ class Group {
   String? GroupName;
   String? AdminId;
   DateTime CreatedAt = DateTime.now();
-  bool? CanMemberCreateAlarm;
+  late bool CanMemberCreateAlarm;
   int? MemberCount = 1;
   bool IsAdmin = false;
 

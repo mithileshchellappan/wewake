@@ -41,7 +41,7 @@ Future<dynamic> getUserAlarms() async {
       return {"success": false, "message": res.body.toString()};
     }
   } catch (e) {
-    print("exception " + e.toString());
+    print(e);
     return {"success": false, "message": e.toString()};
   }
 }

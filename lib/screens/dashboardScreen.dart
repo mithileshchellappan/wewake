@@ -29,8 +29,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
   void setAlarms() async {
     var res = await getUserAlarms();
+    print(res);
     if (res['success']) {
       List<Alarm> alarms = res['alarms'];
+
       final alarmProvider = Provider.of<AlarmProvider>(context, listen: false);
       alarmProvider.setAlarms(alarms);
       await AlarmService.syncAlarms(alarms);

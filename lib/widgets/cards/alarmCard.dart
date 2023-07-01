@@ -1,11 +1,13 @@
 import 'package:alarm_test/api/alarm.dart';
 import 'package:alarm_test/providers/alarmsProvider.dart';
+import 'package:alarm_test/providers/userProvider.dart';
 import 'package:alarm_test/utils/alarmService.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:intl/intl.dart';
 import 'package:just_audio/just_audio.dart';
+import 'package:provider/provider.dart';
 
 import '../../models/Alarm.dart';
 
@@ -72,11 +74,13 @@ class _AlarmCardState extends State<AlarmCard> {
   Widget build(BuildContext context) {
     String? audioLink = widget.alarm.InternalAudioFile;
     // AlarmProvider alarmProvider = Provider.of
+    UserProvider userProvider =
+        Provider.of<UserProvider>(context, listen: false);
     return Padding(
       padding: EdgeInsets.only(top: 2),
       child: SwipeActionCell(
         key: ObjectKey(widget.alarm.AlarmAppId),
-        trailingActions: [
+        leadingActions: [
           SwipeAction(
               icon: Icon(Icons.exit_to_app),
               color: Colors.green,
@@ -84,7 +88,8 @@ class _AlarmCardState extends State<AlarmCard> {
               onTap: (CompletionHandler handler) async {},
               title: "  Opt Out"),
         ],
-        leadingActions: widget.isAdmin
+        trailingActions: (widget.isAdmin ||
+                widget.alarm.CreatedBy == userProvider.user!.UserId)
             ? [
                 SwipeAction(
                     icon: const Icon(Icons.delete_forever),

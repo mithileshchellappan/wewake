@@ -49,8 +49,10 @@ class _GroupScreenState extends State<GroupScreen> {
     }
   }
 
-  Future<void> createGroupAndRefreshList(String name, Function callback) async {
-    var res = await callback(name);
+  Future<void> createGroupAndRefreshList(
+      String name, Function callback, bool optionValue) async {
+    print(optionValue);
+    var res = await callback(name, optionValue);
     print(res);
     if (res['success']) {
       groupProvider.appendGroup(res['group']);
@@ -102,15 +104,20 @@ class _GroupScreenState extends State<GroupScreen> {
           context: context,
           builder: (context) => PopUpDialog(
             "Enter Group Name",
-            (name) async => await createGroupAndRefreshList(name, createGroup),
+            (name, optionValue) async =>
+                await createGroupAndRefreshList(name, createGroup, optionValue),
             yesText: 'Create',
+            showOption: true,
+            optionText: "Allow users set alarm?",
           ),
         ),
         onJoinGroup: () => showDialog(
           context: context,
           builder: (context) => PopUpDialog(
             "Enter Invite Link",
-            (name) async => await createGroupAndRefreshList(name, joinGroup),
+            showOption: false,
+            (name, optionValue) async =>
+                await createGroupAndRefreshList(name, joinGroup, optionValue),
             yesText: 'Join',
           ),
         ),

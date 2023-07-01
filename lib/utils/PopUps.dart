@@ -33,27 +33,34 @@ class YNPopUp extends StatelessWidget {
   }
 }
 
-class PopUpDialog extends StatelessWidget {
+class PopUpDialog extends StatefulWidget {
   final String title;
-  final Function(String) onOkay;
+  final Function(String, bool) onOkay;
   final String yesText;
   final String noText;
+  final bool showOption;
+  final String optionText;
 
-  const PopUpDialog(
-    this.title,
-    this.onOkay, {
-    this.yesText = "OK",
-    this.noText = "Cancel",
-  });
+  const PopUpDialog(this.title, this.onOkay,
+      {this.yesText = "OK",
+      this.noText = "Cancel",
+      this.showOption = false,
+      this.optionText = "Option"});
 
+  @override
+  State<PopUpDialog> createState() => _PopUpDialogState();
+}
+
+class _PopUpDialogState extends State<PopUpDialog> {
   @override
   Widget build(BuildContext context) {
     TextEditingController _textFieldController = TextEditingController();
-
+    ValueNotifier<bool> OptionValueListenable = ValueNotifier<bool>(true);
+    bool returnBool = false;
     return Center(
       child: CupertinoAlertDialog(
         title: Text(
-          title,
+          widget.title,
           style: TextStyle(fontWeight: FontWeight.normal),
         ),
         content: Column(
@@ -65,24 +72,44 @@ class PopUpDialog extends StatelessWidget {
               style: TextStyle(color: Colors.white),
               controller: _textFieldController,
             ),
+            if (this.widget.showOption)
+              Row(
+                children: [
+                  Text(
+                    widget.optionText,
+                    style: TextStyle(fontSize: 15),
+                  ),
+                  Expanded(child: Container()),
+                  ValueListenableBuilder(
+                      valueListenable: OptionValueListenable,
+                      builder: (context, value, child) {
+                        return CupertinoSwitch(
+                            value: value,
+                            onChanged: (newValue) {
+                              // print(value);
+                              OptionValueListenable.value = newValue;
+                            });
+                      })
+                ],
+              )
           ],
         ),
         actions: [
           CupertinoDialogAction(
-            child: Text(noText),
+            child: Text(widget.noText),
             onPressed: () async {
               Navigator.of(context).pop();
             },
           ),
           CupertinoDialogAction(
-            child: Text(yesText),
+            child: Text(widget.yesText),
             onPressed: () {
               String enteredText = _textFieldController.text;
               if (enteredText.isEmpty) {
                 Fluttertoast.showToast(msg: "Value can't be empty");
               } else {
                 Navigator.of(context).pop();
-                onOkay(enteredText);
+                widget.onOkay(enteredText, OptionValueListenable.value);
               }
             },
           ),

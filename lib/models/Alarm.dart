@@ -40,7 +40,7 @@ class Alarm {
     InternalAudioFile = json['internalAudioFile'];
     UseExternalAudio = json['useExternalAudio'];
     AudioURL = json['audioURL'] ?? "";
-    GroupName = json['groupName'];
+    GroupName = json['groupName'] ?? "";
   }
 
   Map toJson() {
