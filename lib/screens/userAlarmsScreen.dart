@@ -1,3 +1,4 @@
+import 'package:alarm_test/models/Group.dart';
 import 'package:alarm_test/screens/groupViewScreen.dart';
 import 'package:alarm_test/widgets/cards/alarmCard.dart';
 import 'package:flutter/cupertino.dart';
@@ -6,6 +7,8 @@ import 'package:provider/provider.dart';
 
 import '../models/Alarm.dart';
 import '../providers/alarmsProvider.dart';
+import '../providers/groupProvider.dart';
+import '../utils/helpers.dart';
 
 class UserAlarmsScreen extends StatefulWidget {
   UserAlarmsScreen({super.key});
@@ -16,11 +19,12 @@ class UserAlarmsScreen extends StatefulWidget {
 
 class _UserAlarmsScreenState extends State<UserAlarmsScreen> {
   Map<String, List<Alarm>> groupedAlarms = {};
-
+  var groupProvider;
   @override
   void initState() {
     super.initState();
     setAlarmPerGroup();
+    groupProvider = Provider.of<GroupProvider>(context, listen: false);
   }
 
   Future<void> setAlarmPerGroup() async {
@@ -34,7 +38,12 @@ class _UserAlarmsScreenState extends State<UserAlarmsScreen> {
         groupedAlarms[groupName] = [alarms[i]];
       }
     }
-    print(groupedAlarms);
+    print(groupedAlarms['First']?[0].GroupId);
+  }
+
+  Group getGroup(String groupId) {
+    List<Group> groups = groupProvider.groups ?? [];
+    return groups.where((element) => element.GroupId == groupId).first;
   }
 
   @override
@@ -66,12 +75,15 @@ class _UserAlarmsScreenState extends State<UserAlarmsScreen> {
                 Padding(
                   padding: const EdgeInsets.all(8.0),
                   child: InkWell(
-                    // onTap: ()=>Navigator.push(context,MaterialPageRoute(
-                    //     builder: (context) => GroupViewScreen(
-                    //           group: group,
-                    //           iconColor: iconColor,
-                    //         )),
-                    // ),
+                    onTap: () => Navigator.push(
+                      context,
+                      MaterialPageRoute(
+                          builder: (context) => GroupViewScreen(
+                                group: getGroup(
+                                    groupedAlarms[groupName]![0].GroupId!),
+                                iconColor: getRandomDarkColor(),
+                              )),
+                    ),
                     child: Row(
                       children: [
                         Text(

@@ -258,7 +258,9 @@ class _AddAlarmButtonState extends State<AddAlarmButton> {
                     await AlarmService.setAlarm(res['alarm']);
                     final alarmProvider =
                         Provider.of<AlarmProvider>(context, listen: false);
-                    alarmProvider.appendAlarm(alarm);
+                    Alarm resAlarm = res['alarm'];
+                    resAlarm.GroupName = widget.group.GroupName;
+                    alarmProvider.appendAlarm(resAlarm);
                     widget.callback(res['alarm']);
                     Fluttertoast.showToast(msg: "Created Alarm Successfully");
                     Navigator.of(context).pop();

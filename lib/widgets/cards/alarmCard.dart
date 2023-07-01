@@ -105,7 +105,7 @@ class _AlarmCardState extends State<AlarmCard> {
                   style: TextStyle(fontSize: 11, color: Colors.white60),
                 ),
               ),
-              Text(widget.alarm.AlarmAppId.toString()),
+              // Text(widget.alarm.AlarmAppId.toString()),
               SizedBox(height: 10),
               bottomBar(),
             ],
