@@ -99,8 +99,25 @@ namespace WeWakeAPI.DBServices
                 join alarm in _context.Alarms on member.GroupId equals alarm.GroupId
                 join grp in _context.Groups on alarm.GroupId equals grp.GroupId
                 where member.MemberId == userId
-                select new { Alarm = alarm, groupName = grp.GroupName }
+                select new {
+                    groupId=alarm.GroupId,
+                    createdBy=alarm.CreatedBy,
+                    alarmAppId = alarm.AlarmAppId,
+                    time=alarm.Time,
+                    isEnabled=alarm.IsEnabled,
+                    loopAudio=alarm.LoopAudio,
+                    vibrate=alarm.Vibrate,
+                    notificationTitle=alarm.NotificationTitle,
+                    notificationBody=alarm.NotificationBody,
+                    internalAudioFile=alarm.InternalAudioFile,
+                    useExternalAudio=alarm.UseExternalAudio,
+                    audioURL=alarm.AudioURL,
+                    groupName=grp.GroupName
+                }
                 ).ToListAsync();
+            
+            
+
             return alarms;
         }
     }
