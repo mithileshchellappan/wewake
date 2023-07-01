@@ -29,13 +29,13 @@ Future<dynamic> getUserAlarms() async {
     final res = await api.get(url);
     if (res.statusCode <= 299 && res.statusCode >= 200) {
       List<dynamic> result = (jsonDecode(res.body.toString()))['alarms'];
-      List<Map<String, dynamic>> alarmWithGrp = [];
+      List<Alarm> alarms = [];
       for (int i = 0; i < result.length; i++) {
         var alarmObj = result[i];
-        Alarm alarm = Alarm.fromJson(alarmObj['alarm']);
-        alarmWithGrp.add({"alarm": alarm, "groupName": alarmObj['groupName']});
+        Alarm alarm = Alarm.fromJson(alarmObj);
+        alarms.add(alarm);
       }
-      return {"success": true, "alarms": alarmWithGrp};
+      return {"success": true, "alarms": alarms};
     } else {
       print(res.body.toString());
       return {"success": false, "message": res.body.toString()};

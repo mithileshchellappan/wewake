@@ -128,7 +128,7 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
       floatingActionButton: widget.group.IsAdmin
           ? AddAlarmButton(
               callback: onAlarmCreateCallback,
-              groupId: widget.group.GroupId,
+              group: widget.group,
             )
           : null,
       appBar: CupertinoNavigationBar(

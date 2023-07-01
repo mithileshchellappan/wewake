@@ -9,11 +9,12 @@ import 'package:cupertino_text_button/cupertino_text_button.dart';
 import 'package:just_audio/just_audio.dart';
 
 import '../../models/Alarm.dart';
+import '../../models/Group.dart';
 
 class AddAlarmButton extends StatefulWidget {
   final Function callback;
-  String? groupId;
-  AddAlarmButton({required this.callback, required this.groupId});
+  Group group;
+  AddAlarmButton({required this.callback, required this.group});
   @override
   _AddAlarmButtonState createState() => _AddAlarmButtonState();
 }
@@ -240,14 +241,15 @@ class _AddAlarmButtonState extends State<AddAlarmButton> {
                       msg: "Please select date and time for alarm.");
                 } else {
                   alarm = Alarm(
-                      widget.groupId,
+                      widget.group.GroupId,
                       NotificationTitle,
                       NotificationBody,
                       IsEnabled,
                       Vibrate,
                       LoopAudio,
                       Time,
-                      InternalAudioFile);
+                      InternalAudioFile,
+                      widget.group.GroupName);
                   print(alarm.Time);
                   var res = await addAlarm(alarm);
                   if (res['success']) {

@@ -12,16 +12,19 @@ class Alarm {
   String? InternalAudioFile; //done
   bool UseExternalAudio = false;
   String AudioURL = "";
+  String? GroupName = "";
 
   Alarm(
-      this.GroupId,
-      this.NotificationTitle,
-      this.NotificationBody,
-      this.IsEnabled,
-      this.Vibrate,
-      this.LoopAudio,
-      this.Time,
-      this.InternalAudioFile);
+    this.GroupId,
+    this.NotificationTitle,
+    this.NotificationBody,
+    this.IsEnabled,
+    this.Vibrate,
+    this.LoopAudio,
+    this.Time,
+    this.InternalAudioFile,
+    this.GroupName,
+  );
 
   Alarm.fromJson(Map<String, dynamic> json) {
     AlarmId = json['alarmId'];
@@ -37,6 +40,7 @@ class Alarm {
     InternalAudioFile = json['internalAudioFile'];
     UseExternalAudio = json['useExternalAudio'];
     AudioURL = json['audioURL'] ?? "";
+    GroupName = json['groupName'];
   }
 
   Map toJson() {

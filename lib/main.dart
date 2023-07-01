@@ -1,3 +1,4 @@
+import 'package:alarm_test/providers/alarmsProvider.dart';
 import 'package:alarm_test/providers/userProvider.dart';
 import 'package:alarm_test/screens/dashboardScreen.dart';
 import 'package:alarm_test/screens/signUpScreen.dart';
@@ -11,9 +12,11 @@ void main() async {
   WidgetsFlutterBinding.ensureInitialized();
 
   await AlarmService.initAlarm();
-  AlarmService.getAlarmsInSystem();
-  runApp(ChangeNotifierProvider(
-    create: (_) => UserProvider(),
+  runApp(MultiProvider(
+    providers: [
+      ChangeNotifierProvider(create: (_) => UserProvider()),
+      ChangeNotifierProvider(create: (_) => AlarmProvider())
+    ],
     child: const WeWake(),
   ));
 }

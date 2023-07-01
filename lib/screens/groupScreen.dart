@@ -62,7 +62,7 @@ class _GroupScreenState extends State<GroupScreen> {
           transitionBetweenRoutes: false,
           automaticallyImplyLeading: false,
           leading: Padding(
-            padding: const EdgeInsets.only(top: 8.0),
+            padding: const EdgeInsets.only(top: 15.0),
             child: Text(
               "Hello ${userProvider.user?.Name}",
               style: TextStyle(color: Colors.white),
