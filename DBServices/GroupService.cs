@@ -19,7 +19,7 @@ namespace WeWakeAPI.DBServices
         {
             Member exists = await _context.Members.FirstOrDefaultAsync(m => m.MemberId == memberId && m.GroupId == groupId);
 
-            if (exists!=null && throwException)
+            if (exists != null && throwException)
             {
                 throw new Exception("User already exists in the group.");
             }
@@ -128,7 +128,7 @@ namespace WeWakeAPI.DBServices
                 {
                     throw new UnauthorizedAccessException("Only Admins can remove other members from group");
                 }
-                Member removingMember = await CheckIfMemberAlreadyExists(groupId, memberId,false);
+                Member removingMember = await CheckIfMemberAlreadyExists(groupId, memberId, false);
                 if (removingMember.isAdmin) throw new Exception("Cannot remove admin. Delete group instead!");
                 _context.Members.Remove(removingMember);
                 await _context.SaveChangesAsync();
@@ -170,8 +170,9 @@ namespace WeWakeAPI.DBServices
             {
                 Group group = await GetGroup(groupId);
                 if (group.AdminId != inviterId) throw new Exception("Only Admin can create or get invite link");
-                InviteLink alreadyExistingId = await _context.InviteLinks.FirstOrDefaultAsync(t=>t.GroupId==groupId);
-                if(alreadyExistingId!=null){
+                InviteLink alreadyExistingId = await _context.InviteLinks.FirstOrDefaultAsync(t => t.GroupId == groupId);
+                if (alreadyExistingId != null)
+                {
                     return alreadyExistingId.InviteLinkId;
                 }
                 InviteLink invite = new InviteLink(groupId, inviterId);
@@ -182,6 +183,31 @@ namespace WeWakeAPI.DBServices
             }
             catch (Exception e)
             {
+                throw new Exception(e.Message);
+            }
+        }
+
+        public async Task<bool> DeleteGroup(Guid groupId, Guid adminId)
+        {
+            try
+            {
+                Group group = await GetGroup(groupId);
+                if(group==null){
+                    throw new Exception("Group does not exist");
+                }
+                if (group.AdminId != adminId)
+                {
+                    throw new UnauthorizedAccessException("Only Admin can delete group");
+                }
+                _context.Members.RemoveRange(_context.Members.Where(x => x.GroupId == groupId));
+                _context.InviteLinks.RemoveRange(_context.InviteLinks.Where(x=>x.GroupId == groupId));
+                _context.Alarms.RemoveRange(_context.Alarms.Where(x=>x.GroupId == groupId));
+                _context.Groups.Remove(group);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+            catch (Exception e)
+            {   
                 throw new Exception(e.Message);
             }
         }

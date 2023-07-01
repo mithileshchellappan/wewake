@@ -53,7 +53,8 @@ namespace WeWakeAPI.Controllers
                 Member member = new Member(Guid.NewGuid(),UserId, group.GroupId, true);
                 _context.Members.Add(member);
                 await _context.SaveChangesAsync();
-                return Ok(new {success=true,group = group});
+                var resGroup = group.AppendKey("memberCount",1);
+                return Ok(new {success=true,group = resGroup});
             }
             catch (Exception e)
             {
@@ -61,6 +62,7 @@ namespace WeWakeAPI.Controllers
                 return BadRequest(e);
             }
         }
+        
 
         [HttpGet("{groupId}")]
         public async Task<ActionResult> GetGroup (Guid groupId){
@@ -102,6 +104,18 @@ namespace WeWakeAPI.Controllers
 
             }catch (Exception e)
             {
+                return BadRequest(e.Message);
+            }
+        }
+
+        [HttpDelete("Delete/{groupId}")]
+        public async Task<ActionResult> DeleteGroup(Guid groupId){
+            try{
+                Guid userId = await _userService.CheckIfUserExistsFromJWT();
+                bool success = await _groupService.DeleteGroup(groupId,userId);
+                return Ok(new {success});
+
+            }catch (Exception e){
                 return BadRequest(e.Message);
             }
         }
