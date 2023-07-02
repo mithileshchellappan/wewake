@@ -46,6 +46,7 @@ dependencies:
   cupertino_text_button: ^0.0.5
   flutter_swipe_action_cell: ^3.1.2
   provider: ^6.0.5
+  flutter_chat_bubble: ^2.0.2
 dev_dependencies:
   flutter_test:
     sdk: flutter

@@ -1,6 +1,6 @@
 import 'package:alarm_test/api/group.dart';
 import 'package:alarm_test/providers/userProvider.dart';
-import 'package:alarm_test/utils/PopUps.dart';
+import 'package:alarm_test/widgets/PopUps.dart';
 import 'package:flutter/material.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';

@@ -3,7 +3,7 @@ import 'package:alarm_test/api/group.dart';
 import 'package:alarm_test/providers/alarmsProvider.dart';
 import 'package:alarm_test/providers/userProvider.dart';
 import 'package:alarm_test/screens/dashboardScreen.dart';
-import 'package:alarm_test/utils/PopUps.dart';
+import 'package:alarm_test/widgets/PopUps.dart';
 import 'package:alarm_test/widgets/buttons/AddAlarmButton.dart';
 import 'package:alarm_test/widgets/cards/alarmCard.dart';
 import 'package:alarm_test/widgets/cards/memberCard.dart';

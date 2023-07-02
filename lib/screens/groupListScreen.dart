@@ -6,7 +6,7 @@ import 'package:alarm_test/providers/alarmsProvider.dart';
 import 'package:alarm_test/providers/groupProvider.dart';
 import 'package:alarm_test/utils/alarmService.dart';
 import 'package:alarm_test/widgets/cards/groupCard.dart';
-import 'package:alarm_test/utils/PopUps.dart';
+import 'package:alarm_test/widgets/PopUps.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';

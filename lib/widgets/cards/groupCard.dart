@@ -2,8 +2,9 @@ import 'package:alarm_test/api/group.dart';
 import 'package:alarm_test/providers/alarmsProvider.dart';
 import 'package:alarm_test/providers/groupProvider.dart';
 import 'package:alarm_test/providers/userProvider.dart';
+import 'package:alarm_test/screens/groupDashboardScren.dart';
 import 'package:alarm_test/screens/groupViewScreen.dart';
-import 'package:alarm_test/utils/PopUps.dart';
+import 'package:alarm_test/widgets/PopUps.dart';
 import 'package:alarm_test/utils/TextIcon.dart';
 import 'package:alarm_test/utils/alarmService.dart';
 import 'package:alarm_test/utils/helpers.dart';
@@ -85,7 +86,7 @@ class GroupCard extends StatelessWidget {
                 Navigator.push(
                     context,
                     MaterialPageRoute(
-                        builder: (context) => GroupViewScreen(
+                        builder: (context) => GroupDashboardScreen(
                               group: group,
                               iconColor: iconColor,
                             )))
