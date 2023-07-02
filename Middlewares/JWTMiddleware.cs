@@ -13,7 +13,8 @@ namespace WeWakeAPI.Middlewares
             _allowedPaths = new PathString[]
             {
                 new PathString("/api/Login"),
-                new PathString("/api/SignUp")
+                new PathString("/api/SignUp"),
+                new PathString("/signalr/negotiate")
             };
         }
 

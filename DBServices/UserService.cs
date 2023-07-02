@@ -25,6 +25,7 @@ namespace WeWakeAPI.DBServices
             Guid? userId = (Guid?)HttpContext.Items["UserId"];
             if (userId == null)
             {
+                console.log(HttpContext.Items["UserId"]);
                 throw new UnauthorizedAccessException("User ID not found");
             }
             return userId.Value;
@@ -65,7 +66,7 @@ namespace WeWakeAPI.DBServices
                         GroupName = group.GroupName,
                         IsAdmin = member.isAdmin,
                         CreatedAt = group.CreatedAt,
-                        CanSetAlarm = group.CanMemberCreateAlarm
+                        CanMemberCreateAlarm = group.CanMemberCreateAlarm
                     })
                 .GroupJoin(_context.Members,
                     g => g.GroupId,
@@ -79,7 +80,7 @@ namespace WeWakeAPI.DBServices
                         GroupName = g.GroupName,
                         IsAdmin = g.IsAdmin,
                         CreatedAt = g.CreatedAt,
-                        CanSetAlarm = g.CanSetAlarm,
+                        CanMemberCreateAlarm = g.CanMemberCreateAlarm,
                         MemberCount = members.Count()
                     })
                 .ToListAsync();
@@ -103,6 +104,7 @@ namespace WeWakeAPI.DBServices
                     alarmId = alarm.AlarmId,
                     groupId=alarm.GroupId,
                     createdBy=alarm.CreatedBy,
+                    canMemberCreateAlarm = grp.CanMemberCreateAlarm,
                     alarmAppId = alarm.AlarmAppId,
                     time=alarm.Time,
                     isEnabled=alarm.IsEnabled,

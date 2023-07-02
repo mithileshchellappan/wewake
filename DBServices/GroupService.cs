@@ -76,7 +76,7 @@ namespace WeWakeAPI.DBServices
                     GroupName = group.GroupName,
                     IsAdmin = member.isAdmin,
                     CreatedAt = group.CreatedAt,
-                    CanSetAlarm = group.CanMemberCreateAlarm
+                    CanMemberCreateAlarm = group.CanMemberCreateAlarm
                 })
             .GroupJoin(_context.Members,
                 g => g.GroupId,
@@ -89,7 +89,7 @@ namespace WeWakeAPI.DBServices
                     GroupName = g.GroupName,
                     IsAdmin = g.IsAdmin,
                     CreatedAt = g.CreatedAt,
-                    CanSetAlarm = g.CanSetAlarm,
+                    CanMemberCreateAlarm = g.CanMemberCreateAlarm,
                     MemberCount = members.Count()
                 })
                 .FirstOrDefaultAsync();
