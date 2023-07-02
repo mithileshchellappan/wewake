@@ -15,7 +15,7 @@ class API extends http.BaseClient {
   void _setHeader() {
     _headers = {
       HttpHeaders.contentTypeHeader: "application/json",
-      HttpHeaders.acceptHeader: "applicatio/json",
+      HttpHeaders.acceptHeader: "application/json",
       HttpHeaders.authorizationHeader: "Bearer $jwtToken"
     };
   }
@@ -37,6 +37,7 @@ class API extends http.BaseClient {
     await initialize();
     var baseUrl = Uri.parse(apiRoute);
     request.headers.addAll(_headers);
+    print(request.headers);
     return _client.send(request);
   }
 }

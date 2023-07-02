@@ -5,22 +5,22 @@ import 'package:alarm_test/models/Group.dart';
 import 'package:alarm_test/models/Member.dart';
 
 Future<dynamic> getUserGroups() async {
-  // try {
-  API api = new API();
-  Uri url = Uri.parse('$apiRoute/User/Groups');
-  final res = await api.get(url);
-  print(res.body.toString());
-  if (res.statusCode <= 299 && res.statusCode >= 200) {
-    Map<String, dynamic> parseGroup = jsonDecode(res.body.toString());
-    List<Group> groups = Group.fromListJson(parseGroup['groups']);
-    return {"success": true, "groups": groups};
-  } else {
-    throw new Exception("Unable to get groups");
+  try {
+    API api = new API();
+    Uri url = Uri.parse('$apiRoute/User/Groups');
+    final res = await api.get(url);
+    print(res.body.toString());
+    if (res.statusCode <= 299 && res.statusCode >= 200) {
+      Map<String, dynamic> parseGroup = jsonDecode(res.body.toString());
+      List<Group> groups = Group.fromListJson(parseGroup['groups']);
+      return {"success": true, "groups": groups};
+    } else {
+      throw new Exception("Unable to get groups");
+    }
+  } catch (e) {
+    print(e);
+    return {"success": false, "message": e};
   }
-  // } catch (e) {
-  //   print(e);
-  //   return {"success": false, "message": e};
-  // }
 }
 
 Future<dynamic> createGroup(String groupName, bool allowUsers) async {

@@ -53,9 +53,9 @@ Future<Map<String, dynamic>> login(String email, String password) async {
     if (res.statusCode == 200) {
       Map<String, dynamic> response = jsonDecode(res.body.toString());
       print(response);
-      SharedPreferencesHelper.setString('jwtToken', response['jwtToken']);
-      SharedPreferencesHelper.setString('userName', response['name']);
-      SharedPreferencesHelper.setString('userId', response['userId']);
+      await SharedPreferencesHelper.setString('jwtToken', response['jwtToken']);
+      await SharedPreferencesHelper.setString('userName', response['name']);
+      await SharedPreferencesHelper.setString('userId', response['userId']);
       User user = User.fromJson(response);
       return {
         "success": true,
