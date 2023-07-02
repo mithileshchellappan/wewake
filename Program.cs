@@ -3,6 +3,8 @@ using WeWakeAPI.Data;
 using WeWakeAPI.Middlewares;
 using WeWakeAPI.DBServices;
 using WeWakeAPI.Utils;
+using WeWakeAPI.WebSockets;
+
 var builder = WebApplication.CreateBuilder(args);
 
 
@@ -39,10 +41,9 @@ app.UseAuthorization();
 
 app.MapControllers();
 
-//app.UseEndpoints(endpoints =>
-//{
-//    endpoints.MapHub<ChatHub>("/chathub");
-//});
+app.UseWebSockets();
+app.UseWebSocketMiddleware();
+
 app.MapGet("/ping", () => "pong");
 
 app.UseJWTMiddleware();
