@@ -15,9 +15,9 @@ namespace WeWakeAPI.Models
         public DateTime CreatedAt { get; set; }
 
        
-        public Chat(Guid groupId, Guid senderId, string senderName, string data)
+        public Chat(Guid messageId,Guid groupId, Guid senderId, string senderName, string data)
         {
-            this.MessageId = Guid.NewGuid();
+            this.MessageId = messageId;
             this.GroupId = groupId;
             this.SenderId = senderId;
             this.SenderName = senderName;

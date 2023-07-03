@@ -1,4 +1,5 @@
-﻿using Newtonsoft.Json;
+﻿using Microsoft.IdentityModel.Tokens;
+using Newtonsoft.Json;
 using Newtonsoft.Json.Linq;
 using System.Collections.Concurrent;
 using System.Net.WebSockets;
@@ -6,6 +7,7 @@ using System.Text;
 using WeWakeAPI.DBServices;
 using WeWakeAPI.Models;
 using WeWakeAPI.RequestModels;
+using WeWakeAPI.Utils;
 
 namespace WeWakeAPI.WebSockets
 {
@@ -23,6 +25,16 @@ namespace WeWakeAPI.WebSockets
 
         public async Task Invoke(HttpContext context)
         {
+
+            string bearerToken = context.Request.Query["auth"].ToString();
+            var (isValid,UserId,Name) = JWTHasher.ValidateToken(bearerToken);
+            if (!isValid || bearerToken.IsNullOrEmpty())
+            {
+                context.Response.StatusCode = 401;
+                await context.Response.WriteAsync("Unauthorized");
+                return;
+            }
+
             if (!context.WebSockets.IsWebSocketRequest)
             {
                 await _next.Invoke(context);
@@ -103,24 +115,31 @@ namespace WeWakeAPI.WebSockets
   
         private static async Task SendToGroup(string groupId, string data, WebSocket senderSocket, ChatService _chatService, CancellationToken ct = default)
         {
-            if (!_groupSockets.TryGetValue(groupId, out var groupSockets))
-                return;
-            //console.log(data);
-            var jsonData = JsonConvert.DeserializeObject<ChatWSRequest>(data);
-            console.log(jsonData);
-
-            var tasks = new List<Task>();
-            foreach (var socket in groupSockets)
+            try
             {
-                if (socket.Value.State != WebSocketState.Open || socket.Value == senderSocket)
-                    continue;
+                if (!_groupSockets.TryGetValue(groupId, out var groupSockets))
+                    return;
+                console.log(data);
+                var jsonData = JsonConvert.DeserializeObject<ChatWSRequest>(data);
+                console.log(jsonData.MessageId);
 
-                tasks.Add(SendStringAsync(socket.Value, data, ct));
+                var tasks = new List<Task>();
+                foreach (var socket in groupSockets)
+                {
+                    if (socket.Value.State != WebSocketState.Open || socket.Value == senderSocket)
+                        continue;
+
+                    tasks.Add(SendStringAsync(socket.Value, data, ct));
+                }
+
+                await Task.WhenAll(tasks);
+                Chat chat = new Chat(Guid.Parse(jsonData.MessageId), Guid.Parse(groupId), Guid.Parse(jsonData.SenderId), jsonData.SenderName, jsonData.Data);
+                _chatService.AddMessage(chat);
             }
-
-            await Task.WhenAll(tasks);
-            Chat chat = new Chat(Guid.Parse(groupId), Guid.Parse(jsonData.SenderId), jsonData.SenderName, jsonData.Data);
-            _chatService.AddMessage(chat);
+            catch(Exception e)
+            {
+                console.log(e.Message);
+            }
         }
 
     }

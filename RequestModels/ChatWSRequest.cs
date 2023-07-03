@@ -5,6 +5,9 @@ namespace WeWakeAPI.RequestModels
 {
     public class ChatWSRequest
     {
+        [JsonProperty("messageId")]
+        public string MessageId { get; set; }
+
         [JsonProperty("senderId")]
         public string SenderId { get; set; }
         [JsonProperty("senderName")]
