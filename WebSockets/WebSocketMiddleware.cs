@@ -71,6 +71,7 @@ namespace WeWakeAPI.WebSockets
         {
             var buffer = Encoding.UTF8.GetBytes(data);
             var segment = new ArraySegment<byte>(buffer);
+            console.log(data);
             return socket.SendAsync(segment, WebSocketMessageType.Text, true, ct);
         }
 
@@ -104,9 +105,9 @@ namespace WeWakeAPI.WebSockets
         {
             if (!_groupSockets.TryGetValue(groupId, out var groupSockets))
                 return;
-            console.log(data);
+            //console.log(data);
             var jsonData = JsonConvert.DeserializeObject<ChatWSRequest>(data);
-            console.log(jsonData.Data);
+            console.log(jsonData);
 
             var tasks = new List<Task>();
             foreach (var socket in groupSockets)
@@ -114,7 +115,7 @@ namespace WeWakeAPI.WebSockets
                 if (socket.Value.State != WebSocketState.Open || socket.Value == senderSocket)
                     continue;
 
-                tasks.Add(SendStringAsync(socket.Value, jsonData, ct));
+                tasks.Add(SendStringAsync(socket.Value, data, ct));
             }
 
             await Task.WhenAll(tasks);
