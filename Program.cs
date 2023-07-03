@@ -58,8 +58,11 @@ app.UseCors(policy =>
 app.UseAuthorization();
 
 app.MapControllers();
-
-app.UseWebSockets();
+WebSocketOptions wsOptions = new WebSocketOptions
+{
+    KeepAliveInterval = TimeSpan.FromMinutes(2)
+};
+app.UseWebSockets(wsOptions);
 app.UseWebSocketMiddleware("/ws");
 
 
