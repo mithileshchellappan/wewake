@@ -19,18 +19,19 @@ class UserAlarmsScreen extends StatefulWidget {
 
 class _UserAlarmsScreenState extends State<UserAlarmsScreen> {
   Map<String, List<Alarm>> groupedAlarms = {};
-  var alarmProvider;
-  var groupProvider;
+
   @override
   void initState() {
     super.initState();
     setAlarmPerGroup();
-    groupProvider = Provider.of<GroupProvider>(context, listen: false);
   }
 
+  var alarmProvider;
+  var groupProvider;
   Future<void> setAlarmPerGroup() async {
-    final alarmProvider = Provider.of<AlarmProvider>(context, listen: false);
-    late List<Alarm> alarms = alarmProvider.alarms ?? [];
+    alarmProvider = Provider.of<AlarmProvider>(context, listen: false);
+    late List<Alarm> alarms = alarmProvider?.alarms ?? [];
+    print(alarms);
     for (int i = 0; i < alarms.length; i++) {
       String groupName = alarms[i].GroupName ?? "Undefined Group";
       if (groupedAlarms.containsKey(groupName)) {
@@ -39,17 +40,18 @@ class _UserAlarmsScreenState extends State<UserAlarmsScreen> {
         groupedAlarms[groupName] = [alarms[i]];
       }
     }
-    print(groupedAlarms['First']?[0].GroupId);
   }
 
   Group getGroup(String groupId) {
     List<Group> groups = groupProvider.groups ?? [];
+    print("groups" + groups.toString());
     return groups.where((element) => element.GroupId == groupId).first;
   }
 
   @override
   Widget build(BuildContext context) {
     alarmProvider = Provider.of<AlarmProvider>(context, listen: true);
+    groupProvider = Provider.of<GroupProvider>(context, listen: true);
 
     return Scaffold(
         appBar: CupertinoNavigationBar(

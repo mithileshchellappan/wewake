@@ -239,6 +239,7 @@ class _PlayButtonState extends State<PlayButton> {
   @override
   void dispose() {
     player.dispose();
+    super.dispose();
   }
 
   @override

@@ -27,22 +27,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
     setAlarms();
   }
 
+  var alarmProvider;
   void setAlarms() async {
-    var res = await getUserAlarms();
-    print(res);
-    if (res['success']) {
-      List<Alarm> alarms = res['alarms'];
-
-      final alarmProvider = Provider.of<AlarmProvider>(context, listen: false);
-      alarmProvider.setAlarms(alarms);
-      await AlarmService.syncAlarms(alarms);
+    var providerAlarms = alarmProvider?.alarms ?? [];
+    if (providerAlarms.length <= 0) {
+      var res = await getUserAlarms();
+      print(res);
+      if (res['success']) {
+        List<Alarm> alarms = res['alarms'];
+        print("Setting alarms");
+        alarmProvider.setAlarms(alarms);
+        await AlarmService.syncAlarms(alarms);
+      } else {
+        Fluttertoast.showToast(msg: "Error retrieving alarms");
+      }
     } else {
-      Fluttertoast.showToast(msg: "Error retrieving alarms");
+      serverAlarms = providerAlarms;
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    alarmProvider = Provider.of<AlarmProvider>(context, listen: true);
     return SafeArea(
       child: Scaffold(
         body: _navBarIndex == 0 ? GroupScreen() : UserAlarmsScreen(),
@@ -66,8 +72,6 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 }
-
-
 
 // class FloatingAction extends StatelessWidget {
 //   @override

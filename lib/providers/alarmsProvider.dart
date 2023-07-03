@@ -4,9 +4,10 @@ import 'package:provider/provider.dart';
 
 class AlarmProvider extends ChangeNotifier {
   List<Alarm>? _alarms;
-  List<Alarm>? get alarms => _alarms; // Fix here
+  List<Alarm>? get alarms => _alarms;
 
   void setAlarms(List<Alarm> alarms) {
+    print("ALARM PROVIDER: Setting alarms");
     _alarms = alarms;
     notifyListeners();
   }
@@ -27,9 +28,9 @@ class AlarmProvider extends ChangeNotifier {
   }
 
   List<Alarm> getAlarmsWithGroupId(String groupId) {
-    List<Alarm> alarms =
-        _alarms!.where((element) => element.GroupId == groupId).toList();
-    return alarms;
+    List<Alarm>? alarms =
+        _alarms?.where((element) => element.GroupId == groupId).toList();
+    return alarms ?? [];
   }
 
   void removeAlarmsWithGroupId(String groupId) {

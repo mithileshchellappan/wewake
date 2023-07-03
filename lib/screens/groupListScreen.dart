@@ -36,16 +36,20 @@ class _GroupScreenState extends State<GroupScreen> {
   }
 
   void setGroups() async {
-    var res = await getUserGroups();
-    if (res['success']) {
-      groupProvider.setGroup(res['groups']);
-      setState(() {
-        userGroups = res['groups'];
-      });
+    groupProvider = Provider.of<GroupProvider>(context, listen: false);
+    var providerGroups = groupProvider?.groups ?? [];
+    if (providerGroups.length <= 0) {
+      var res = await getUserGroups();
+      if (res['success']) {
+        groupProvider.setGroup(res['groups']);
+        userGroups = groupProvider.groups;
 
-      print(userGroups.length);
+        print(userGroups.length);
+      } else {
+        Fluttertoast.showToast(msg: res['message']);
+      }
     } else {
-      Fluttertoast.showToast(msg: res['message']);
+      userGroups = groupProvider.groups;
     }
   }
 

@@ -23,8 +23,6 @@ class API extends http.BaseClient {
   Future<void> initialize() async {
     jwtToken = await SharedPreferencesHelper.getString('jwtToken');
     String? name = await SharedPreferencesHelper.getString('userName');
-    print(jwtToken);
-    print(name);
     if (jwtToken != null) {
       _setHeader();
     }
@@ -37,7 +35,6 @@ class API extends http.BaseClient {
     await initialize();
     var baseUrl = Uri.parse(apiRoute);
     request.headers.addAll(_headers);
-    print(request.headers);
     return _client.send(request);
   }
 }
