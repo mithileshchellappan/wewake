@@ -12,8 +12,8 @@ using WeWakeAPI.Data;
 namespace WeWakeAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20230623161812_minorChangeAlarm1")]
-    partial class minorChangeAlarm1
+    [Migration("20230703065106_ChatMigration")]
+    partial class ChatMigration
     {
         /// <inheritdoc />
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
@@ -31,8 +31,14 @@ namespace WeWakeAPI.Migrations
                         .ValueGeneratedOnAdd()
                         .HasColumnType("uniqueidentifier");
 
+                    b.Property<int>("AlarmAppId")
+                        .HasColumnType("int");
+
                     b.Property<string>("AudioURL")
                         .HasColumnType("nvarchar(max)");
+
+                    b.Property<Guid>("CreatedBy")
+                        .HasColumnType("uniqueidentifier");
 
                     b.Property<Guid>("GroupId")
                         .HasColumnType("uniqueidentifier");
@@ -66,6 +72,8 @@ namespace WeWakeAPI.Migrations
 
                     b.HasKey("AlarmId");
 
+                    b.HasIndex("GroupId");
+
                     b.ToTable("Alarms");
                 });
 
@@ -91,6 +99,25 @@ namespace WeWakeAPI.Migrations
                     b.HasKey("GroupId");
 
                     b.ToTable("Groups");
+                });
+
+            modelBuilder.Entity("WeWakeAPI.Models.InviteLink", b =>
+                {
+                    b.Property<Guid>("InviteLinkId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("InviterId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.HasKey("InviteLinkId");
+
+                    b.HasIndex("GroupId");
+
+                    b.ToTable("InviteLinks");
                 });
 
             modelBuilder.Entity("WeWakeAPI.Models.Member", b =>
@@ -138,6 +165,28 @@ namespace WeWakeAPI.Migrations
                     b.HasKey("UserId");
 
                     b.ToTable("Users");
+                });
+
+            modelBuilder.Entity("WeWakeAPI.Models.Alarm", b =>
+                {
+                    b.HasOne("WeWakeAPI.Models.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
+                });
+
+            modelBuilder.Entity("WeWakeAPI.Models.InviteLink", b =>
+                {
+                    b.HasOne("WeWakeAPI.Models.Group", "Group")
+                        .WithMany()
+                        .HasForeignKey("GroupId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
+                    b.Navigation("Group");
                 });
 
             modelBuilder.Entity("WeWakeAPI.Models.Member", b =>

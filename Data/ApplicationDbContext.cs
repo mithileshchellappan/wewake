@@ -17,6 +17,8 @@ namespace WeWakeAPI.Data
 
         public DbSet<InviteLink> InviteLinks { get; set; }
 
+        public DbSet<Chat> Chats { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);

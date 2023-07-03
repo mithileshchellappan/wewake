@@ -21,10 +21,19 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<GroupService>();
 builder.Services.AddScoped<AlarmService>();
 
+string internalIp = IpAddr.GetIp();
 
 builder.Services.AddDbContext<ApplicationDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("Database")));
 Console.WriteLine(builder.Configuration.GetConnectionString("Database"));
+
+//builder.Services.AddCors(options =>
+//{
+//    options.AddPolicy(name: "Origins", policy =>
+//    {
+//        policy.WithOrigins("http://localhost:52732", $"http://{internalIp}:52732");
+//    });
+//});
 
 var app = builder.Build();
 
@@ -37,6 +46,14 @@ app.UseSwaggerUI();
 
 app.UseHttpsRedirection();
 app.UseRouting();
+
+app.UseCors(policy =>
+{
+    policy.AllowAnyOrigin();
+    policy.AllowAnyHeader();
+    policy.AllowAnyMethod();
+});
+
 app.UseAuthorization();
 
 app.MapControllers();
@@ -47,7 +64,6 @@ app.UseWebSocketMiddleware();
 app.MapGet("/ping", () => "pong");
 
 app.UseJWTMiddleware();
-string internalIp = IpAddr.GetIp();
 console.log(internalIp);
 app.Urls.Add($"http://{internalIp}:5022");
 app.Urls.Add("http://localhost:5022");

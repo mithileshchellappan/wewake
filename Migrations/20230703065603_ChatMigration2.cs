@@ -6,22 +6,24 @@ using Microsoft.EntityFrameworkCore.Migrations;
 namespace WeWakeAPI.Migrations
 {
     /// <inheritdoc />
-    public partial class addMember : Migration
+    public partial class ChatMigration2 : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.CreateTable(
-                name: "Member",
+                name: "Chats",
                 columns: table => new
                 {
-                    MemberId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    MessageId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
                     GroupId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
-                    isAdmin = table.Column<bool>(type: "bit", nullable: false)
+                    SenderId = table.Column<Guid>(type: "uniqueidentifier", nullable: false),
+                    SenderName = table.Column<string>(type: "nvarchar(max)", nullable: false),
+                    CreatedAt = table.Column<DateTime>(type: "datetime2", nullable: false)
                 },
                 constraints: table =>
                 {
-                    table.PrimaryKey("PK_Member", x => x.MemberId);
+                    table.PrimaryKey("PK_Chats", x => x.MessageId);
                 });
         }
 
@@ -29,7 +31,7 @@ namespace WeWakeAPI.Migrations
         protected override void Down(MigrationBuilder migrationBuilder)
         {
             migrationBuilder.DropTable(
-                name: "Member");
+                name: "Chats");
         }
     }
 }

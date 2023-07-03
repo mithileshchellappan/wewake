@@ -74,6 +74,30 @@ namespace WeWakeAPI.Migrations
                     b.ToTable("Alarms");
                 });
 
+            modelBuilder.Entity("WeWakeAPI.Models.Chat", b =>
+                {
+                    b.Property<Guid>("MessageId")
+                        .ValueGeneratedOnAdd()
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<DateTime>("CreatedAt")
+                        .HasColumnType("datetime2");
+
+                    b.Property<Guid>("GroupId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<Guid>("SenderId")
+                        .HasColumnType("uniqueidentifier");
+
+                    b.Property<string>("SenderName")
+                        .IsRequired()
+                        .HasColumnType("nvarchar(max)");
+
+                    b.HasKey("MessageId");
+
+                    b.ToTable("Chats");
+                });
+
             modelBuilder.Entity("WeWakeAPI.Models.Group", b =>
                 {
                     b.Property<Guid>("GroupId")
