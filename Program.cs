@@ -60,7 +60,7 @@ app.UseAuthorization();
 app.MapControllers();
 WebSocketOptions wsOptions = new WebSocketOptions
 {
-    KeepAliveInterval = TimeSpan.FromMinutes(2)
+    KeepAliveInterval = TimeSpan.FromSeconds(30)
 };
 app.UseWebSockets(wsOptions);
 app.UseWebSocketMiddleware("/ws");
