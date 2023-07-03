@@ -126,9 +126,12 @@ namespace WeWakeAPI.WebSockets
 
     public static class WebSocketMiddlewareExtension
     {
-        public static IApplicationBuilder UseWebSocketMiddleware(this IApplicationBuilder builder)
+        public static IApplicationBuilder UseWebSocketMiddleware(this IApplicationBuilder builder,string route)
         {
-            return builder.UseMiddleware<WebSocketMiddleware>();
+            return builder.Map(route, app =>
+            {
+                app.UseMiddleware<WebSocketMiddleware>();
+            });
         }
     }
 }

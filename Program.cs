@@ -60,7 +60,7 @@ app.UseAuthorization();
 app.MapControllers();
 
 app.UseWebSockets();
-app.UseWebSocketMiddleware();
+app.UseWebSocketMiddleware("/ws");
 
 
 app.UseJWTMiddleware();
