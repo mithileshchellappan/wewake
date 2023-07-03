@@ -1,4 +1,5 @@
 import 'package:alarm_test/providers/alarmsProvider.dart';
+import 'package:alarm_test/providers/chatsProvider.dart';
 import 'package:alarm_test/providers/groupProvider.dart';
 import 'package:alarm_test/providers/userProvider.dart';
 import 'package:alarm_test/screens/dashboardScreen.dart';
@@ -17,6 +18,7 @@ void main() async {
     providers: [
       ChangeNotifierProvider(create: (_) => UserProvider()),
       ChangeNotifierProvider(create: (_) => AlarmProvider()),
+      ChangeNotifierProvider(create: (_) => ChatProvider()),
       ChangeNotifierProvider(create: (_) => GroupProvider())
     ],
     child: const WeWake(),

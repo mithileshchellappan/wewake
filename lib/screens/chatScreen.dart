@@ -1,6 +1,9 @@
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:alarm_test/api/chat.dart';
+import 'package:alarm_test/models/Chat.dart';
+import 'package:alarm_test/providers/chatsProvider.dart';
 import 'package:alarm_test/providers/userProvider.dart';
 import 'package:alarm_test/widgets/chatWidgets.dart';
 import 'package:flutter/cupertino.dart';
@@ -30,24 +33,39 @@ class _ChatScreenState extends State<ChatScreen> {
   final senderTextController = TextEditingController();
   var channel;
   var userProvider;
+  var chatsProvider;
   @override
   void dispose() {
     senderTextController.dispose();
+    channel?.sink?.close();
     super.dispose();
   }
 
   @override
   void initState() {
     super.initState();
+    chatsProvider = Provider.of<ChatProvider>(context, listen: false);
     userProvider = Provider.of<UserProvider>(context, listen: false);
-    connectToWs();
+    getChatsFromDB();
+    reconnectToWs();
   }
 
-  void connectToWs() {
+  void getChatsFromDB() async {
+    var res = await getChatsCheckerId(widget.groupId);
+    print(res);
+    var ress = await getGroupChats(widget.groupId);
+    List<Chat> chats = Chat.fromListJson(ress['chats']);
+    // print(ress);
+    chatsProvider.setGroupChat(widget.groupId, chats);
+  }
+
+  bool isWSConnected = false;
+  void connectToWs() async {
     try {
       var url = Uri.parse(
           "${wsRoute}?group=${widget.groupId}&auth=${userProvider.user.JwtToken}");
       channel = WebSocketChannel.connect(url);
+      print(channel?.ready);
       print("connected to ${url}");
 
       channel.stream.listen(addMessage, onDone: () {
@@ -64,6 +82,7 @@ class _ChatScreenState extends State<ChatScreen> {
   void sendMessage() {
     if (senderTextController.text.isNotEmpty) {
       var json = {
+        "groupId": widget.groupId,
         "senderId": userProvider.user.UserId,
         "senderName": userProvider.user.Name,
         "data": senderTextController.text
@@ -99,6 +118,8 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   Widget build(BuildContext context) {
     userProvider = Provider.of<UserProvider>(context, listen: true);
+    chatsProvider = Provider.of<ChatProvider>(context, listen: true);
+
     return Scaffold(
       appBar: CupertinoNavigationBar(
         brightness: Theme.of(context).brightness,
