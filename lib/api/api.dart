@@ -2,14 +2,12 @@ import 'dart:io';
 
 import 'package:alarm_test/constants/api.dart';
 import 'package:http/http.dart' as http;
-import 'package:shared_preferences/shared_preferences.dart';
 
 import '../utils/sharedPref.dart';
 
 class API extends http.BaseClient {
   http.Client _client = http.Client();
   String? jwtToken;
-
   Map<String, String> _headers = {};
 
   void _setHeader() {

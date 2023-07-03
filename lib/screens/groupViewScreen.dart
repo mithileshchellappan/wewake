@@ -41,26 +41,24 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
   @override
   void initState() {
     super.initState();
-    setAlarms();
+    // setAlarms();
   }
 
-  void setAlarms() async {
-    setState(() {
-      isAlarmsLoading = true;
-    });
-    var res = await getGroupAlarms(widget.group.GroupId);
-    if (res['success']) {
-      setState(() {
-        // alarms = res['alarms'];
-      });
-      print(alarms.length);
-    } else {
-      Fluttertoast.showToast(msg: res['message']);
-    }
-    setState(() {
-      isAlarmsLoading = false;
-    });
-  }
+  // void setAlarms() async {
+  //   setState(() {
+  //     isAlarmsLoading = true;
+  //   });
+  //   var res = await getGroupAlarms(widget.group.GroupId);
+  //   if (res['success']) {
+
+  //     print(alarms.length);
+  //   } else {
+  //     Fluttertoast.showToast(msg: res['message']);
+  //   }
+  //   setState(() {
+  //     isAlarmsLoading = false;
+  //   });
+  // }
 
   void onAlarmCreateCallback(dynamic data) {
     if (data == null) {

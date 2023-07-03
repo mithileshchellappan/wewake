@@ -31,7 +31,7 @@ class _GroupDashboardScreenState extends State<GroupDashboardScreen> {
                 group: widget.group,
                 iconColor: widget.iconColor,
               )
-            : ChatScreen(),
+            : ChatScreen(widget.group.GroupId),
         bottomNavigationBar: CupertinoTabBar(
           currentIndex: _navBarIndex,
           onTap: (value) => {

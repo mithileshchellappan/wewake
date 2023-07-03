@@ -1,10 +1,18 @@
+import 'dart:convert';
+
+import 'package:alarm_test/providers/userProvider.dart';
 import 'package:alarm_test/widgets/chatWidgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
+import 'package:provider/provider.dart';
+import 'package:web_socket_channel/web_socket_channel.dart';
+
+import '../constants/api.dart';
 
 class ChatScreen extends StatefulWidget {
-  const ChatScreen({Key? key}) : super(key: key);
+  String groupId;
+  ChatScreen(this.groupId, {super.key});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -12,35 +20,58 @@ class ChatScreen extends StatefulWidget {
 
 class _ChatScreenState extends State<ChatScreen> {
   final List<Map<String, dynamic>> chatMessages = [
-    {"sender": "text1", "text": "Hello There", "isSelf": true},
-    {"sender": "text1", "text": "Hello There", "isSelf": false},
-    {"sender": "text1", "text": "Hello There", "isSelf": true},
-    {"sender": "text1", "text": "Hello There", "isSelf": false},
+    {"senderName": "text1", "data": "Hello There", "senderId": "not me"},
+    {"senderName": "text1", "data": "Hello There", "senderId": "not me"},
+    {"senderName": "text1", "data": "Hello There", "senderId": "not me"},
+    {"senderName": "text1", "data": "Hello There", "senderId": "not me"},
   ];
 
   final senderTextController = TextEditingController();
-
+  var channel;
+  var userProvider;
   @override
   void dispose() {
     senderTextController.dispose();
     super.dispose();
   }
 
+  @override
+  void initState() {
+    super.initState();
+    var url = Uri.parse("${wsRoute}?group=${widget.groupId}");
+    channel = WebSocketChannel.connect(url);
+    print("connected to ${url}");
+    // stream = channel.stream;
+    channel.stream.listen(addMessage);
+  }
+
   void sendMessage() {
     if (senderTextController.text.isNotEmpty) {
+      var json = {
+        "senderId": userProvider.user.UserId,
+        "senderName": userProvider.user.Name,
+        "data": senderTextController.text
+      };
+      print(json.toString());
       setState(() {
-        chatMessages.insert(0, {
-          "sender": "ivan dhaan",
-          "text": senderTextController.text,
-          "isSelf": true
-        });
+        chatMessages.insert(0, json);
       });
       senderTextController.clear();
+      channel.sink.add(jsonEncode(json));
     }
+  }
+
+  void addMessage(dynamic jsonData) {
+    var json = jsonDecode(jsonData);
+    print(jsonData);
+    setState(() {
+      chatMessages.insert(0, json);
+    });
   }
 
   @override
   Widget build(BuildContext context) {
+    userProvider = Provider.of<UserProvider>(context, listen: true);
     return Scaffold(
       appBar: CupertinoNavigationBar(
         brightness: Theme.of(context).brightness,
@@ -62,23 +93,35 @@ class _ChatScreenState extends State<ChatScreen> {
                 itemCount: chatMessages.length,
                 itemBuilder: (context, index) {
                   final message = chatMessages[index];
-                  if (message['isSelf']) {
-                    return ChatSendBubble(text: message['text']);
+                  if (message['senderId'] == userProvider.user.UserId) {
+                    return ChatSendBubble(text: message['data']);
                   } else {
                     return ChatReceiveBubble(
-                      sender: message['sender'],
-                      text: message['text'],
+                      sender: message['senderName'],
+                      text: message['data'],
                     );
                   }
                 },
               ),
             ),
+            // StreamBuilder(
+            //     stream: stream,
+            //     builder: (context, snapshot) {
+            //       if (snapshot.hasData) {
+            //         var jsonData = jsonDecode(snapshot.data.toString());
+            //         print(jsonData);
+            //         addMessage(jsonData);
+            //         return ChatReceiveBubble(
+            //             sender: jsonData['sender'], text: jsonData['text']);
+            //       }
+            //       return Container();
+            //     }),
             Padding(
               padding: const EdgeInsets.all(8.0),
               child: CupertinoTextField(
                 padding: const EdgeInsets.symmetric(
                     horizontal: 16.0, vertical: 12.0),
-                placeholder: 'iMessage',
+                placeholder: 'wMessage',
                 placeholderStyle: const TextStyle(
                   color: CupertinoColors.placeholderText,
                 ),
@@ -87,8 +130,7 @@ class _ChatScreenState extends State<ChatScreen> {
                 ),
                 cursorColor: Colors.white,
                 decoration: BoxDecoration(
-                  color: Colors.grey[
-                      700], // Set your desired text field background color here
+                  color: Colors.grey[700],
                   borderRadius: BorderRadius.circular(20.0),
                 ),
                 maxLines: null,

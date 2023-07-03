@@ -78,6 +78,7 @@ Future<bool> verify() async {
   try {
     API api = new API();
     Uri url = Uri.parse("$apiRoute/User/Verify");
+    print(apiRoute);
     final res = await api.get(url);
     print(res.statusCode);
     if (res.statusCode == 200) {
