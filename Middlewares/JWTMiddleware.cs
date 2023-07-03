@@ -37,19 +37,19 @@ namespace WeWakeAPI.Middlewares
             var bearerToken = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var (isValid, UserId, Name) = JWTHasher.ValidateToken(bearerToken);
 
-            if (isValid)
-            {
+            //if (isValid)
+            //{
                 Console.WriteLine("Requesting User:" + UserId);
                 context.Items["UserId"] = UserId;
                 context.Items["Name"] = Name;
                 await _next(context);
                 return;
-            }
-            else
-            {
-                SetUnauthorizedResponse(context);
-                return;
-            }
+            //}
+            //else
+            //{
+                //SetUnauthorizedResponse(context);
+                //return;
+            //}
         }
 
         private static void SetUnauthorizedResponse(HttpContext context)
