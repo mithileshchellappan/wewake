@@ -19,4 +19,20 @@ class ChatProvider extends ChangeNotifier {
     }
     print(_chats.toString() + noOfChats.toString());
   }
+
+  String? getLastMessageId(String groupId) {
+    return _chats?[groupId]?.first.MessageId;
+  }
+
+  void clearGroupChat(String groupId) {
+    _chats!.remove(groupId);
+  }
+
+  void addMessageToChat(String groupId, Chat message) {
+    _chats![groupId]!.insert(0, message);
+  }
+
+  List<Chat> getGroupChat(String groupId) {
+    return _chats?[groupId] ?? [];
+  }
 }

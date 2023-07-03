@@ -23,7 +23,7 @@ Future<dynamic> getGroupChats(groupId) async {
     Uri url = Uri.parse('$apiRoute/Chat/${groupId}');
     final res = await api.get(url);
     if (res.statusCode <= 299 && res.statusCode >= 200) {
-      return await jsonDecode(res.body.toString());
+      return jsonDecode(res.body.toString());
     }
   } catch (e) {
     return {"success": false, "message": e.toString()};

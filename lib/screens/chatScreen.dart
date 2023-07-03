@@ -24,12 +24,7 @@ class ChatScreen extends StatefulWidget {
 }
 
 class _ChatScreenState extends State<ChatScreen> {
-  final List<Map<String, dynamic>> chatMessages = [
-    {"senderName": "text1", "data": "Hello There", "senderId": "not me"},
-    {"senderName": "text1", "data": "Hello There", "senderId": "not me"},
-    {"senderName": "text1", "data": "Hello There", "senderId": "not me"},
-    {"senderName": "text1", "data": "Hello There", "senderId": "not me"},
-  ];
+  List<Chat> chatMessages = [];
   final senderTextController = TextEditingController();
   var channel;
   var userProvider;
@@ -44,7 +39,7 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    chatsProvider = Provider.of<ChatProvider>(context, listen: false);
+    // chatsProvider = Provider.of<ChatProvider>(context, listen: false);
     userProvider = Provider.of<UserProvider>(context, listen: false);
     getChatsFromDB();
     reconnectToWs();
@@ -52,11 +47,19 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void getChatsFromDB() async {
     var res = await getChatsCheckerId(widget.groupId);
-    print(res);
-    var ress = await getGroupChats(widget.groupId);
-    List<Chat> chats = Chat.fromListJson(ress['chats']);
-    // print(ress);
-    chatsProvider.setGroupChat(widget.groupId, chats);
+    // print(res);
+    String? lastMessageId = chatsProvider.getLastMessageId(widget.groupId);
+    print(res.toString() + (lastMessageId ?? "nothing"));
+    if (lastMessageId == null || res['messageId'] != lastMessageId) {
+      print("getting from db");
+      var ress = await getGroupChats(widget.groupId);
+      List<Chat> chats = Chat.fromListJson(ress['chats']);
+      // print(ress);
+      chatsProvider.setGroupChat(widget.groupId, chats);
+      setState(() {});
+    } else {
+      print('getting from provider');
+    }
   }
 
   bool isWSConnected = false;
@@ -81,17 +84,16 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void sendMessage() {
     if (senderTextController.text.isNotEmpty) {
-      var json = {
-        "groupId": widget.groupId,
-        "senderId": userProvider.user.UserId,
-        "senderName": userProvider.user.Name,
-        "data": senderTextController.text
-      };
-      print(json.toString());
-      if (channel.closeCode == null) {
+      // print(json.toString());
+      if (channel?.closeCode == null) {
+        Chat message = Chat(widget.groupId, userProvider.user.UserId,
+            userProvider.user.Name, senderTextController.text);
+
+        var json = message.toJson();
+        chatsProvider.addMessageToChat(widget.groupId, message);
         channel.sink.add(jsonEncode(json));
         setState(() {
-          chatMessages.insert(0, json);
+          // chatMessages.add(message);
         });
         senderTextController.clear();
       } else {
@@ -102,10 +104,9 @@ class _ChatScreenState extends State<ChatScreen> {
 
   void addMessage(dynamic jsonData) {
     var json = jsonDecode(jsonData);
-    print(jsonData);
-    setState(() {
-      chatMessages.insert(0, json);
-    });
+    Chat message = Chat.fromJson(json);
+    chatsProvider.addMessageToChat(widget.groupId, message);
+    setState(() {});
   }
 
   void reconnectToWs() {
@@ -119,7 +120,7 @@ class _ChatScreenState extends State<ChatScreen> {
   Widget build(BuildContext context) {
     userProvider = Provider.of<UserProvider>(context, listen: true);
     chatsProvider = Provider.of<ChatProvider>(context, listen: true);
-
+    chatMessages = chatsProvider.chats[widget.groupId] ?? [];
     return Scaffold(
       appBar: CupertinoNavigationBar(
         brightness: Theme.of(context).brightness,
@@ -145,12 +146,12 @@ class _ChatScreenState extends State<ChatScreen> {
                 itemCount: chatMessages.length,
                 itemBuilder: (context, index) {
                   final message = chatMessages[index];
-                  if (message['senderId'] == userProvider.user.UserId) {
-                    return ChatSendBubble(text: message['data']);
+                  if (message.SenderId == userProvider.user.UserId) {
+                    return ChatSendBubble(text: message.Data);
                   } else {
                     return ChatReceiveBubble(
-                      sender: message['senderName'],
-                      text: message['data'],
+                      sender: message.SenderName,
+                      text: message.Data,
                     );
                   }
                 },
