@@ -28,11 +28,11 @@ namespace WeWakeAPI.Middlewares
                 return;
             }
 
-            if (!context.Request.Headers.ContainsKey("Authorization"))
-            {
-                SetUnauthorizedResponse(context);
-                return;
-            }
+            //if (!context.Request.Headers.ContainsKey("Authorization"))
+            //{
+                //SetUnauthorizedResponse(context);
+                //return;
+            //}
 
             var bearerToken = context.Request.Headers["Authorization"].ToString().Replace("Bearer ", "");
             var (isValid, UserId, Name) = JWTHasher.ValidateToken(bearerToken);
