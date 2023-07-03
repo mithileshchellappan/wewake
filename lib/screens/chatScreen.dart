@@ -1,10 +1,12 @@
 import 'dart:convert';
+import 'dart:io';
 
 import 'package:alarm_test/providers/userProvider.dart';
 import 'package:alarm_test/widgets/chatWidgets.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_chat_bubble/chat_bubble.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 import 'package:provider/provider.dart';
 import 'package:web_socket_channel/web_socket_channel.dart';
 
@@ -25,7 +27,6 @@ class _ChatScreenState extends State<ChatScreen> {
     {"senderName": "text1", "data": "Hello There", "senderId": "not me"},
     {"senderName": "text1", "data": "Hello There", "senderId": "not me"},
   ];
-
   final senderTextController = TextEditingController();
   var channel;
   var userProvider;
@@ -38,11 +39,26 @@ class _ChatScreenState extends State<ChatScreen> {
   @override
   void initState() {
     super.initState();
-    var url = Uri.parse("${wsRoute}?group=${widget.groupId}");
-    channel = WebSocketChannel.connect(url);
-    print("connected to ${url}");
-    // stream = channel.stream;
-    channel.stream.listen(addMessage);
+    userProvider = Provider.of<UserProvider>(context, listen: false);
+    connectToWs();
+  }
+
+  void connectToWs() {
+    try {
+      var url = Uri.parse(
+          "${wsRoute}?group=${widget.groupId}&auth=${userProvider.user.JwtToken}");
+      channel = WebSocketChannel.connect(url);
+      print("connected to ${url}");
+
+      channel.stream.listen(addMessage, onDone: () {
+        print("channel closed");
+      }, onError: (error) {
+        print(error);
+      });
+    } on Exception catch (e) {
+      print(e);
+      Fluttertoast.showToast(msg: "Error Connecting to Chat");
+    }
   }
 
   void sendMessage() {
@@ -53,11 +69,15 @@ class _ChatScreenState extends State<ChatScreen> {
         "data": senderTextController.text
       };
       print(json.toString());
-      setState(() {
-        chatMessages.insert(0, json);
-      });
-      senderTextController.clear();
-      channel.sink.add(jsonEncode(json));
+      if (channel.closeCode == null) {
+        channel.sink.add(jsonEncode(json));
+        setState(() {
+          chatMessages.insert(0, json);
+        });
+        senderTextController.clear();
+      } else {
+        Fluttertoast.showToast(msg: "Chat disconnected. Reconnect");
+      }
     }
   }
 
@@ -67,6 +87,13 @@ class _ChatScreenState extends State<ChatScreen> {
     setState(() {
       chatMessages.insert(0, json);
     });
+  }
+
+  void reconnectToWs() {
+    if (channel != null && channel.closeCode == null) {
+      channel.sink.close();
+    }
+    connectToWs();
   }
 
   @override
@@ -81,6 +108,10 @@ class _ChatScreenState extends State<ChatScreen> {
         middle: Text(
           'Chat',
           style: TextStyle(color: Colors.white),
+        ),
+        trailing: IconButton(
+          icon: Icon(Icons.refresh),
+          onPressed: reconnectToWs,
         ),
       ),
       body: SafeArea(
