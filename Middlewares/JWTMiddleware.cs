@@ -14,7 +14,7 @@ namespace WeWakeAPI.Middlewares
             {
                 new PathString("/api/Login"),
                 new PathString("/api/SignUp"),
-                new PathString("/signalr/negotiate")
+                new PathString("/")
             };
         }
 
