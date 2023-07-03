@@ -20,6 +20,7 @@ builder.Services.AddHttpContextAccessor();
 builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<GroupService>();
 builder.Services.AddScoped<AlarmService>();
+builder.Services.AddScoped<ChatService>();
 
 string internalIp = IpAddr.GetIp();
 

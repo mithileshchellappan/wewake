@@ -1,6 +1,11 @@
-﻿using System.Collections.Concurrent;
+﻿using Newtonsoft.Json;
+using Newtonsoft.Json.Linq;
+using System.Collections.Concurrent;
 using System.Net.WebSockets;
 using System.Text;
+using WeWakeAPI.DBServices;
+using WeWakeAPI.Models;
+using WeWakeAPI.RequestModels;
 
 namespace WeWakeAPI.WebSockets
 {
@@ -8,10 +13,12 @@ namespace WeWakeAPI.WebSockets
     {
         private static ConcurrentDictionary<string, ConcurrentDictionary<string, WebSocket>> _groupSockets = new();
         private readonly RequestDelegate _next;
+        private ChatService _chatService;
 
-        public WebSocketMiddleware(RequestDelegate next)
+        public WebSocketMiddleware(RequestDelegate next,ChatService chatService)
         {
             _next = next;
+            _chatService = chatService;
         }
 
         public async Task Invoke(HttpContext context)
@@ -46,7 +53,7 @@ namespace WeWakeAPI.WebSockets
                         continue;
                     }
 
-                    await SendToGroup(groupId, response,currentSocket, ct);
+                    await SendToGroup(groupId, response,currentSocket, _chatService,ct);
                 }
             }
             finally
@@ -60,7 +67,7 @@ namespace WeWakeAPI.WebSockets
             }
         }
 
-        private static Task SendStringAsync(WebSocket socket, string data, CancellationToken ct = default)
+        private static Task SendStringAsync(WebSocket socket, dynamic data, CancellationToken ct = default)
         {
             var buffer = Encoding.UTF8.GetBytes(data);
             var segment = new ArraySegment<byte>(buffer);
@@ -92,11 +99,14 @@ namespace WeWakeAPI.WebSockets
             }
         }
 
-        private static async Task SendToGroup(string groupId, string data, WebSocket senderSocket, CancellationToken ct = default)
+  
+        private static async Task SendToGroup(string groupId, string data, WebSocket senderSocket, ChatService _chatService, CancellationToken ct = default)
         {
             if (!_groupSockets.TryGetValue(groupId, out var groupSockets))
                 return;
             console.log(data);
+            var jsonData = JsonConvert.DeserializeObject<ChatWSRequest>(data);
+            console.log(jsonData.Data);
 
             var tasks = new List<Task>();
             foreach (var socket in groupSockets)
@@ -104,10 +114,12 @@ namespace WeWakeAPI.WebSockets
                 if (socket.Value.State != WebSocketState.Open || socket.Value == senderSocket)
                     continue;
 
-                tasks.Add(SendStringAsync(socket.Value, data, ct));
+                tasks.Add(SendStringAsync(socket.Value, jsonData, ct));
             }
 
             await Task.WhenAll(tasks);
+            Chat chat = new Chat(Guid.Parse(groupId), Guid.Parse(jsonData.SenderId), jsonData.SenderName, jsonData.Data);
+            _chatService.AddMessage(chat);
         }
 
     }

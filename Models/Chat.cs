@@ -11,15 +11,18 @@ namespace WeWakeAPI.Models
         public Guid GroupId { get; set; }
         public Guid SenderId { get; set; }
         public string SenderName {get;set;}
+        public string Data { get; set; }
         public DateTime CreatedAt { get; set; }
 
        
-        public Chat(Guid groupId,Guid senderId,string senderName){
+        public Chat(Guid groupId, Guid senderId, string senderName, string data)
+        {
             this.MessageId = Guid.NewGuid();
             this.GroupId = groupId;
             this.SenderId = senderId;
             this.SenderName = senderName;
             this.CreatedAt = DateTime.Now;
+            this.Data = data;
         }
 
         // public Dictionary<String, object> AppendKey(string key, object obj)
