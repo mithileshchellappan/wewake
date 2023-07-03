@@ -62,9 +62,9 @@ app.MapControllers();
 app.UseWebSockets();
 app.UseWebSocketMiddleware();
 
-app.MapGet("/ping", () => "pong");
 
 app.UseJWTMiddleware();
+app.MapGet("/ping", () => "pong");
 console.log(internalIp);
 app.Urls.Add($"http://{internalIp}:5022");
 app.Urls.Add("http://localhost:5022");
