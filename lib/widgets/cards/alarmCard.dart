@@ -4,6 +4,7 @@ import 'package:alarm_test/api/alarm.dart';
 import 'package:alarm_test/providers/alarmsProvider.dart';
 import 'package:alarm_test/providers/userProvider.dart';
 import 'package:alarm_test/utils/alarmService.dart';
+import 'package:alarm_test/widgets/taskList.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -41,6 +42,7 @@ class _AlarmCardState extends State<AlarmCard> {
     });
   }
 
+  List<String> tasks = ["task 1", "task 2", "task 3"];
   static String formatTimeDifference(Duration difference, widget) {
     if (difference.inSeconds < 60 && difference.inSeconds > 0) {
       return "In ${difference.inSeconds} seconds";
@@ -165,6 +167,19 @@ class _AlarmCardState extends State<AlarmCard> {
                   // Text(widget.alarm.AlarmAppId.toString()),
                   SizedBox(height: 10),
                   bottomBar(),
+                  TaskList(tasks: tasks),
+                  Container(
+                      decoration: BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(5),
+                              bottomRight: Radius.circular(5))),
+                      child: const Center(
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.center,
+                          children: [Icon(Icons.add), Text("Add New Task")],
+                        ),
+                      ))
                 ],
               ),
             ),
