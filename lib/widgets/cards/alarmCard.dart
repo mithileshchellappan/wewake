@@ -1,10 +1,11 @@
 import 'dart:async';
 
 import 'package:alarm_test/api/alarm.dart';
+import 'package:alarm_test/models/Task.dart';
 import 'package:alarm_test/providers/alarmsProvider.dart';
 import 'package:alarm_test/providers/userProvider.dart';
 import 'package:alarm_test/utils/alarmService.dart';
-import 'package:alarm_test/widgets/taskList.dart';
+import 'package:alarm_test/widgets/taskTextField.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -31,8 +32,10 @@ class AlarmCard extends StatefulWidget {
 
 class _AlarmCardState extends State<AlarmCard> {
   static Timer? _timer;
+  List<Task> tasks = [];
   static StreamController<DateTime> _timeController =
       StreamController<DateTime>.broadcast();
+
   @override
   void initState() {
     super.initState();
@@ -40,9 +43,30 @@ class _AlarmCardState extends State<AlarmCard> {
     _timer ??= Timer.periodic(Duration(seconds: 10), (_) {
       _timeController.add(DateTime.now());
     });
+    tasks = [
+      Task(
+        widget.alarm.AlarmId,
+        "Test 1",
+        false,
+      ),
+      Task(
+        widget.alarm.AlarmId,
+        "Test 2",
+        true,
+      ),
+      Task(
+        widget.alarm.AlarmId,
+        "Test 3",
+        false,
+      ),
+      Task(
+        widget.alarm.AlarmId,
+        "Test 4",
+        true,
+      ),
+    ];
   }
 
-  List<String> tasks = ["task 1", "task 2", "task 3"];
   static String formatTimeDifference(Duration difference, widget) {
     if (difference.inSeconds < 60 && difference.inSeconds > 0) {
       return "In ${difference.inSeconds} seconds";
@@ -167,19 +191,39 @@ class _AlarmCardState extends State<AlarmCard> {
                   // Text(widget.alarm.AlarmAppId.toString()),
                   SizedBox(height: 10),
                   bottomBar(),
-                  TaskList(tasks: tasks),
                   Container(
-                      decoration: BoxDecoration(
-                          color: Colors.black,
-                          borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(5),
-                              bottomRight: Radius.circular(5))),
-                      child: const Center(
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: [Icon(Icons.add), Text("Add New Task")],
-                        ),
-                      ))
+                    color: Colors.black,
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: tasks.length,
+                      itemBuilder: (context, index) {
+                        final item = tasks[index];
+                        return TaskTextField(task: item);
+                      },
+                    ),
+                  ),
+                  InkWell(
+                    onTap: () {
+                      print("here");
+                      setState(() {
+                        tasks.add(Task(widget.alarm.AlarmId, "Edit this", false,
+                            IsNew: true));
+                      });
+                    },
+                    child: Container(
+                        decoration: BoxDecoration(
+                            color: Colors.black,
+                            borderRadius: BorderRadius.only(
+                                bottomLeft: Radius.circular(5),
+                                bottomRight: Radius.circular(5))),
+                        child: const Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [Icon(Icons.add), Text("Add New Task")],
+                          ),
+                        )),
+                  )
                 ],
               ),
             ),
