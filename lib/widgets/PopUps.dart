@@ -33,6 +33,38 @@ class YNPopUp extends StatelessWidget {
   }
 }
 
+class MultiActionPopup extends StatefulWidget {
+  final String title;
+  final String subtitle;
+  final String description;
+  final List<CupertinoDialogAction> actions;
+  const MultiActionPopup(this.title, this.subtitle, this.description,
+      {required this.actions, super.key});
+  @override
+  State<MultiActionPopup> createState() => _MultiActionPopupState();
+}
+
+class _MultiActionPopupState extends State<MultiActionPopup> {
+  @override
+  Widget build(BuildContext context) {
+    return Center(
+      child: CupertinoAlertDialog(
+        title: Text(widget.title),
+        content: Column(
+          children: [
+            Text(widget.subtitle),
+            Text(
+              widget.description,
+              style: TextStyle(fontSize: 14),
+            )
+          ],
+        ),
+        actions: widget.actions,
+      ),
+    );
+  }
+}
+
 class PopUpDialog extends StatefulWidget {
   final String title;
   final Function(String, bool) onOkay;

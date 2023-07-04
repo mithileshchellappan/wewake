@@ -2,7 +2,7 @@ import 'package:alarm_test/api/group.dart';
 import 'package:alarm_test/providers/alarmsProvider.dart';
 import 'package:alarm_test/providers/groupProvider.dart';
 import 'package:alarm_test/providers/userProvider.dart';
-import 'package:alarm_test/screens/groupDashboardScren.dart';
+import 'package:alarm_test/screens/groupDashboardScreen.dart';
 import 'package:alarm_test/screens/groupViewScreen.dart';
 import 'package:alarm_test/widgets/PopUps.dart';
 import 'package:alarm_test/utils/TextIcon.dart';

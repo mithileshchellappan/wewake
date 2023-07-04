@@ -40,4 +40,18 @@ class AlarmProvider extends ChangeNotifier {
       removeAlarm(element);
     });
   }
+
+  Alarm? getAlarmFromAlarmAppId(int alarmAppId) {
+    Alarm alarm =
+        _alarms!.where((element) => element.AlarmAppId == alarmAppId).first;
+    return alarm;
+  }
+
+  void editAlarm(String alarmId, Alarm updatedAlarm) {
+    final index = _alarms?.indexWhere((element) => element.AlarmId == alarmId);
+    if (index != null && index >= 0) {
+      _alarms?[index] = updatedAlarm;
+      notifyListeners();
+    }
+  }
 }

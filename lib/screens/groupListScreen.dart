@@ -1,10 +1,13 @@
+import 'dart:async';
 import 'dart:math';
 
 import 'package:alarm_test/api/group.dart';
+import 'package:alarm_test/models/Alarm.dart';
 import 'package:alarm_test/models/User.dart';
 import 'package:alarm_test/providers/alarmsProvider.dart';
 import 'package:alarm_test/providers/groupProvider.dart';
 import 'package:alarm_test/utils/alarmService.dart';
+import 'package:alarm_test/utils/helpers.dart';
 import 'package:alarm_test/widgets/cards/groupCard.dart';
 import 'package:alarm_test/widgets/PopUps.dart';
 import 'package:flutter/cupertino.dart';
@@ -17,7 +20,7 @@ import 'package:provider/provider.dart';
 import 'package:alarm_test/providers/userProvider.dart';
 
 class GroupScreen extends StatefulWidget {
-  const GroupScreen({Key? key}) : super(key: key);
+  GroupScreen({Key? key}) : super(key: key);
 
   @override
   _GroupScreenState createState() => _GroupScreenState();
@@ -31,7 +34,6 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   void initState() {
     super.initState();
-
     setGroups();
   }
 
@@ -164,15 +166,41 @@ class GroupFloatingActionButton extends StatelessWidget {
       backgroundColor: Theme.of(context).focusColor,
       children: [
         SpeedDialChild(
-          child: const Icon(Icons.nat),
-          label: 'Debugging Button',
-          onTap: () {
-            final userProvider =
-                Provider.of<UserProvider>(context, listen: false);
-            final user = userProvider.user;
-            print(user?.UserId);
-          },
-        ),
+            child: const Icon(Icons.nat),
+            label: 'Debugging Button',
+            onTap: () {
+              showDialog(
+                  context: context,
+                  builder: (context) {
+                    return MultiActionPopup(
+                      "⏰ Test",
+                      "Test",
+                      "from: Group",
+                      actions: [
+                        CupertinoDialogAction(
+                          textStyle:
+                              TextStyle(backgroundColor: Colors.yellowAccent),
+                          child: Container(
+                            child: const Text("Snooze (+5 min)"),
+                          ),
+                          onPressed: () {
+                            Navigator.of(context).pop();
+                            Fluttertoast.showToast(msg: "Snoozing");
+                          },
+                        ),
+                        CupertinoDialogAction(
+                          child: Text("Go to group"),
+                          onPressed: () {},
+                        ),
+                        CupertinoDialogAction(
+                          child: Text("Stop"),
+                          isDestructiveAction: true,
+                          onPressed: () {},
+                        )
+                      ],
+                    );
+                  });
+            }),
         SpeedDialChild(
           child: const Icon(Icons.add),
           label: 'Create Group',
