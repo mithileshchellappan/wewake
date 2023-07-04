@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:alarm_test/api/alarm.dart';
+import 'package:alarm_test/constants/app.dart';
 import 'package:alarm_test/models/Task.dart';
 import 'package:alarm_test/providers/alarmsProvider.dart';
 import 'package:alarm_test/providers/userProvider.dart';
@@ -342,7 +343,11 @@ class _AlarmCardState extends State<AlarmCard> {
 class PlayButton extends StatefulWidget {
   String url;
   bool isExpanded;
-  PlayButton({super.key, required this.url, this.isExpanded = true});
+  PlayButton({
+    super.key,
+    required this.url,
+    this.isExpanded = true,
+  });
 
   @override
   State<PlayButton> createState() => _PlayButtonState();
@@ -351,11 +356,20 @@ class PlayButton extends StatefulWidget {
 class _PlayButtonState extends State<PlayButton> {
   bool _isPlaying = false;
   final player = AudioPlayer();
-
+  late String fileName;
   @override
   void dispose() {
     player.dispose();
     super.dispose();
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    fileName = ((alarmTones
+            .where((element) => element['location'] == widget.url)
+            .first)['name'] ??
+        "Nokia");
   }
 
   @override
@@ -384,7 +398,7 @@ class _PlayButtonState extends State<PlayButton> {
         },
         child: Container(
             decoration: BoxDecoration(
-                color: Colors.white, borderRadius: BorderRadius.circular(20)),
+                color: Colors.black, borderRadius: BorderRadius.circular(20)),
             child: Padding(
               padding:
                   widget.isExpanded ? EdgeInsets.all(2.0) : EdgeInsets.all(0.0),
@@ -394,13 +408,13 @@ class _PlayButtonState extends State<PlayButton> {
                     _isPlaying
                         ? Icons.pause_circle_filled
                         : Icons.play_circle_fill,
-                    color: Colors.black,
+                    color: Colors.white,
                   ),
                   if (widget.isExpanded) SizedBox(width: 5),
                   if (widget.isExpanded)
                     Text(
-                      _isPlaying ? "Pause" : "Play",
-                      style: TextStyle(color: Colors.black),
+                      fileName,
+                      style: TextStyle(color: Colors.white, fontSize: 16),
                     ),
                   if (widget.isExpanded) SizedBox(width: 5),
                 ],
