@@ -27,14 +27,10 @@ class AlarmCard extends StatefulWidget {
 }
 
 class _AlarmCardState extends State<AlarmCard> {
-  late String time;
-  late String timeText;
+  // late String time;
   @override
   void initState() {
     super.initState();
-    time = formatTimeDifference(
-        widget.alarm.Time.difference(DateTime.now()), widget);
-    timeText = DateFormat('dd MMMM yy \nhh:mm a').format(widget.alarm.Time);
   }
 
   static String formatTimeDifference(Duration difference, widget) {
@@ -147,7 +143,8 @@ class _AlarmCardState extends State<AlarmCard> {
                   Padding(
                     padding: const EdgeInsets.only(left: 4.0),
                     child: Text(
-                      "$timeText",
+                      DateFormat('dd MMMM yy \nhh:mm a')
+                          .format(widget.alarm.Time),
                       style: TextStyle(fontSize: 11, color: Colors.white60),
                     ),
                   ),
@@ -212,7 +209,8 @@ class _AlarmCardState extends State<AlarmCard> {
                   ),
                 ),
                 Expanded(child: Container()),
-                Text("$time"),
+                Text(formatTimeDifference(
+                    widget.alarm.Time.difference(DateTime.now()), widget)),
                 SizedBox(
                   width: 10,
                 )

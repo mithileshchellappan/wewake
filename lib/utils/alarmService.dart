@@ -39,7 +39,7 @@ class AlarmService {
 
   static Future<void> cancelAlarm(int alarmId) async {
     print("Cancelled alarm $alarmId");
-    await AP.Alarm.stop(alarmId);
+    await AP.Alarm?.stop(alarmId);
   }
 
   static Future<bool> checkAlarm(alarmId) async {
