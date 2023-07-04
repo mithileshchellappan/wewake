@@ -37,9 +37,9 @@ class AlarmService {
     }
   }
 
-  static Future<void> cancelAlarm(int alarmId) async {
+  static void cancelAlarm(int alarmId) {
     print("Cancelled alarm $alarmId");
-    await AP.Alarm?.stop(alarmId);
+    AP.Alarm.stop(alarmId);
   }
 
   static Future<bool> checkAlarm(alarmId) async {
@@ -56,7 +56,7 @@ class AlarmService {
     for (int i = 0; i < deviceAlarms.length; i++) {
       if (!serverAlarms
           .any((alarm) => alarm.AlarmAppId == deviceAlarms[i].id)) {
-        await cancelAlarm(deviceAlarms[i].id);
+        cancelAlarm(deviceAlarms[i].id);
       }
     }
 
@@ -70,7 +70,7 @@ class AlarmService {
 
   static Future<void> cancelMultipleAlarms(List<Alarm> alarms) async {
     for (var alarm in alarms) {
-      await cancelAlarm(alarm.AlarmAppId);
+      cancelAlarm(alarm.AlarmAppId);
     }
   }
 
@@ -78,7 +78,7 @@ class AlarmService {
     List<AlarmSettings> deviceAlarms = getAlarmsInSystem();
 
     for (int i = 0; i < deviceAlarms.length; i++) {
-      await cancelAlarm(deviceAlarms[i].id);
+      cancelAlarm(deviceAlarms[i].id);
     }
   }
 }

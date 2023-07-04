@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:alarm_test/api/alarm.dart';
 import 'package:alarm_test/providers/alarmsProvider.dart';
 import 'package:alarm_test/providers/userProvider.dart';
@@ -27,16 +29,21 @@ class AlarmCard extends StatefulWidget {
 }
 
 class _AlarmCardState extends State<AlarmCard> {
-  // late String time;
+  static Timer? _timer;
+  static StreamController<DateTime> _timeController =
+      StreamController<DateTime>.broadcast();
   @override
   void initState() {
     super.initState();
+    !_timeController.isClosed ? _timeController.add(DateTime.now()) : null;
+    _timer ??= Timer.periodic(Duration(seconds: 10), (_) {
+      _timeController.add(DateTime.now());
+    });
   }
 
   static String formatTimeDifference(Duration difference, widget) {
-    print(difference.inMinutes);
     if (difference.inSeconds < 60 && difference.inSeconds > 0) {
-      return "just now";
+      return "In ${difference.inSeconds} seconds";
     } else if (difference.inMinutes < 60) {
       if (difference.inMinutes < 0) {
         widget.alarm.IsEnabled = false;
@@ -64,6 +71,13 @@ class _AlarmCardState extends State<AlarmCard> {
       }
       return "In $months ${months == 1 ? 'month' : 'months'}";
     }
+  }
+
+  @override
+  void dispose() async {
+    _timer?.cancel();
+    _timeController.close();
+    super.dispose();
   }
 
   @override
@@ -137,7 +151,7 @@ class _AlarmCardState extends State<AlarmCard> {
                     padding: const EdgeInsets.only(left: 4.0),
                     child: Text(
                       widget.alarm.NotificationBody,
-                      style: TextStyle(fontSize: 12, color: Colors.white60),
+                      style: TextStyle(fontSize: 13, color: Colors.white70),
                     ),
                   ),
                   Padding(
@@ -145,7 +159,7 @@ class _AlarmCardState extends State<AlarmCard> {
                     child: Text(
                       DateFormat('dd MMMM yy \nhh:mm a')
                           .format(widget.alarm.Time),
-                      style: TextStyle(fontSize: 11, color: Colors.white60),
+                      style: TextStyle(fontSize: 11, color: Colors.white30),
                     ),
                   ),
                   // Text(widget.alarm.AlarmAppId.toString()),
@@ -175,7 +189,10 @@ class _AlarmCardState extends State<AlarmCard> {
                 SizedBox(
                   width: 10,
                 ),
-                Text(widget.alarm.IsEnabled ? "🟢" : "🔴"),
+                Text((widget.alarm.IsEnabled &&
+                        DateTime.now().compareTo(widget.alarm.Time) <= 0)
+                    ? "🟢"
+                    : "🔴"),
                 SizedBox(
                   width: 10,
                 ),
@@ -209,8 +226,25 @@ class _AlarmCardState extends State<AlarmCard> {
                   ),
                 ),
                 Expanded(child: Container()),
-                Text(formatTimeDifference(
-                    widget.alarm.Time.difference(DateTime.now()), widget)),
+                StreamBuilder<DateTime>(
+                    stream: _timeController.stream,
+                    builder: (context, snapshot) {
+                      if (snapshot.hasData) {
+                        return Text(
+                          formatTimeDifference(
+                              widget.alarm.Time.difference(snapshot.data!),
+                              widget),
+                          style: TextStyle(fontSize: 11, color: Colors.white),
+                        );
+                      } else {
+                        return Text(
+                            formatTimeDifference(
+                                widget.alarm.Time.difference(DateTime.now()),
+                                widget),
+                            style:
+                                TextStyle(fontSize: 11, color: Colors.white));
+                      }
+                    }),
                 SizedBox(
                   width: 10,
                 )
