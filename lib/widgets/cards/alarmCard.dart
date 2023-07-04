@@ -33,6 +33,7 @@ class AlarmCard extends StatefulWidget {
 class _AlarmCardState extends State<AlarmCard> {
   static Timer? _timer;
   List<Task> tasks = [];
+  bool showTasks = false;
   static StreamController<DateTime> _timeController =
       StreamController<DateTime>.broadcast();
 
@@ -124,8 +125,9 @@ class _AlarmCardState extends State<AlarmCard> {
               onTap: (CompletionHandler handler) async {},
               title: "  Opt Out"),
         ],
-        trailingActions: (widget.isAdmin ||
-                widget.alarm.CreatedBy == userProvider.user!.UserId)
+        trailingActions: ((widget.isAdmin ||
+                    widget.alarm.CreatedBy == userProvider.user!.UserId) &&
+                !showTasks)
             ? [
                 SwipeAction(
                     icon: const Icon(Icons.delete_forever),
@@ -162,7 +164,7 @@ class _AlarmCardState extends State<AlarmCard> {
                         padding: const EdgeInsets.only(left: 4.0),
                         child: Text(
                           widget.alarm.NotificationTitle,
-                          style: TextStyle(fontSize: 15),
+                          style: TextStyle(fontSize: 24),
                         ),
                       ),
                       Expanded(child: Container()),
@@ -170,20 +172,20 @@ class _AlarmCardState extends State<AlarmCard> {
                         url: audioLink ?? "nokia.mp3",
                         isExpanded: true,
                       ),
-                      SizedBox(width: 5),
+                      SizedBox(width: 2),
                     ],
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 4.0),
                     child: Text(
                       widget.alarm.NotificationBody,
-                      style: TextStyle(fontSize: 13, color: Colors.white70),
+                      style: TextStyle(fontSize: 15, color: Colors.white70),
                     ),
                   ),
                   Padding(
                     padding: const EdgeInsets.only(left: 4.0),
                     child: Text(
-                      DateFormat('dd MMMM yy \nhh:mm a')
+                      DateFormat('hh:mm a dd MMMM yy ')
                           .format(widget.alarm.Time),
                       style: TextStyle(fontSize: 11, color: Colors.white30),
                     ),
@@ -191,24 +193,44 @@ class _AlarmCardState extends State<AlarmCard> {
                   // Text(widget.alarm.AlarmAppId.toString()),
                   SizedBox(height: 10),
                   bottomBar(),
-                  Container(
-                    color: Colors.black,
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: tasks.length,
-                      itemBuilder: (context, index) {
-                        final item = tasks[index];
-                        return TaskTextField(task: item);
+                  if (showTasks)
+                    InkWell(
+                      onTap: () {
+                        print("here");
+                        setState(() {
+                          tasks.insert(
+                              0,
+                              Task(widget.alarm.AlarmId, "Add your task", false,
+                                  IsNew: true));
+                        });
                       },
+                      child: Container(
+                          color: Colors.blueGrey[700],
+                          child: const Center(
+                            child: Row(
+                              mainAxisAlignment: MainAxisAlignment.center,
+                              children: [Icon(Icons.add), Text("Add New Task")],
+                            ),
+                          )),
                     ),
-                  ),
+                  if (showTasks)
+                    Container(
+                      color: Colors.black,
+                      child: ListView.builder(
+                        shrinkWrap: true,
+                        physics: NeverScrollableScrollPhysics(),
+                        itemCount: tasks.length,
+                        itemBuilder: (context, index) {
+                          final item = tasks[index];
+                          return TaskTextField(task: item);
+                        },
+                      ),
+                    ),
+
                   InkWell(
                     onTap: () {
-                      print("here");
                       setState(() {
-                        tasks.add(Task(widget.alarm.AlarmId, "Edit this", false,
-                            IsNew: true));
+                        showTasks = !showTasks;
                       });
                     },
                     child: Container(
@@ -217,13 +239,20 @@ class _AlarmCardState extends State<AlarmCard> {
                             borderRadius: BorderRadius.only(
                                 bottomLeft: Radius.circular(5),
                                 bottomRight: Radius.circular(5))),
-                        child: const Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [Icon(Icons.add), Text("Add New Task")],
-                          ),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.end,
+                          children: [
+                            Icon(showTasks
+                                ? Icons.arrow_drop_up
+                                : Icons.arrow_drop_down),
+                            Text(
+                              "Tasks",
+                              style: TextStyle(fontSize: 16),
+                            ),
+                            SizedBox(width: 10)
+                          ],
                         )),
-                  )
+                  ),
                 ],
               ),
             ),
@@ -238,11 +267,7 @@ class _AlarmCardState extends State<AlarmCard> {
       builder: ((context, constraints) => Container(
             width: constraints.maxWidth,
             padding: EdgeInsets.only(top: 3),
-            decoration: BoxDecoration(
-                color: Theme.of(context).backgroundColor,
-                borderRadius: BorderRadius.only(
-                    bottomLeft: Radius.circular(5),
-                    bottomRight: Radius.circular(5))),
+            color: Theme.of(context).backgroundColor,
             child: Row(
               children: [
                 SizedBox(
