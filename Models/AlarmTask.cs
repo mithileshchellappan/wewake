@@ -11,14 +11,14 @@ namespace WeWakeAPI.Models
         [ForeignKey("AlarmId")]
         public Alarm Alarm { get; set; }
 
-        AlarmTask(Guid alarmTaskId, Guid alarmId, string taskText)
+        public AlarmTask(Guid alarmTaskId, Guid alarmId, string taskText)
         {
             AlarmTaskId = alarmTaskId;
             AlarmId = alarmId;
             TaskText = taskText;
         }
 
-        AlarmTask(Guid alarmId,string taskText)
+        public AlarmTask(Guid alarmId,string taskText)
         {
             AlarmTaskId = Guid.NewGuid();
             AlarmId = alarmId;

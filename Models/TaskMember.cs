@@ -12,9 +12,8 @@ namespace WeWakeAPI.Models
 
         [ForeignKey("AlarmTaskId")]
         public AlarmTask AlarmTask { get; set; }
-        [ForeignKey("MemberId")]
-        public Member Member { get; set; }
-        public TaskMember(Guid taskMemberId, Guid taskId, Guid memberId, bool isDone)
+
+        public TaskMember(Guid taskMemberId, Guid taskId, Guid memberId, bool isDone=false)
         {
             TaskMemberId = taskMemberId;
             AlarmTaskId = taskId;

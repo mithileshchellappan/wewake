@@ -21,6 +21,8 @@ builder.Services.AddScoped<UserService>();
 builder.Services.AddScoped<GroupService>();
 builder.Services.AddScoped<AlarmService>();
 builder.Services.AddScoped<ChatService>();
+builder.Services.AddScoped<AlarmTaskService>();
+
 
 string internalIp = IpAddr.GetIp();
 
