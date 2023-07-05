@@ -52,9 +52,11 @@ namespace WeWakeAPI.DBServices
         {
             //AlarmTask task = await _context.AlarmsTasks.Where(m=>m.AlarmTaskId).FindAsync()
 
-            TaskMember taskMember = _context.TaskMembers.Where(m => m.AlarmTaskId == taskId && m.TaskMemberId == memberId).FirstOrDefault();
+            TaskMember taskMember = await _context.TaskMembers.FirstOrDefaultAsync(m => (m.AlarmTaskId == taskId && m.MemberId == memberId));
             if (taskMember!=null)
             {
+            console.log(taskMember.IsDone);
+                console.log("inside");
                 taskMember.IsDone = !taskMember.IsDone;
                 _context.TaskMembers.Update(taskMember);
                 await _context.SaveChangesAsync();
@@ -62,6 +64,7 @@ namespace WeWakeAPI.DBServices
             }
             else
             {
+                console.log("inside else");
                 taskMember = new TaskMember(taskId, memberId, true);
                 _context.TaskMembers.Add(taskMember);
                 await _context.SaveChangesAsync();

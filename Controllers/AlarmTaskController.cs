@@ -76,7 +76,7 @@ namespace WeWakeAPI.Controllers
 
                 return Ok(new
                 {
-                    sucess = true,
+                    success = true,
                     task = new { taskId, status }
                 });
             }catch(Exception e)
