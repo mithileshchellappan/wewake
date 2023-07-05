@@ -70,14 +70,15 @@ namespace WeWakeAPI.Controllers
         {
             try
             {
+                await _alarmTaskService.CheckIfTaskExists(taskId);
                 Guid userId = _userService.GetUserIdFromJWT();
 
-                bool status = await _alarmTaskService.SetTaskStatus(taskId, userId);
+                bool isDone = await _alarmTaskService.SetTaskStatus(taskId, userId);
 
                 return Ok(new
                 {
                     success = true,
-                    task = new { taskId, status }
+                    task = new { taskId, isDone }
                 });
             }catch(Exception e)
             {

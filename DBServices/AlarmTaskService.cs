@@ -48,6 +48,16 @@ namespace WeWakeAPI.DBServices
             return tasks;
         }
 
+        public async Task<bool> CheckIfTaskExists(Guid taskId,bool throwException=true)
+        {
+            bool exists = await _context.AlarmsTasks.AnyAsync(m => m.AlarmTaskId == taskId);
+            if(!exists && throwException)
+            {
+                throw new Exception("Task does not exist");
+            }
+            return exists;
+        }
+
         public async Task<bool> SetTaskStatus(Guid taskId,Guid memberId)
         {
             //AlarmTask task = await _context.AlarmsTasks.Where(m=>m.AlarmTaskId).FindAsync()
