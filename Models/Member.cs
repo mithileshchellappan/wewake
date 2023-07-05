@@ -11,8 +11,10 @@ namespace WeWakeAPI.Models
         public Guid MemberId { get; set; }
         public Guid GroupId { get; set; }
         public bool isAdmin { get; set; }
+
         [ForeignKey("MemberId")]
         public User User { get; set; }
+
         [ForeignKey("GroupId")]
         public Group Group { get; set; }
 

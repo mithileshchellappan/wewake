@@ -19,10 +19,14 @@ namespace WeWakeAPI.Data
 
         public DbSet<Chat> Chats { get; set; }
 
+        public DbSet<AlarmTask> AlarmsTasks { get; set; }
+        public DbSet<TaskMember> TaskMembers { get; set; }
+
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
+            
             base.OnModelCreating(modelBuilder);
-    
+
         }
     }
 }

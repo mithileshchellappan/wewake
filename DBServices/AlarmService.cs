@@ -17,9 +17,14 @@ namespace WeWakeAPI.DBServices
             _groupService = groupService;
         }
 
-        public async Task<Alarm> GetAlarm(Guid alarmId)
+        public async Task<Alarm> GetAlarm(Guid alarmId,bool throwException=true)
         {
-            return await _context.Alarms.FirstAsync(x => x.AlarmId == alarmId);
+              Alarm alarm =  await _context.Alarms.FirstAsync(x => x.AlarmId == alarmId);
+            if(alarm==null && throwException)
+            {
+                throw new NotFoundException("Alarm not found");
+            }
+            return alarm;
         }
 
         public async Task<Alarm> CreateAlarm(AlarmRequest alarmReq, Guid userId)
