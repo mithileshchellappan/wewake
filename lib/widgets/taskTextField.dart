@@ -1,32 +1,70 @@
+import 'package:alarm_test/api/task.dart';
 import 'package:alarm_test/models/Task.dart';
+import 'package:alarm_test/widgets/cards/alarmCard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:fluttertoast/fluttertoast.dart';
 
 class TaskTextField extends StatefulWidget {
   Task task;
-  TaskTextField({super.key, required this.task});
+  String groupId;
+  int index;
+  // TasksProvider tasksProvider;
+  Function onUpdate;
+  FocusNode focusNode;
+  TextEditingController textEditingController;
+  TaskTextField(
+      {super.key,
+      required this.task,
+      required this.groupId,
+      required this.onUpdate,
+      // required this.tasksProvider,
+      required this.focusNode,
+      required this.textEditingController,
+      required this.index});
 
   @override
   State<TaskTextField> createState() => _TaskTextFieldState();
 }
 
 class _TaskTextFieldState extends State<TaskTextField> {
-  TextEditingController _controller = TextEditingController();
   bool isEdit = false;
-  FocusNode focusNode = FocusNode();
-
   @override
   void initState() {
     super.initState();
-    // focusNode = FocusNode();
   }
 
-  void setUpdate(_) {
-    setState(() {
-      isEdit = false;
-      widget.task.TaskText = _controller.text;
-      widget.task.IsNew = false;
-    });
+  @override
+  void dispose() {
+    super.dispose();
+  }
+
+  void setUpdate(_) async {
+    if (widget.textEditingController.text.isEmpty) {
+      widget.onUpdate(UpdateTypes.remove, widget.index, widget.task);
+    } else {
+      widget.task.TaskText = widget.textEditingController.text;
+      if (widget.task.IsNew) {
+        var res = await createTask(widget.groupId, widget.task);
+        if (res['success']) {
+          widget.task = res['task'];
+
+          setState(() {
+            isEdit = false;
+            widget.task.IsNew = false;
+          });
+          widget.onUpdate(UpdateTypes.insert, widget.index, res['task']);
+        } else {
+          setState(() {
+            isEdit = false;
+            widget.task.IsNew = false;
+          });
+          widget.onUpdate(UpdateTypes.remove, widget.index, widget.task);
+
+          Fluttertoast.showToast(msg: "Error creating task");
+        }
+      }
+    }
   }
 
   @override
@@ -39,10 +77,10 @@ class _TaskTextFieldState extends State<TaskTextField> {
         },
         onLongPress: () {
           // _controller.
-          focusNode.requestFocus();
+          widget.focusNode.requestFocus();
           setState(() {
             isEdit = true;
-            _controller.text = widget.task.TaskText;
+            widget.textEditingController.text = widget.task.TaskText;
           });
         },
         child: Container(
@@ -63,8 +101,8 @@ class _TaskTextFieldState extends State<TaskTextField> {
                     autocorrect: true,
                     autofocus: true,
                     keyboardType: TextInputType.text,
-                    controller: _controller,
-                    focusNode: focusNode,
+                    controller: widget.textEditingController,
+                    focusNode: widget.focusNode,
                     textAlign: TextAlign.center,
                     maxLength: 20,
                     style: TextStyle(

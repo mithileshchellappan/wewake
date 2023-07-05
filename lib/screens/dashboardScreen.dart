@@ -46,45 +46,50 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 alarmProvider.getAlarmFromAlarmAppId(alarmSettings.id);
             Group group = groupProvider.getGroup(alarm!.GroupId!);
 
-            return MultiActionPopup(
-              "⏰ ${alarm!.NotificationTitle}",
-              "${alarm.NotificationBody}",
-              "from: ${group.GroupName}",
-              actions: [
-                CupertinoDialogAction(
-                  child: const Text("Snooze (+5 min)"),
-                  textStyle: TextStyle(color: Colors.yellowAccent),
-                  onPressed: () {
-                    alarm.Time = alarm.Time.add(const Duration(minutes: 1));
-                    alarmProvider.editAlarm(alarm.AlarmId, alarm);
-                    AP.Alarm.set(
-                        alarmSettings:
-                            alarmSettings.copyWith(dateTime: alarm.Time));
-                    Navigator.of(context).pop();
-                    Fluttertoast.showToast(msg: "Snoozing");
-                  },
-                ),
-                CupertinoDialogAction(
-                  child: const Text("Go to group"),
-                  onPressed: () {
-                    Group group = groupProvider.getGroup(alarm.GroupId!);
-                    Navigator.of(context).pop();
-                    Navigator.of(context).push(MaterialPageRoute(
-                        builder: (context) => GroupViewScreen(
-                            group: group, iconColor: getRandomDarkColor())));
-                    AP.Alarm.stop(alarmSettings.id);
-                  },
-                ),
-                CupertinoDialogAction(
-                  child: Text("Stop"),
-                  isDestructiveAction: true,
-                  onPressed: () {
-                    AP.Alarm.stop(alarmSettings.id);
-                    Navigator.of(context).pop();
-                  },
-                )
-              ],
-            );
+            if (group != null) {
+              return MultiActionPopup(
+                "⏰ ${alarm!.NotificationTitle}",
+                "${alarm.NotificationBody}",
+                "from: ${group.GroupName}",
+                actions: [
+                  CupertinoDialogAction(
+                    child: const Text("Snooze (+5 min)"),
+                    textStyle: TextStyle(color: Colors.yellowAccent),
+                    onPressed: () {
+                      alarm.Time = alarm.Time.add(const Duration(minutes: 1));
+                      alarmProvider.editAlarm(alarm.AlarmId, alarm);
+                      AP.Alarm.set(
+                          alarmSettings:
+                              alarmSettings.copyWith(dateTime: alarm.Time));
+                      Navigator.of(context).pop();
+                      Fluttertoast.showToast(msg: "Snoozing");
+                    },
+                  ),
+                  CupertinoDialogAction(
+                    child: const Text("Go to group"),
+                    onPressed: () {
+                      Group group = groupProvider.getGroup(alarm.GroupId!);
+                      Navigator.of(context).pop();
+                      Navigator.of(context).push(MaterialPageRoute(
+                          builder: (context) => GroupViewScreen(
+                              group: group, iconColor: getRandomDarkColor())));
+                      AP.Alarm.stop(alarmSettings.id);
+                    },
+                  ),
+                  CupertinoDialogAction(
+                    child: Text("Stop"),
+                    isDestructiveAction: true,
+                    onPressed: () {
+                      AP.Alarm.stop(alarmSettings.id);
+                      Navigator.of(context).pop();
+                    },
+                  )
+                ],
+              );
+            } else {
+              AlarmService.cancelAlarm(alarm.AlarmAppId);
+              return Container();
+            }
           });
     });
   }

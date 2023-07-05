@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:alarm_test/api/alarm.dart';
+import 'package:alarm_test/api/task.dart';
 import 'package:alarm_test/constants/app.dart';
 import 'package:alarm_test/models/Task.dart';
 import 'package:alarm_test/providers/alarmsProvider.dart';
@@ -25,8 +26,8 @@ class AlarmCard extends StatefulWidget {
   AlarmCard(
       {required this.alarm,
       required this.isAdmin,
-      Key? key,
       required this.alarmProvider,
+      Key? key,
       this.allowActions = true})
       : super(key: key);
 
@@ -34,108 +35,69 @@ class AlarmCard extends StatefulWidget {
   _AlarmCardState createState() => _AlarmCardState();
 }
 
+enum UpdateTypes { update, remove, insert }
+
 class _AlarmCardState extends State<AlarmCard> {
   static Timer? _timer;
   List<Task> tasks = [];
   bool showTasks = false;
+  List<FocusNode> _focusNodes = [FocusNode()];
+  List<TextEditingController> _textEditingControllers = [
+    TextEditingController()
+  ];
+
+  bool isTasksLoading = false;
   static StreamController<DateTime> _timeController =
       StreamController<DateTime>.broadcast();
 
   @override
   void initState() {
     super.initState();
+    tasks = [];
     !_timeController.isClosed ? _timeController.add(DateTime.now()) : null;
     _timer ??= Timer.periodic(Duration(seconds: 10), (_) {
       _timeController.add(DateTime.now());
     });
-    // tasks = [
-    //   Task(
-    //     widget.alarm.AlarmId,
-    //     "Test 1",
-    //     false,
-    //   ),
-    //   Task(
-    //     widget.alarm.AlarmId,
-    //     "Test 2",
-    //     true,
-    //   ),
-    //   Task(
-    //     widget.alarm.AlarmId,
-    //     "Test 3",
-    //     false,
-    //   ),
-    //   Task(
-    //     widget.alarm.AlarmId,
-    //     "Test 4",
-    //     true,
-    //   ),
-    // ];
-  }
-
-  static String formatTimeDifference(Duration difference, widget) {
-    if (difference.inSeconds < 60 && difference.inSeconds > 0) {
-      return "In ${difference.inSeconds} seconds";
-    } else if (difference.inMinutes < 60) {
-      if (difference.inMinutes < 0) {
-        widget.alarm.IsEnabled = false;
-        return "Alarm Expired";
-      }
-
-      return "In ${difference.inMinutes} ${difference.inMinutes == 1 ? 'minute' : 'minutes'}";
-    } else if (difference.inHours < 24) {
-      if (difference.inHours < 0) {
-        widget.alarm.IsEnabled = false;
-        return "Alarm Expired";
-      }
-      return "In ${difference.inHours} ${difference.inHours == 1 ? 'hour' : 'hours'}";
-    } else if (difference.inDays < 30) {
-      if (difference.inDays < 0) {
-        widget.alarm.IsEnabled = false;
-        return "Alarm Expired";
-      }
-      return "In ${difference.inDays} ${difference.inDays == 1 ? 'day' : 'days'}";
-    } else {
-      int months = (difference.inDays / 30).floor();
-      if (months < 0) {
-        widget.alarm.IsEnabled = false;
-        return "Alarm Expired";
-      }
-      return "In $months ${months == 1 ? 'month' : 'months'}";
-    }
   }
 
   @override
   void dispose() async {
     _timer?.cancel();
     _timeController.close();
+    tasks = [];
+    for (var focusNode in _focusNodes) focusNode.dispose();
+    for (var editor in _textEditingControllers) editor.dispose();
     super.dispose();
+  }
+
+  void removeTask(int index) {
+    setState(() {
+      tasks.removeAt(index);
+    });
+  }
+
+  void addTask(Task task, int index) {
+    setState(() {
+      tasks.insert(index, task);
+    });
+  }
+
+  void onUpdate(UpdateTypes upd, int index, Task task) {
+    if (upd == UpdateTypes.remove)
+      removeTask(index);
+    else if (upd == UpdateTypes.insert) addTask(task, index);
   }
 
   @override
   Widget build(BuildContext context) {
     String? audioLink = widget.alarm.InternalAudioFile;
-    // AlarmProvider alarmProvider = Provider.of
     UserProvider userProvider =
         Provider.of<UserProvider>(context, listen: false);
     return Padding(
       padding: EdgeInsets.only(top: 2),
       child: SwipeActionCell(
         key: ObjectKey(widget.alarm.AlarmAppId),
-        leadingActions: [
-          // SwipeAction(
-          //     icon: Icon(Icons.exit_to_app),
-          //     color: Colors.green,
-          //     backgroundRadius: 5,
-          //     onTap: (CompletionHandler handler) async {},
-          //     title: "  Opt Out"),
-        ],
-        trailingActions:
-            //  ((widget.isAdmin ||
-            //             widget.alarm.CreatedBy == userProvider.user!.UserId) &&
-            //         !showTasks &&
-            //         widget.allowActions)
-            // ?
-            [
+        trailingActions: [
           if ((widget.isAdmin ||
                   widget.alarm.CreatedBy == userProvider.user!.UserId) &&
               !showTasks &&
@@ -211,12 +173,16 @@ class _AlarmCardState extends State<AlarmCard> {
                       onTap: () {
                         print("here");
                         setState(() {
-                          tasks.insert(
-                              0,
-                              Task(widget.alarm.AlarmId, "Add your task", false,
-                                  0,
-                                  IsNew: true));
+                          _focusNodes.insert(0, FocusNode());
+                          _textEditingControllers.insert(
+                              0, TextEditingController());
                         });
+
+                        tasks.insert(
+                            0,
+                            Task(
+                                widget.alarm.AlarmId, "Add your task", false, 0,
+                                IsNew: true));
                       },
                       child: Container(
                           color: Colors.blueGrey[700],
@@ -227,6 +193,14 @@ class _AlarmCardState extends State<AlarmCard> {
                             ),
                           )),
                     ),
+
+                  if (isTasksLoading)
+                    Container(
+                      color: Colors.black,
+                      child: Center(
+                        child: CupertinoActivityIndicator(),
+                      ),
+                    ),
                   if (showTasks)
                     Container(
                       color: Colors.black,
@@ -236,19 +210,47 @@ class _AlarmCardState extends State<AlarmCard> {
                         itemCount: tasks.length,
                         itemBuilder: (context, index) {
                           final item = tasks[index];
-                          return TaskTextField(task: item);
+                          return TaskTextField(
+                            index: index,
+                            task: item,
+                            groupId: widget.alarm.GroupId!,
+                            focusNode: _focusNodes[index],
+                            onUpdate: onUpdate,
+                            textEditingController:
+                                _textEditingControllers[index],
+                          );
                         },
                       ),
                     ),
 
                   InkWell(
-                    onTap: () {
-                      setState(() {
-                        showTasks = !showTasks;
-                      });
+                    onTap: () async {
+                      if (!showTasks) {
+                        setState(() {
+                          isTasksLoading = true;
+                        });
+                      }
+                      var res = await getTasks(widget.alarm.AlarmId);
+                      if (res['success']) {
+                        for (var i = 0; i <= res['tasks'].length; i++) {
+                          _focusNodes.insert(0, FocusNode());
+                          _textEditingControllers.insert(
+                              0, TextEditingController());
+                        }
+                        setState(() {
+                          isTasksLoading = false;
+                          showTasks = !showTasks;
+                          tasks = res['tasks'];
+                        });
+                      } else {
+                        setState(() {
+                          isTasksLoading = false;
+                        });
+                        Fluttertoast.showToast(msg: "Unable to fetch tasks");
+                      }
                     },
                     child: Container(
-                        decoration: BoxDecoration(
+                        decoration: const BoxDecoration(
                             color: Colors.black,
                             borderRadius: BorderRadius.only(
                                 bottomLeft: Radius.circular(5),
@@ -380,6 +382,38 @@ class _AlarmCardState extends State<AlarmCard> {
             ),
           )),
     );
+  }
+}
+
+String formatTimeDifference(Duration difference, widget) {
+  if (difference.inSeconds < 60 && difference.inSeconds > 0) {
+    return "In ${difference.inSeconds} seconds";
+  } else if (difference.inMinutes < 60) {
+    if (difference.inMinutes < 0) {
+      widget.alarm.IsEnabled = false;
+      return "Alarm Expired";
+    }
+
+    return "In ${difference.inMinutes} ${difference.inMinutes == 1 ? 'minute' : 'minutes'}";
+  } else if (difference.inHours < 24) {
+    if (difference.inHours < 0) {
+      widget.alarm.IsEnabled = false;
+      return "Alarm Expired";
+    }
+    return "In ${difference.inHours} ${difference.inHours == 1 ? 'hour' : 'hours'}";
+  } else if (difference.inDays < 30) {
+    if (difference.inDays < 0) {
+      widget.alarm.IsEnabled = false;
+      return "Alarm Expired";
+    }
+    return "In ${difference.inDays} ${difference.inDays == 1 ? 'day' : 'days'}";
+  } else {
+    int months = (difference.inDays / 30).floor();
+    if (months < 0) {
+      widget.alarm.IsEnabled = false;
+      return "Alarm Expired";
+    }
+    return "In $months ${months == 1 ? 'month' : 'months'}";
   }
 }
 

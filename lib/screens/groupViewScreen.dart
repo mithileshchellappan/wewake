@@ -38,6 +38,7 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
   List<Alarm> alarms = [];
   bool isAlarmsLoading = false;
   var alarmProvider;
+  var tasksProvider;
   @override
   void initState() {
     super.initState();
@@ -98,6 +99,7 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
   @override
   Widget build(BuildContext context) {
     alarmProvider = Provider.of<AlarmProvider>(context, listen: true);
+
     final userProvider = Provider.of<UserProvider>(context, listen: false);
     alarms = alarmProvider.getAlarmsWithGroupId(widget.group.GroupId) ?? [];
     void leaveGroup() {

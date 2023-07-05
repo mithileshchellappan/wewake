@@ -19,7 +19,7 @@ void main() async {
       ChangeNotifierProvider(create: (_) => UserProvider()),
       ChangeNotifierProvider(create: (_) => AlarmProvider()),
       ChangeNotifierProvider(create: (_) => ChatProvider()),
-      ChangeNotifierProvider(create: (_) => GroupProvider())
+      ChangeNotifierProvider(create: (_) => GroupProvider()),
     ],
     child: const WeWake(),
   ));

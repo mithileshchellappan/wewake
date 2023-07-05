@@ -1,5 +1,5 @@
 class Task {
-  late String AlarmTaskId;
+  late String AlarmTaskId = "";
   late String AlarmId;
   late String TaskText;
   late bool IsDone;

@@ -28,6 +28,7 @@ class _UserAlarmsScreenState extends State<UserAlarmsScreen> {
 
   var alarmProvider;
   var groupProvider;
+  var tasksProvider;
   Future<void> setAlarmPerGroup() async {
     alarmProvider = Provider.of<AlarmProvider>(context, listen: false);
     late List<Alarm> alarms = alarmProvider?.alarms ?? [];
@@ -59,7 +60,6 @@ class _UserAlarmsScreenState extends State<UserAlarmsScreen> {
   Widget build(BuildContext context) {
     alarmProvider = Provider.of<AlarmProvider>(context, listen: true);
     groupProvider = Provider.of<GroupProvider>(context, listen: true);
-
     return Scaffold(
         appBar: CupertinoNavigationBar(
           brightness: Theme.of(context).brightness,
