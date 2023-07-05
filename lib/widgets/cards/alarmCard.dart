@@ -7,6 +7,7 @@ import 'package:alarm_test/providers/alarmsProvider.dart';
 import 'package:alarm_test/providers/userProvider.dart';
 import 'package:alarm_test/utils/alarmService.dart';
 import 'package:alarm_test/widgets/taskTextField.dart';
+import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_swipe_action_cell/core/cell.dart';
 import 'package:fluttertoast/fluttertoast.dart';
@@ -47,28 +48,28 @@ class _AlarmCardState extends State<AlarmCard> {
     _timer ??= Timer.periodic(Duration(seconds: 10), (_) {
       _timeController.add(DateTime.now());
     });
-    tasks = [
-      Task(
-        widget.alarm.AlarmId,
-        "Test 1",
-        false,
-      ),
-      Task(
-        widget.alarm.AlarmId,
-        "Test 2",
-        true,
-      ),
-      Task(
-        widget.alarm.AlarmId,
-        "Test 3",
-        false,
-      ),
-      Task(
-        widget.alarm.AlarmId,
-        "Test 4",
-        true,
-      ),
-    ];
+    // tasks = [
+    //   Task(
+    //     widget.alarm.AlarmId,
+    //     "Test 1",
+    //     false,
+    //   ),
+    //   Task(
+    //     widget.alarm.AlarmId,
+    //     "Test 2",
+    //     true,
+    //   ),
+    //   Task(
+    //     widget.alarm.AlarmId,
+    //     "Test 3",
+    //     false,
+    //   ),
+    //   Task(
+    //     widget.alarm.AlarmId,
+    //     "Test 4",
+    //     true,
+    //   ),
+    // ];
   }
 
   static String formatTimeDifference(Duration difference, widget) {
@@ -121,35 +122,43 @@ class _AlarmCardState extends State<AlarmCard> {
       child: SwipeActionCell(
         key: ObjectKey(widget.alarm.AlarmAppId),
         leadingActions: [
-          SwipeAction(
-              icon: Icon(Icons.exit_to_app),
-              color: Colors.green,
-              backgroundRadius: 5,
-              onTap: (CompletionHandler handler) async {},
-              title: "  Opt Out"),
+          // SwipeAction(
+          //     icon: Icon(Icons.exit_to_app),
+          //     color: Colors.green,
+          //     backgroundRadius: 5,
+          //     onTap: (CompletionHandler handler) async {},
+          //     title: "  Opt Out"),
         ],
-        trailingActions: ((widget.isAdmin ||
-                    widget.alarm.CreatedBy == userProvider.user!.UserId) &&
-                !showTasks &&
-                widget.allowActions)
-            ? [
-                SwipeAction(
-                    icon: const Icon(Icons.delete_forever),
-                    backgroundRadius: 5,
-                    onTap: (CompletionHandler handler) async {
-                      var res = await deleteAlarm(widget.alarm.AlarmId);
-                      print(res);
-                      if (res['success']) {
-                        AlarmService.cancelAlarm(widget.alarm.AlarmAppId);
-                        widget.alarmProvider.removeAlarm(widget.alarm);
-                        Fluttertoast.showToast(msg: "Delete Alarm!");
-                      } else {
-                        Fluttertoast.showToast(msg: res['message']);
-                      }
-                    },
-                    title: "  Delete"),
-              ]
-            : [],
+        trailingActions:
+            //  ((widget.isAdmin ||
+            //             widget.alarm.CreatedBy == userProvider.user!.UserId) &&
+            //         !showTasks &&
+            //         widget.allowActions)
+            // ?
+            [
+          if ((widget.isAdmin ||
+                  widget.alarm.CreatedBy == userProvider.user!.UserId) &&
+              !showTasks &&
+              widget.allowActions)
+            customSwipeActionCell(
+                Icon(CupertinoIcons.delete, color: Colors.red),
+                Text("Delete", style: TextStyle(color: Colors.red)),
+                (p0) async {
+              print(p0);
+              var res = await deleteAlarm(widget.alarm.AlarmId);
+              print(res);
+              if (res['success']) {
+                AlarmService.cancelAlarm(widget.alarm.AlarmAppId);
+                widget.alarmProvider.removeAlarm(widget.alarm);
+                Fluttertoast.showToast(msg: "Delete Alarm!");
+              } else {
+                Fluttertoast.showToast(msg: res['message']);
+              }
+            }),
+          customSwipeActionCell(
+              Icon(Icons.exit_to_app_rounded), Text("Opt Out"), (p0) => null)
+        ],
+        // : [],
         child: Padding(
           padding: const EdgeInsets.only(top: 10, left: 8, right: 8),
           child: Container(
@@ -205,6 +214,7 @@ class _AlarmCardState extends State<AlarmCard> {
                           tasks.insert(
                               0,
                               Task(widget.alarm.AlarmId, "Add your task", false,
+                                  0,
                                   IsNew: true));
                         });
                       },
@@ -263,6 +273,36 @@ class _AlarmCardState extends State<AlarmCard> {
           ),
         ),
       ),
+    );
+  }
+
+  SwipeAction customSwipeActionCell(
+      Icon icon, Text text, Function(CompletionHandler) onTap) {
+    return SwipeAction(
+      // icon: const Icon(Icons.delete_forever),
+      color: Colors.transparent,
+      content: Container(
+        margin: EdgeInsets.only(left: 2),
+        height: 90,
+        decoration: BoxDecoration(
+            color: CupertinoColors.darkBackgroundGray,
+            borderRadius: BorderRadius.all(Radius.circular(15)),
+            border: Border.all(color: CupertinoColors.black)),
+        child: Center(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.center,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              icon,
+              SizedBox(height: 10),
+              text,
+            ],
+          ),
+        ),
+      ),
+      backgroundRadius: 5,
+      onTap: onTap,
+      // title: "  Delete"
     );
   }
 
