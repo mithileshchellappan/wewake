@@ -99,7 +99,7 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
   Widget build(BuildContext context) {
     alarmProvider = Provider.of<AlarmProvider>(context, listen: true);
     final userProvider = Provider.of<UserProvider>(context, listen: false);
-    alarms = alarmProvider.alarms ?? [];
+    alarms = alarmProvider.getAlarmsWithGroupId(widget.group.GroupId) ?? [];
     void leaveGroup() {
       alarms = alarmProvider.getAlarmsWithGroupId(widget.group.GroupId);
       // print(widget.group.GroupId)

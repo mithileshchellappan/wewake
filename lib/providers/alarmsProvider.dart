@@ -18,6 +18,15 @@ class AlarmProvider extends ChangeNotifier {
 
   void appendAlarm(Alarm alarm) {
     _alarms?.add(alarm);
+
+    _alarms?.sort((a, b) {
+      if (a.IsEnabled != b.IsEnabled) {
+        return a.IsEnabled ? -1 : 1;
+      }
+
+      return a.Time.compareTo(b.Time);
+    });
+
     notifyListeners();
   }
 
