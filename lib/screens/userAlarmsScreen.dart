@@ -35,9 +35,16 @@ class _UserAlarmsScreenState extends State<UserAlarmsScreen> {
     for (int i = 0; i < alarms.length; i++) {
       String groupName = alarms[i].GroupName ?? "Undefined Group";
       if (groupedAlarms.containsKey(groupName)) {
-        groupedAlarms[groupName]!.add(alarms[i]);
+        if (alarms[i].IsEnabled &&
+            alarms[i].Time.compareTo(DateTime.now()) > 0) {
+          print(alarms[i].Time);
+          groupedAlarms[groupName]!.add(alarms[i]);
+        }
       } else {
-        groupedAlarms[groupName] = [alarms[i]];
+        if (alarms[i].IsEnabled &&
+            alarms[i].Time.compareTo(DateTime.now()) > 0) {
+          groupedAlarms[groupName] = [alarms[i]];
+        }
       }
     }
   }
@@ -114,6 +121,7 @@ class _UserAlarmsScreenState extends State<UserAlarmsScreen> {
                       alarm: alarm,
                       isAdmin: false,
                       alarmProvider: alarmProvider,
+                      allowActions: false,
                     );
                   },
                 ),

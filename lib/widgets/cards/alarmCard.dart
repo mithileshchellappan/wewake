@@ -20,11 +20,13 @@ class AlarmCard extends StatefulWidget {
   final Alarm alarm;
   final bool isAdmin;
   final AlarmProvider alarmProvider;
+  bool allowActions;
   AlarmCard(
       {required this.alarm,
       required this.isAdmin,
       Key? key,
-      required this.alarmProvider})
+      required this.alarmProvider,
+      this.allowActions = true})
       : super(key: key);
 
   @override
@@ -128,7 +130,8 @@ class _AlarmCardState extends State<AlarmCard> {
         ],
         trailingActions: ((widget.isAdmin ||
                     widget.alarm.CreatedBy == userProvider.user!.UserId) &&
-                !showTasks)
+                !showTasks &&
+                widget.allowActions)
             ? [
                 SwipeAction(
                     icon: const Icon(Icons.delete_forever),
