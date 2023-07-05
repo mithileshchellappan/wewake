@@ -48,6 +48,29 @@ namespace WeWakeAPI.DBServices
             return tasks;
         }
 
+        public async Task<bool> SetTaskStatus(Guid taskId,Guid memberId)
+        {
+            //AlarmTask task = await _context.AlarmsTasks.Where(m=>m.AlarmTaskId).FindAsync()
+
+            TaskMember taskMember = _context.TaskMembers.Where(m => m.AlarmTaskId == taskId && m.TaskMemberId == memberId).FirstOrDefault();
+            if (taskMember!=null)
+            {
+                taskMember.IsDone = !taskMember.IsDone;
+                _context.TaskMembers.Update(taskMember);
+                await _context.SaveChangesAsync();
+                return taskMember.IsDone;
+            }
+            else
+            {
+                taskMember = new TaskMember(taskId, memberId, true);
+                _context.TaskMembers.Add(taskMember);
+                await _context.SaveChangesAsync();
+                return true;
+            }
+
+
+        }
+
         
 
     }

@@ -65,6 +65,26 @@ namespace WeWakeAPI.Controllers
             }
         }
 
+        [HttpGet("Status/{taskId}")]
+        public async Task<IActionResult> UpdateTaskStatus(Guid taskId)
+        {
+            try
+            {
+                Guid userId = _userService.GetUserIdFromJWT();
+
+                bool status = await _alarmTaskService.SetTaskStatus(taskId, userId);
+
+                return Ok(new
+                {
+                    sucess = true,
+                    task = new { taskId, status }
+                });
+            }catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
+        }
+
 
     }
 }
