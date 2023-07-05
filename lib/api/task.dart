@@ -40,3 +40,18 @@ Future<dynamic> createTask(String groupId, Task task) async {
     return {"success": false, "message": e.toString()};
   }
 }
+
+Future<dynamic> setTaskStatus(String taskId, bool status) async {
+  try {
+    Uri url = Uri.parse("$apiRoute/Tasks/Status/$taskId");
+    API api = new API();
+    var res = await api.get(url);
+    if (res.statusCode <= 299 && res.statusCode >= 200) {
+      return {"success": true};
+    } else {
+      return {"success": false, "message": res.body.toString()};
+    }
+  } catch (e) {
+    return {"success": false, "message": e.toString()};
+  }
+}

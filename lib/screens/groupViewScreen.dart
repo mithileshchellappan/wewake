@@ -169,6 +169,7 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
                 ),
               ...alarms.map((e) => AlarmCard(
                     alarm: e,
+                    memberCount: widget.group.MemberCount!,
                     isAdmin: widget.group.IsAdmin,
                     alarmProvider: alarmProvider,
                   )),

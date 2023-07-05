@@ -119,6 +119,7 @@ class _UserAlarmsScreenState extends State<UserAlarmsScreen> {
 
                     return AlarmCard(
                       alarm: alarm,
+                      memberCount: 0,
                       isAdmin: false,
                       alarmProvider: alarmProvider,
                       allowActions: false,

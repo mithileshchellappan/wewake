@@ -22,11 +22,13 @@ class AlarmCard extends StatefulWidget {
   final Alarm alarm;
   final bool isAdmin;
   final AlarmProvider alarmProvider;
+  int memberCount;
   bool allowActions;
   AlarmCard(
       {required this.alarm,
       required this.isAdmin,
       required this.alarmProvider,
+      required this.memberCount,
       Key? key,
       this.allowActions = true})
       : super(key: key);
@@ -213,6 +215,7 @@ class _AlarmCardState extends State<AlarmCard> {
                           return TaskTextField(
                             index: index,
                             task: item,
+                            memberCount: widget.memberCount,
                             groupId: widget.alarm.GroupId!,
                             focusNode: _focusNodes[index],
                             onUpdate: onUpdate,

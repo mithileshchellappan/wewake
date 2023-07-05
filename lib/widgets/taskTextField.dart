@@ -9,7 +9,7 @@ class TaskTextField extends StatefulWidget {
   Task task;
   String groupId;
   int index;
-  // TasksProvider tasksProvider;
+  int memberCount;
   Function onUpdate;
   FocusNode focusNode;
   TextEditingController textEditingController;
@@ -18,8 +18,8 @@ class TaskTextField extends StatefulWidget {
       required this.task,
       required this.groupId,
       required this.onUpdate,
-      // required this.tasksProvider,
       required this.focusNode,
+      required this.memberCount,
       required this.textEditingController,
       required this.index});
 
@@ -67,6 +67,20 @@ class _TaskTextFieldState extends State<TaskTextField> {
     }
   }
 
+  void setDone() async {
+    var res = await setTaskStatus(widget.task.AlarmTaskId, widget.task.IsDone);
+    if (!res['success']) {
+      setState(() {
+        widget.task.IsDone = !widget.task.IsDone;
+      });
+      Fluttertoast.showToast(msg: "Error setting task status");
+    } else {
+      setState(() {
+        widget.task.IsDone ? ++widget.task.DoneCount : --widget.task.DoneCount;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return InkWell(
@@ -74,6 +88,7 @@ class _TaskTextFieldState extends State<TaskTextField> {
           setState(() {
             widget.task.IsDone = !widget.task.IsDone;
           });
+          setDone();
         },
         onLongPress: () {
           // _controller.
@@ -133,7 +148,7 @@ class _TaskTextFieldState extends State<TaskTextField> {
                         child: Container(),
                       ),
                       Text(
-                        "12/18",
+                        "${widget.task.DoneCount}/${widget.memberCount}",
                         style: TextStyle(fontSize: 10),
                       )
                     ],
