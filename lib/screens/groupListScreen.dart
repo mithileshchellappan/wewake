@@ -1,13 +1,9 @@
 import 'dart:async';
-import 'dart:math';
 
+import 'package:alarm_test/api/auth.dart';
 import 'package:alarm_test/api/group.dart';
-import 'package:alarm_test/models/Alarm.dart';
-import 'package:alarm_test/models/User.dart';
-import 'package:alarm_test/providers/alarmsProvider.dart';
 import 'package:alarm_test/providers/groupProvider.dart';
 import 'package:alarm_test/utils/alarmService.dart';
-import 'package:alarm_test/utils/helpers.dart';
 import 'package:alarm_test/widgets/cards/groupCard.dart';
 import 'package:alarm_test/widgets/PopUps.dart';
 import 'package:flutter/cupertino.dart';
@@ -15,7 +11,6 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:alarm_test/models/Group.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:alarm_test/api/auth.dart';
 import 'package:provider/provider.dart';
 import 'package:alarm_test/providers/userProvider.dart';
 
@@ -132,14 +127,26 @@ class _GroupScreenState extends State<GroupScreen> {
         floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
         body: Container(
             child: CustomScrollView(slivers: <Widget>[
-          SliverAppBar(
-            pinned: true,
-            snap: false,
-            floating: true,
+          CupertinoSliverNavigationBar(
             backgroundColor: Theme.of(context).backgroundColor,
-            expandedHeight: 100,
-            flexibleSpace: FlexibleSpaceBar(
-                title: Text("Hello ${userProvider.user?.Name}")),
+            largeTitle: Text("Groups", style: TextStyle(color: Colors.white)),
+            trailing: InkWell(
+              child: Icon(CupertinoIcons.square_arrow_right),
+              onTap: () => showDialog(
+                context: context,
+                builder: (context) => YNPopUp(
+                  "Logout?",
+                  () async {
+                    logout();
+                    await AlarmService.cancelAllAlarms();
+                    userProvider.removeUser();
+                    Navigator.pushReplacementNamed(context, 'signUpScreen');
+                  },
+                  yesText: "Logout",
+                  noText: "Cancel",
+                ),
+              ),
+            ),
           ),
           SliverList(
             delegate: SliverChildBuilderDelegate(
