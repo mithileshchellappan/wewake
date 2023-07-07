@@ -76,73 +76,90 @@ class _GroupScreenState extends State<GroupScreen> {
     groupProvider = Provider.of<GroupProvider>(context, listen: true);
     userProvider = Provider.of<UserProvider>(context, listen: true);
     return Scaffold(
-      appBar: CupertinoNavigationBar(
-          brightness: Theme.of(context).brightness,
-          backgroundColor: Theme.of(context).backgroundColor,
-          transitionBetweenRoutes: false,
-          automaticallyImplyLeading: false,
-          leading: Padding(
-            padding: const EdgeInsets.only(top: 15.0),
-            child: Text(
-              "Hello ${userProvider.user?.Name}",
-              style: TextStyle(color: Colors.white),
+        backgroundColor: Theme.of(context).backgroundColor,
+        // appBar: CupertinoNavigationBar(
+        //     brightness: Theme.of(context).brightness,
+        //     backgroundColor: Theme.of(context).backgroundColor,
+        //     transitionBetweenRoutes: false,
+        //     automaticallyImplyLeading: false,
+        //     leading: Padding(
+        //       padding: const EdgeInsets.only(top: 15.0),
+        //       child: Text(
+        //         "Hello ${userProvider.user?.Name}",
+        //         style: TextStyle(color: Colors.white),
+        //       ),
+        //     ),
+        //     trailing: CupertinoButton(
+        //       child: Icon(Icons.logout),
+        //       onPressed: () => showDialog(
+        //         context: context,
+        //         builder: (context) => YNPopUp(
+        //           "Logout?",
+        //           () async {
+        //             logout();
+        //             await AlarmService.cancelAllAlarms();
+        //             userProvider.removeUser();
+        //             Navigator.pushReplacementNamed(context, 'signUpScreen');
+        //           },
+        //           yesText: "Logout",
+        //           noText: "Cancel",
+        //         ),
+        //       ),
+        //     )),
+        floatingActionButton: GroupFloatingActionButton(
+          onCreateGroup: () => showDialog(
+            context: context,
+            builder: (context) => PopUpDialog(
+              "Enter Group Name",
+              (name, optionValue) async => await createGroupAndRefreshList(
+                  name, createGroup, optionValue),
+              yesText: 'Create',
+              showOption: true,
+              optionText: "Allow users set alarm?",
             ),
           ),
-          trailing: CupertinoButton(
-            child: Icon(Icons.logout),
-            onPressed: () => showDialog(
-              context: context,
-              builder: (context) => YNPopUp(
-                "Logout?",
-                () async {
-                  logout();
-                  await AlarmService.cancelAllAlarms();
-                  userProvider.removeUser();
-                  Navigator.pushReplacementNamed(context, 'signUpScreen');
-                },
-                yesText: "Logout",
-                noText: "Cancel",
-              ),
+          onJoinGroup: () => showDialog(
+            context: context,
+            builder: (context) => PopUpDialog(
+              "Enter Invite Link",
+              showOption: false,
+              (name, optionValue) async =>
+                  await createGroupAndRefreshList(name, joinGroup, optionValue),
+              yesText: 'Join',
             ),
-          )),
-      floatingActionButton: GroupFloatingActionButton(
-        onCreateGroup: () => showDialog(
-          context: context,
-          builder: (context) => PopUpDialog(
-            "Enter Group Name",
-            (name, optionValue) async =>
-                await createGroupAndRefreshList(name, createGroup, optionValue),
-            yesText: 'Create',
-            showOption: true,
-            optionText: "Allow users set alarm?",
           ),
         ),
-        onJoinGroup: () => showDialog(
-          context: context,
-          builder: (context) => PopUpDialog(
-            "Enter Invite Link",
-            showOption: false,
-            (name, optionValue) async =>
-                await createGroupAndRefreshList(name, joinGroup, optionValue),
-            yesText: 'Join',
+        floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
+        body: Container(
+            child: CustomScrollView(slivers: <Widget>[
+          SliverAppBar(
+            pinned: true,
+            snap: false,
+            floating: true,
+            backgroundColor: Theme.of(context).backgroundColor,
+            expandedHeight: 100,
+            flexibleSpace: FlexibleSpaceBar(
+                title: Text("Hello ${userProvider.user?.Name}")),
           ),
-        ),
-      ),
-      floatingActionButtonLocation: FloatingActionButtonLocation.endFloat,
-      body: Container(
-          child: SingleChildScrollView(
-              child: Column(
-        children: userGroups
-            .map((element) => GroupCard(
-                  group: element,
-                  groupProvider: groupProvider,
-                  userId: userProvider.user!.UserId!,
-
-                  // callback: ,
-                ))
-            .toList(),
-      ))),
-    );
+          SliverList(
+            delegate: SliverChildBuilderDelegate(
+                childCount: userGroups.length,
+                ((context, index) =>
+                    //  Column(
+                    //       children: userGroups
+                    //           .map((element) => GroupCard(
+                    //                 group: element,
+                    //                 groupProvider: groupProvider,
+                    //                 userId: userProvider.user!.UserId!,
+                    //               ))
+                    //           .toList(),
+                    //     ))
+                    GroupCard(
+                        group: userGroups[index],
+                        userId: userProvider.user!.UserId!,
+                        groupProvider: groupProvider))),
+          )
+        ])));
   }
 }
 

@@ -90,6 +90,38 @@ class _AlarmCardState extends State<AlarmCard> {
     else if (upd == UpdateTypes.insert) addTask(task, index);
   }
 
+  String formatTimeDifference(Duration difference, widget) {
+    if (difference.inSeconds < 60 && difference.inSeconds > 0) {
+      return "In ${difference.inSeconds} seconds";
+    } else if (difference.inMinutes < 60) {
+      if (difference.inMinutes < 0) {
+        widget.alarm.IsEnabled = false;
+        return "Alarm Expired";
+      }
+
+      return "In ${difference.inMinutes} ${difference.inMinutes == 1 ? 'minute' : 'minutes'}";
+    } else if (difference.inHours < 24) {
+      if (difference.inHours < 0) {
+        widget.alarm.IsEnabled = false;
+        return "Alarm Expired";
+      }
+      return "In ${difference.inHours} ${difference.inHours == 1 ? 'hour' : 'hours'}";
+    } else if (difference.inDays < 30) {
+      if (difference.inDays < 0) {
+        widget.alarm.IsEnabled = false;
+        return "Alarm Expired";
+      }
+      return "In ${difference.inDays} ${difference.inDays == 1 ? 'day' : 'days'}";
+    } else {
+      int months = (difference.inDays / 30).floor();
+      if (months < 0) {
+        widget.alarm.IsEnabled = false;
+        return "Alarm Expired";
+      }
+      return "In $months ${months == 1 ? 'month' : 'months'}";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     String? audioLink = widget.alarm.InternalAudioFile;
@@ -385,38 +417,6 @@ class _AlarmCardState extends State<AlarmCard> {
             ),
           )),
     );
-  }
-}
-
-String formatTimeDifference(Duration difference, widget) {
-  if (difference.inSeconds < 60 && difference.inSeconds > 0) {
-    return "In ${difference.inSeconds} seconds";
-  } else if (difference.inMinutes < 60) {
-    if (difference.inMinutes < 0) {
-      widget.alarm.IsEnabled = false;
-      return "Alarm Expired";
-    }
-
-    return "In ${difference.inMinutes} ${difference.inMinutes == 1 ? 'minute' : 'minutes'}";
-  } else if (difference.inHours < 24) {
-    if (difference.inHours < 0) {
-      widget.alarm.IsEnabled = false;
-      return "Alarm Expired";
-    }
-    return "In ${difference.inHours} ${difference.inHours == 1 ? 'hour' : 'hours'}";
-  } else if (difference.inDays < 30) {
-    if (difference.inDays < 0) {
-      widget.alarm.IsEnabled = false;
-      return "Alarm Expired";
-    }
-    return "In ${difference.inDays} ${difference.inDays == 1 ? 'day' : 'days'}";
-  } else {
-    int months = (difference.inDays / 30).floor();
-    if (months < 0) {
-      widget.alarm.IsEnabled = false;
-      return "Alarm Expired";
-    }
-    return "In $months ${months == 1 ? 'month' : 'months'}";
   }
 }
 

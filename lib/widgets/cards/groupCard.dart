@@ -26,73 +26,68 @@ class GroupCard extends StatelessWidget {
   final iconColor = getRandomDarkColor();
   @override
   Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(5.0),
-      child: SwipeActionCell(
-        trailingActions: <SwipeAction>[
-          SwipeAction(
-              backgroundRadius: 5,
-              title: group.IsAdmin ? "Delete" : "Leave",
-              onTap: (CompletionHandler handler) async {
-                showDialog(
-                    context: context,
-                    builder: (context) => YNPopUp(
-                            "${group.IsAdmin ? "Delete" : "Leave"} Group?",
-                            yesText: group.IsAdmin ? "Delete" : "Leave",
-                            () async {
-                          var res;
-                          if (group.IsAdmin) {
-                            res = await deleteGroup(group.GroupId);
-                          } else {
-                            res = await removeMember(group.GroupId, userId);
-                          }
-                          if (res['success']) {
-                            Fluttertoast.showToast(
-                                msg: "Left ${group.GroupName}");
-                            var alarmProvider = Provider.of<AlarmProvider>(
-                                context,
-                                listen: false);
-                            var alarms = alarmProvider
-                                .getAlarmsWithGroupId(group.GroupId);
-                            await AlarmService.cancelMultipleAlarms(alarms)
-                                .then((value) {
-                              alarmProvider
-                                  .removeAlarmsWithGroupId(group.GroupId);
-                              groupProvider.removeGroup(group);
-                            });
-                          } else {
-                            Fluttertoast.showToast(msg: res['message']);
-                          }
-                          Navigator.of(context).pop();
-                        }));
-              },
-              color: Colors.red),
-        ],
-        key: ObjectKey(group.GroupId),
-        child: Card(
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10.0),
-          ),
-          child: Padding(
-            padding: EdgeInsets.symmetric(vertical: 2),
-            child: ListTile(
-              leading: TextIcon(
-                  text: group.GroupName?.trim() ?? 'Group',
-                  backgroundColor: iconColor),
-              title: Text(group.GroupName ?? ''),
-              subtitle: Text('👥x ${group.MemberCount ?? 0}'),
-              trailing: Text(group.IsAdmin ? "👑" : ""),
-              onTap: () => {
-                Navigator.push(
-                    context,
-                    MaterialPageRoute(
-                        builder: (context) => GroupDashboardScreen(
-                              group: group,
-                              iconColor: iconColor,
-                            )))
-              },
-            ),
-          ),
+    return SwipeActionCell(
+      backgroundColor: Theme.of(context).backgroundColor,
+      trailingActions: <SwipeAction>[
+        SwipeAction(
+            backgroundRadius: 5,
+            title: group.IsAdmin ? "Delete" : "Leave",
+            onTap: (CompletionHandler handler) async {
+              showDialog(
+                  context: context,
+                  builder: (context) => YNPopUp(
+                          "${group.IsAdmin ? "Delete" : "Leave"} Group?",
+                          yesText: group.IsAdmin ? "Delete" : "Leave",
+                          () async {
+                        var res;
+                        if (group.IsAdmin) {
+                          res = await deleteGroup(group.GroupId);
+                        } else {
+                          res = await removeMember(group.GroupId, userId);
+                        }
+                        if (res['success']) {
+                          Fluttertoast.showToast(
+                              msg: "Left ${group.GroupName}");
+                          var alarmProvider = Provider.of<AlarmProvider>(
+                              context,
+                              listen: false);
+                          var alarms =
+                              alarmProvider.getAlarmsWithGroupId(group.GroupId);
+                          await AlarmService.cancelMultipleAlarms(alarms)
+                              .then((value) {
+                            alarmProvider
+                                .removeAlarmsWithGroupId(group.GroupId);
+                            groupProvider.removeGroup(group);
+                          });
+                        } else {
+                          Fluttertoast.showToast(msg: res['message']);
+                        }
+                        Navigator.of(context).pop();
+                      }));
+            },
+            color: Colors.red),
+      ],
+      key: ObjectKey(group.GroupId),
+      child: Card(
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(10.0),
+        ),
+        child: ListTile(
+          leading: TextIcon(
+              text: group.GroupName?.trim() ?? 'Group',
+              backgroundColor: iconColor),
+          title: Text(group.GroupName ?? ''),
+          subtitle: Text('👥x ${group.MemberCount ?? 0}'),
+          trailing: Text(group.IsAdmin ? "👑" : ""),
+          onTap: () => {
+            Navigator.push(
+                context,
+                MaterialPageRoute(
+                    builder: (context) => GroupDashboardScreen(
+                          group: group,
+                          iconColor: iconColor,
+                        )))
+          },
         ),
       ),
     );
