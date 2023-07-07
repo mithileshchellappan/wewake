@@ -71,7 +71,7 @@ app.UseWebSocketMiddleware("/ws");
 app.UseJWTMiddleware();
 app.MapGet("/ping", () => "pong");
 console.log(internalIp);
-app.Urls.Add($"http://{internalIp}:5022");
+//app.Urls.Add($"http://{internalIp}:5022");
 app.Urls.Add("http://localhost:5022");
 app.Urls.Add("http://0.0.0.0:5022");
 app.Run();
