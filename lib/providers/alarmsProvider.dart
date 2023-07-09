@@ -63,4 +63,18 @@ class AlarmProvider extends ChangeNotifier {
       notifyListeners();
     }
   }
+
+  Alarm? getUpcomingAlarm() {
+    final now = DateTime.now();
+
+    final enabledAlarms = _alarms?.where((alarm) => alarm.IsEnabled).toList();
+
+    enabledAlarms?.sort((a, b) => a.Time.compareTo(b.Time));
+
+    final upcomingAlarm = enabledAlarms?.firstWhere(
+        (alarm) => alarm.Time.isAfter(now),
+        orElse: () => Alarm.empty());
+    print(upcomingAlarm?.Time);
+    return upcomingAlarm;
+  }
 }

@@ -60,6 +60,23 @@ class Alarm {
     return data;
   }
 
+  Alarm.empty() {
+    AlarmId = "";
+    GroupId = "";
+    AlarmAppId = 0;
+    CreatedBy = "";
+    Time = DateTime(0);
+    IsEnabled = false;
+    LoopAudio = false;
+    Vibrate = false;
+    NotificationTitle = "";
+    NotificationBody = "";
+    InternalAudioFile = "";
+    UseExternalAudio = false;
+    AudioURL = "";
+    GroupName = "";
+  }
+
   static List<Alarm> fromListJson(List<dynamic> arr) {
     List<Alarm> alarms = [];
     for (var json in arr) {

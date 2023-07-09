@@ -2,6 +2,8 @@ import 'dart:async';
 
 import 'package:alarm_test/api/auth.dart';
 import 'package:alarm_test/api/group.dart';
+import 'package:alarm_test/models/Alarm.dart';
+import 'package:alarm_test/providers/alarmsProvider.dart';
 import 'package:alarm_test/providers/groupProvider.dart';
 import 'package:alarm_test/utils/alarmService.dart';
 import 'package:alarm_test/widgets/cards/groupCard.dart';
@@ -11,6 +13,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_speed_dial/flutter_speed_dial.dart';
 import 'package:alarm_test/models/Group.dart';
 import 'package:fluttertoast/fluttertoast.dart';
+import 'package:intl/intl.dart';
 import 'package:provider/provider.dart';
 import 'package:alarm_test/providers/userProvider.dart';
 
@@ -24,12 +27,19 @@ class GroupScreen extends StatefulWidget {
 class _GroupScreenState extends State<GroupScreen> {
   List<Group> userGroups = [];
   var groupProvider;
+  var alarmProvider;
   var userProvider;
+  var upcomingAlarm;
 
   @override
   void initState() {
     super.initState();
     setGroups();
+  }
+
+  void getUpcomingAlarm() {
+    alarmProvider = Provider.of<AlarmProvider>(context, listen: false);
+    Alarm upcomingAlarm = alarmProvider.getUpcomingAlarm();
   }
 
   void setGroups() async {
@@ -65,11 +75,40 @@ class _GroupScreenState extends State<GroupScreen> {
     }
   }
 
+  String formatTimeDifference(Duration difference) {
+    if (difference.inSeconds < 60 && difference.inSeconds > 0) {
+      return "Next alarm in ${difference.inSeconds} seconds";
+    } else if (difference.inMinutes < 60) {
+      if (difference.inMinutes < 0) {
+        return "Alarm Expired";
+      }
+
+      return "Next alarm in ${difference.inMinutes} ${difference.inMinutes == 1 ? 'minute' : 'minutes'}";
+    } else if (difference.inHours < 24) {
+      if (difference.inHours < 0) {
+        return "Alarm Expired";
+      }
+      return "Next alarm in ${difference.inHours} ${difference.inHours == 1 ? 'hour' : 'hours'}";
+    } else if (difference.inDays < 30) {
+      if (difference.inDays < 0) {
+        return "Alarm Expired";
+      }
+      return "Next alarm in ${difference.inDays} ${difference.inDays == 1 ? 'day' : 'days'}";
+    } else {
+      int months = (difference.inDays / 30).floor();
+      if (months < 0) {
+        return "Alarm Expired";
+      }
+      return "Next alarm in $months ${months == 1 ? 'month' : 'months'}";
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // final userProvider = Provider.of<UserProvider>(context, listen: false);
     groupProvider = Provider.of<GroupProvider>(context, listen: true);
     userProvider = Provider.of<UserProvider>(context, listen: true);
+    alarmProvider = Provider.of<AlarmProvider>(context, listen: true);
     return Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
         // appBar: CupertinoNavigationBar(
@@ -153,21 +192,41 @@ class _GroupScreenState extends State<GroupScreen> {
           ),
           SliverList(
             delegate: SliverChildBuilderDelegate(
-                childCount: userGroups.length,
-                ((context, index) =>
-                    //  Column(
-                    //       children: userGroups
-                    //           .map((element) => GroupCard(
-                    //                 group: element,
-                    //                 groupProvider: groupProvider,
-                    //                 userId: userProvider.user!.UserId!,
-                    //               ))
-                    //           .toList(),
-                    //     ))
-                    GroupCard(
-                        group: userGroups[index],
-                        userId: userProvider.user!.UserId!,
-                        groupProvider: groupProvider))),
+                childCount: userGroups.length + 1, ((context, index) {
+              if (index == 0) {
+                return StreamBuilder<DateTime>(
+                  builder: (context, snapshot) {
+                    print(alarmProvider.getUpcomingAlarm());
+                    print(Alarm.empty());
+                    print((alarmProvider.getUpcomingAlarm())?.Time ==
+                        Alarm.empty().Time);
+                    return Container(
+                        margin: EdgeInsets.all(4),
+                        height: 40,
+                        decoration: BoxDecoration(
+                            color: Theme.of(context).canvasColor,
+                            border: Border.all(color: Colors.black38),
+                            borderRadius:
+                                BorderRadius.all(Radius.circular(10))),
+                        child: Container(
+                            margin: EdgeInsets.only(left: 10, top: 10),
+                            child: ((alarmProvider.getUpcomingAlarm())?.Time ==
+                                    Alarm.empty().Time)
+                                ? Text('No upcoming alarms',
+                                    style: TextStyle(color: Colors.grey[700]))
+                                : Text("test")));
+                  },
+                );
+              }
+
+              if (index > 0) {
+                var adjIndex = index - 1;
+                return GroupCard(
+                    group: userGroups[adjIndex],
+                    userId: userProvider.user!.UserId!,
+                    groupProvider: groupProvider);
+              }
+            })),
           )
         ])));
   }
@@ -242,3 +301,13 @@ class GroupFloatingActionButton extends StatelessWidget {
     );
   }
 }
+
+  //  Column(
+                    //       children: userGroups
+                    //           .map((element) => GroupCard(
+                    //                 group: element,
+                    //                 groupProvider: groupProvider,
+                    //                 userId: userProvider.user!.UserId!,
+                    //               ))
+                    //           .toList(),
+                    //     ))

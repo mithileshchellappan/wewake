@@ -147,7 +147,7 @@ class _AlarmCardState extends State<AlarmCard> {
               if (res['success']) {
                 AlarmService.cancelAlarm(widget.alarm.AlarmAppId);
                 widget.alarmProvider.removeAlarm(widget.alarm);
-                Fluttertoast.showToast(msg: "Delete Alarm!");
+                Fluttertoast.showToast(msg: "Deleted Alarm!");
               } else {
                 Fluttertoast.showToast(msg: res['message']);
               }
