@@ -132,6 +132,7 @@ class _GroupViewScreenState extends State<GroupViewScreen> {
     }
 
     return Scaffold(
+      backgroundColor: Colors.black54,
       floatingActionButton:
           (widget.group.IsAdmin || widget.group.CanMemberCreateAlarm)
               ? AddAlarmButton(

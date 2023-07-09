@@ -130,6 +130,7 @@ class _AlarmCardState extends State<AlarmCard> {
     return Padding(
       padding: EdgeInsets.only(top: 2),
       child: SwipeActionCell(
+        backgroundColor: Colors.black12,
         key: ObjectKey(widget.alarm.AlarmAppId),
         trailingActions: [
           if ((widget.isAdmin ||
@@ -155,157 +156,151 @@ class _AlarmCardState extends State<AlarmCard> {
               Icon(Icons.exit_to_app_rounded), Text("Opt Out"), (p0) => null)
         ],
         // : [],
-        child: Padding(
-          padding: const EdgeInsets.only(top: 10, left: 8, right: 8),
-          child: Container(
-            width: MediaQuery.of(context).size.width,
-            decoration: BoxDecoration(
-                color: Theme.of(context).focusColor,
-                borderRadius: BorderRadius.all(Radius.circular(5))),
-            child: Padding(
-              padding: const EdgeInsets.only(top: 6.0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Row(
-                    children: [
-                      Padding(
-                        padding: const EdgeInsets.only(left: 4.0),
-                        child: Text(
-                          widget.alarm.NotificationTitle,
-                          style: TextStyle(fontSize: 24),
-                        ),
+        child: Container(
+          margin: const EdgeInsets.only(top: 10, left: 8, right: 8),
+          width: MediaQuery.of(context).size.width,
+          decoration: BoxDecoration(
+              color: Theme.of(context).focusColor,
+              borderRadius: BorderRadius.all(Radius.circular(5))),
+          child: Padding(
+            padding: const EdgeInsets.only(top: 6.0),
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4.0),
+                      child: Text(
+                        widget.alarm.NotificationTitle,
+                        style: TextStyle(fontSize: 24),
                       ),
-                      Expanded(child: Container()),
-                      PlayButton(
-                        url: audioLink ?? "nokia.mp3",
-                        isExpanded: true,
-                      ),
-                      SizedBox(width: 2),
-                    ],
+                    ),
+                    Expanded(child: Container()),
+                    PlayButton(
+                      url: audioLink ?? "nokia.mp3",
+                      isExpanded: true,
+                    ),
+                    SizedBox(width: 2),
+                  ],
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 4.0),
+                  child: Text(
+                    widget.alarm.NotificationBody,
+                    style: TextStyle(fontSize: 15, color: Colors.white70),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 4.0),
-                    child: Text(
-                      widget.alarm.NotificationBody,
-                      style: TextStyle(fontSize: 15, color: Colors.white70),
-                    ),
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 4.0),
+                  child: Text(
+                    DateFormat('hh:mm a dd MMMM yy ').format(widget.alarm.Time),
+                    style: TextStyle(fontSize: 11, color: Colors.white30),
                   ),
-                  Padding(
-                    padding: const EdgeInsets.only(left: 4.0),
-                    child: Text(
-                      DateFormat('hh:mm a dd MMMM yy ')
-                          .format(widget.alarm.Time),
-                      style: TextStyle(fontSize: 11, color: Colors.white30),
-                    ),
-                  ),
-                  // Text(widget.alarm.AlarmAppId.toString()),
-                  SizedBox(height: 10),
-                  bottomBar(),
-                  if (showTasks)
-                    InkWell(
-                      onTap: () {
-                        print("here");
-                        setState(() {
-                          _focusNodes.insert(0, FocusNode());
-                          _textEditingControllers.insert(
-                              0, TextEditingController());
-                        });
-
-                        tasks.insert(
-                            0,
-                            Task(
-                                widget.alarm.AlarmId, "Add your task", false, 0,
-                                IsNew: true));
-                      },
-                      child: Container(
-                          color: Colors.blueGrey[700],
-                          child: const Center(
-                            child: Row(
-                              mainAxisAlignment: MainAxisAlignment.center,
-                              children: [Icon(Icons.add), Text("Add New Task")],
-                            ),
-                          )),
-                    ),
-
-                  if (isTasksLoading)
-                    Container(
-                      color: Colors.black,
-                      child: Center(
-                        child: CupertinoActivityIndicator(),
-                      ),
-                    ),
-                  if (showTasks)
-                    Container(
-                      color: Colors.black,
-                      child: ListView.builder(
-                        shrinkWrap: true,
-                        physics: NeverScrollableScrollPhysics(),
-                        itemCount: tasks.length,
-                        itemBuilder: (context, index) {
-                          final item = tasks[index];
-                          return TaskTextField(
-                            index: index,
-                            task: item,
-                            memberCount: widget.memberCount,
-                            groupId: widget.alarm.GroupId!,
-                            focusNode: _focusNodes[index],
-                            onUpdate: onUpdate,
-                            textEditingController:
-                                _textEditingControllers[index],
-                          );
-                        },
-                      ),
-                    ),
-
+                ),
+                // Text(widget.alarm.AlarmAppId.toString()),
+                SizedBox(height: 10),
+                bottomBar(),
+                if (showTasks)
                   InkWell(
-                    onTap: () async {
-                      if (!showTasks) {
-                        setState(() {
-                          isTasksLoading = true;
-                        });
-                      }
-                      var res = await getTasks(widget.alarm.AlarmId);
-                      if (res['success']) {
-                        for (var i = 0; i <= res['tasks'].length; i++) {
-                          _focusNodes.insert(0, FocusNode());
-                          _textEditingControllers.insert(
-                              0, TextEditingController());
-                        }
-                        setState(() {
-                          isTasksLoading = false;
-                          showTasks = !showTasks;
-                          tasks = res['tasks'];
-                        });
-                      } else {
-                        setState(() {
-                          isTasksLoading = false;
-                        });
-                        Fluttertoast.showToast(msg: "Unable to fetch tasks");
-                      }
+                    onTap: () {
+                      print("here");
+                      setState(() {
+                        _focusNodes.insert(0, FocusNode());
+                        _textEditingControllers.insert(
+                            0, TextEditingController());
+                      });
+
+                      tasks.insert(
+                          0,
+                          Task(widget.alarm.AlarmId, "Add your task", false, 0,
+                              IsNew: true));
                     },
                     child: Container(
-                        decoration: const BoxDecoration(
-                            color: Colors.black,
-                            borderRadius: BorderRadius.only(
-                                bottomLeft: Radius.circular(5),
-                                bottomRight: Radius.circular(5))),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.end,
-                          children: [
-                            Icon(showTasks
-                                ? Icons.arrow_drop_up
-                                : Icons.arrow_drop_down),
-                            Text(
-                              "Tasks",
-                              style: TextStyle(fontSize: 16),
-                            ),
-                            SizedBox(width: 10)
-                          ],
+                        color: Colors.blueGrey[700],
+                        child: const Center(
+                          child: Row(
+                            mainAxisAlignment: MainAxisAlignment.center,
+                            children: [Icon(Icons.add), Text("Add New Task")],
+                          ),
                         )),
                   ),
-                ],
-              ),
+
+                if (isTasksLoading)
+                  Container(
+                    color: Colors.black,
+                    child: Center(
+                      child: CupertinoActivityIndicator(),
+                    ),
+                  ),
+                if (showTasks)
+                  Container(
+                    child: ListView.builder(
+                      shrinkWrap: true,
+                      physics: NeverScrollableScrollPhysics(),
+                      itemCount: tasks.length,
+                      itemBuilder: (context, index) {
+                        final item = tasks[index];
+                        return TaskTextField(
+                          index: index,
+                          task: item,
+                          memberCount: widget.memberCount,
+                          groupId: widget.alarm.GroupId!,
+                          focusNode: _focusNodes[index],
+                          onUpdate: onUpdate,
+                          textEditingController: _textEditingControllers[index],
+                        );
+                      },
+                    ),
+                  ),
+
+                InkWell(
+                  onTap: () async {
+                    if (!showTasks) {
+                      setState(() {
+                        isTasksLoading = true;
+                      });
+                    }
+                    var res = await getTasks(widget.alarm.AlarmId);
+                    if (res['success']) {
+                      for (var i = 0; i <= res['tasks'].length; i++) {
+                        _focusNodes.insert(0, FocusNode());
+                        _textEditingControllers.insert(
+                            0, TextEditingController());
+                      }
+                      setState(() {
+                        isTasksLoading = false;
+                        showTasks = !showTasks;
+                        tasks = res['tasks'];
+                      });
+                    } else {
+                      setState(() {
+                        isTasksLoading = false;
+                      });
+                      Fluttertoast.showToast(msg: "Unable to fetch tasks");
+                    }
+                  },
+                  child: Container(
+                      decoration: const BoxDecoration(
+                          color: Colors.black,
+                          borderRadius: BorderRadius.only(
+                              bottomLeft: Radius.circular(5),
+                              bottomRight: Radius.circular(5))),
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          Icon(showTasks
+                              ? Icons.arrow_drop_up
+                              : Icons.arrow_drop_down),
+                          Text(
+                            "Tasks",
+                            style: TextStyle(fontSize: 16),
+                          ),
+                          SizedBox(width: 10)
+                        ],
+                      )),
+                ),
+              ],
             ),
           ),
         ),

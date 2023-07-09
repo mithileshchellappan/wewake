@@ -34,9 +34,10 @@ class WeWake extends StatelessWidget {
         title: 'WeWake',
         theme: ThemeData(
             highlightColor: Colors.blue[500],
-            disabledColor: Colors.blueGrey,
+            disabledColor: Color.fromARGB(255, 50, 54, 56),
             brightness: Brightness.dark,
-            focusColor: Colors.blue[700],
+            // canvasColor: Colors.black12,
+            focusColor: Colors.blueGrey[700],
             backgroundColor: Colors.black,
             bottomAppBarColor: Colors.white),
         initialRoute: SplashScreen.route,

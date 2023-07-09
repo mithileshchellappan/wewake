@@ -131,7 +131,10 @@ class _GroupScreenState extends State<GroupScreen> {
             backgroundColor: Theme.of(context).backgroundColor,
             largeTitle: Text("Groups", style: TextStyle(color: Colors.white)),
             trailing: InkWell(
-              child: Icon(CupertinoIcons.square_arrow_right),
+              child: Icon(
+                CupertinoIcons.square_arrow_right,
+                color: Theme.of(context).highlightColor,
+              ),
               onTap: () => showDialog(
                 context: context,
                 builder: (context) => YNPopUp(
