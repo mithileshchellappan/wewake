@@ -74,7 +74,6 @@ class AlarmProvider extends ChangeNotifier {
     final upcomingAlarm = enabledAlarms?.firstWhere(
         (alarm) => alarm.Time.isAfter(now),
         orElse: () => Alarm.empty());
-    print(upcomingAlarm?.Time);
     return upcomingAlarm;
   }
 }

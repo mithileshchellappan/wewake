@@ -26,20 +26,29 @@ class GroupScreen extends StatefulWidget {
 
 class _GroupScreenState extends State<GroupScreen> {
   List<Group> userGroups = [];
+  Alarm? alarm;
   var groupProvider;
   var alarmProvider;
   var userProvider;
   var upcomingAlarm;
+  static StreamController<DateTime> _timeController =
+      StreamController<DateTime>.broadcast();
+  static Timer? _timer;
 
   @override
   void initState() {
     super.initState();
     setGroups();
+    getUpcomingAlarm();
+    !_timeController.isClosed ? _timeController.add(DateTime.now()) : null;
+    _timer ??= Timer.periodic(Duration(seconds: 1), (_) {
+      _timeController.add(DateTime.now());
+    });
   }
 
   void getUpcomingAlarm() {
     alarmProvider = Provider.of<AlarmProvider>(context, listen: false);
-    Alarm upcomingAlarm = alarmProvider.getUpcomingAlarm();
+    alarm = alarmProvider.getUpcomingAlarm();
   }
 
   void setGroups() async {
@@ -169,23 +178,26 @@ class _GroupScreenState extends State<GroupScreen> {
           CupertinoSliverNavigationBar(
             backgroundColor: Theme.of(context).backgroundColor,
             largeTitle: Text("Groups", style: TextStyle(color: Colors.white)),
-            trailing: InkWell(
-              child: Icon(
-                CupertinoIcons.square_arrow_right,
-                color: Theme.of(context).highlightColor,
-              ),
-              onTap: () => showDialog(
-                context: context,
-                builder: (context) => YNPopUp(
-                  "Logout?",
-                  () async {
-                    logout();
-                    await AlarmService.cancelAllAlarms();
-                    userProvider.removeUser();
-                    Navigator.pushReplacementNamed(context, 'signUpScreen');
-                  },
-                  yesText: "Logout",
-                  noText: "Cancel",
+            trailing: Material(
+              color: Colors.black,
+              child: InkWell(
+                child: Icon(
+                  CupertinoIcons.square_arrow_right,
+                  color: Theme.of(context).highlightColor,
+                ),
+                onTap: () => showDialog(
+                  context: context,
+                  builder: (context) => YNPopUp(
+                    "Logout?",
+                    () async {
+                      logout();
+                      await AlarmService.cancelAllAlarms();
+                      userProvider.removeUser();
+                      Navigator.pushReplacementNamed(context, 'signUpScreen');
+                    },
+                    yesText: "Logout",
+                    noText: "Cancel",
+                  ),
                 ),
               ),
             ),
@@ -195,26 +207,64 @@ class _GroupScreenState extends State<GroupScreen> {
                 childCount: userGroups.length + 1, ((context, index) {
               if (index == 0) {
                 return StreamBuilder<DateTime>(
+                  stream: _timeController.stream,
                   builder: (context, snapshot) {
-                    print(alarmProvider.getUpcomingAlarm());
-                    print(Alarm.empty());
-                    print((alarmProvider.getUpcomingAlarm())?.Time ==
-                        Alarm.empty().Time);
-                    return Container(
-                        margin: EdgeInsets.all(4),
-                        height: 40,
-                        decoration: BoxDecoration(
-                            color: Theme.of(context).canvasColor,
-                            border: Border.all(color: Colors.black38),
-                            borderRadius:
-                                BorderRadius.all(Radius.circular(10))),
-                        child: Container(
+                    alarm = alarmProvider?.getUpcomingAlarm();
+                    if (alarm != null && snapshot.hasData) {
+                      return Container(
+                          margin: const EdgeInsets.all(4),
+                          height: 40,
+                          decoration: BoxDecoration(
+                              color: Theme.of(context).canvasColor,
+                              border: Border.all(color: Colors.black38),
+                              borderRadius:
+                                  const BorderRadius.all(Radius.circular(10))),
+                          child: Container(
+                              margin: const EdgeInsets.only(
+                                left: 10,
+                              ),
+                              child: (alarm?.Time == Alarm.empty().Time ||
+                                      alarm!.Time.isBefore(snapshot.data!))
+                                  ? Container(
+                                      margin:
+                                          EdgeInsets.only(left: 10, top: 10),
+                                      child: Text('No upcoming alarms',
+                                          style: TextStyle(
+                                              color: Colors.grey[700])),
+                                    )
+                                  : Row(
+                                      children: [
+                                        Text(formatTimeDifference(alarm!.Time
+                                            .difference(snapshot.data!))),
+                                        Expanded(
+                                          child: Container(),
+                                        ),
+                                        Text("${alarm!.GroupName!}, ",
+                                            style: TextStyle(
+                                                color: Colors.grey[700])),
+                                        Text(
+                                            DateFormat('hh:mm a')
+                                                .format(alarm!.Time),
+                                            style: TextStyle(
+                                                color: Colors.grey[700])),
+                                        const SizedBox(width: 10)
+                                      ],
+                                    )));
+                    } else {
+                      return Container(
+                          margin: EdgeInsets.all(4),
+                          height: 40,
+                          decoration: BoxDecoration(
+                              color: Theme.of(context).canvasColor,
+                              border: Border.all(color: Colors.black38),
+                              borderRadius:
+                                  BorderRadius.all(Radius.circular(10))),
+                          child: Container(
                             margin: EdgeInsets.only(left: 10, top: 10),
-                            child: ((alarmProvider.getUpcomingAlarm())?.Time ==
-                                    Alarm.empty().Time)
-                                ? Text('No upcoming alarms',
-                                    style: TextStyle(color: Colors.grey[700]))
-                                : Text("test")));
+                            child: Text('No upcoming alarms',
+                                style: TextStyle(color: Colors.grey[700])),
+                          ));
+                    }
                   },
                 );
               }
