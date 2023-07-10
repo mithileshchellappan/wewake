@@ -67,7 +67,8 @@ class AlarmProvider extends ChangeNotifier {
   Alarm? getUpcomingAlarm() {
     final now = DateTime.now();
 
-    final enabledAlarms = _alarms?.where((alarm) => alarm.IsEnabled).toList();
+    final enabledAlarms =
+        _alarms?.where((alarm) => (alarm.IsEnabled && !alarm.OptOut)).toList();
 
     enabledAlarms?.sort((a, b) => a.Time.compareTo(b.Time));
 

@@ -61,6 +61,7 @@ class _UserAlarmsScreenState extends State<UserAlarmsScreen> {
     alarmProvider = Provider.of<AlarmProvider>(context, listen: true);
     groupProvider = Provider.of<GroupProvider>(context, listen: true);
     return Scaffold(
+        // backgroundColor: Theme.of(context).backgroundColor,
         appBar: CupertinoNavigationBar(
           brightness: Theme.of(context).brightness,
           backgroundColor: Theme.of(context).backgroundColor,

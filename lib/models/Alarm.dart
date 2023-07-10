@@ -13,6 +13,7 @@ class Alarm {
   bool UseExternalAudio = false;
   String AudioURL = "";
   String? GroupName = "";
+  bool OptOut = false;
 
   Alarm(
     this.GroupId,
@@ -41,6 +42,7 @@ class Alarm {
     UseExternalAudio = json['useExternalAudio'];
     AudioURL = json['audioURL'] ?? "";
     GroupName = json['groupName'] ?? "";
+    OptOut = json['optOut'] ?? false;
   }
 
   Map toJson() {
@@ -75,6 +77,7 @@ class Alarm {
     UseExternalAudio = false;
     AudioURL = "";
     GroupName = "";
+    OptOut = false;
   }
 
   static List<Alarm> fromListJson(List<dynamic> arr) {

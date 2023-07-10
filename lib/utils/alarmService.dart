@@ -29,6 +29,7 @@ class AlarmService {
       stopOnNotificationOpen: true,
     );
     if (alarm.IsEnabled &&
+        !alarm.OptOut &&
         alarm.Time.compareTo(DateTime.now()) > 0 &&
         !await checkAlarm(alarm.AlarmAppId)) {
       print(
@@ -62,8 +63,11 @@ class AlarmService {
 
     for (int i = 0; i < serverAlarms.length; i++) {
       bool isAlarmSet = await checkAlarm(serverAlarms[i].AlarmAppId);
-      if (!isAlarmSet) {
+      if (!isAlarmSet && serverAlarms[i].IsEnabled && !serverAlarms[i].OptOut) {
         await setAlarm(serverAlarms[i]);
+      } else if (isAlarmSet &&
+          (!serverAlarms[i].IsEnabled || serverAlarms[i].OptOut)) {
+        cancelAlarm(serverAlarms[i].AlarmAppId);
       }
     }
   }
