@@ -131,9 +131,12 @@ class _ChatScreenState extends State<ChatScreen> {
           'Chat',
           style: TextStyle(color: Colors.white),
         ),
-        trailing: IconButton(
-          icon: Icon(Icons.refresh),
-          onPressed: reconnectToWs,
+        trailing: Material(
+          color: Colors.black,
+          child: IconButton(
+            icon: Icon(Icons.refresh),
+            onPressed: reconnectToWs,
+          ),
         ),
       ),
       body: SafeArea(
