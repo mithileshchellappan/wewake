@@ -3,6 +3,7 @@ using System;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.EntityFrameworkCore.Infrastructure;
 using Microsoft.EntityFrameworkCore.Metadata;
+using Microsoft.EntityFrameworkCore.Migrations;
 using Microsoft.EntityFrameworkCore.Storage.ValueConversion;
 using WeWakeAPI.Data;
 
@@ -11,9 +12,11 @@ using WeWakeAPI.Data;
 namespace WeWakeAPI.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    partial class ApplicationDbContextModelSnapshot : ModelSnapshot
+    [Migration("20230710084850_AddOptOuts")]
+    partial class AddOptOuts
     {
-        protected override void BuildModel(ModelBuilder modelBuilder)
+        /// <inheritdoc />
+        protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
 #pragma warning disable 612, 618
             modelBuilder
@@ -208,6 +211,8 @@ namespace WeWakeAPI.Migrations
 
                     b.HasIndex("AlarmId");
 
+                    b.HasIndex("MemberId");
+
                     b.ToTable("OptOuts");
                 });
 
@@ -316,7 +321,15 @@ namespace WeWakeAPI.Migrations
                         .OnDelete(DeleteBehavior.Cascade)
                         .IsRequired();
 
+                    b.HasOne("WeWakeAPI.Models.Member", "Member")
+                        .WithMany()
+                        .HasForeignKey("MemberId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
+
                     b.Navigation("Alarm");
+
+                    b.Navigation("Member");
                 });
 
             modelBuilder.Entity("WeWakeAPI.Models.TaskMember", b =>

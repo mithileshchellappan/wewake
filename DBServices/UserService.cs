@@ -99,6 +99,7 @@ namespace WeWakeAPI.DBServices
                 from member in _context.Members
                 join alarm in _context.Alarms on member.GroupId equals alarm.GroupId
                 join grp in _context.Groups on alarm.GroupId equals grp.GroupId
+                join opts in _context.OptOuts on alarm.AlarmId equals opts.AlarmId
                 where member.MemberId == userId
                 select new {
                     alarmId = alarm.AlarmId,
@@ -115,7 +116,8 @@ namespace WeWakeAPI.DBServices
                     internalAudioFile=alarm.InternalAudioFile,
                     useExternalAudio=alarm.UseExternalAudio,
                     audioURL=alarm.AudioURL,
-                    groupName=grp.GroupName
+                    groupName=grp.GroupName,
+                    optOut = opts.IsOptOut
                 }
                 ).ToListAsync();
             

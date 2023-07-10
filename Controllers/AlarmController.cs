@@ -15,14 +15,18 @@ namespace WeWakeAPI.Controllers
         private readonly AlarmService _alarmService;
         private readonly UserService _userService;
         private readonly GroupService _groupService;
+        private readonly IHttpContextAccessor _httpContextAccessor;
 
-        public AlarmController(ApplicationDbContext context, AlarmService alarmService, UserService userService, GroupService groupService)
+        public AlarmController(ApplicationDbContext context, AlarmService alarmService, UserService userService, GroupService groupService, IHttpContextAccessor httpContextAccessor)
         {
             _context = context;
             _alarmService = alarmService;
             _userService = userService;
             _groupService = groupService;
+            _httpContextAccessor = httpContextAccessor;
         }
+
+        private HttpContext _httpContext => _httpContextAccessor.HttpContext;
 
         [HttpGet("Group/{groupId}")]
         public async Task<ActionResult> GetAlarms(Guid groupId)
@@ -95,6 +99,31 @@ namespace WeWakeAPI.Controllers
                 return BadRequest(e.Message);
             }
 
+        }
+
+        [HttpGet("OptOut/{alarmId}")]
+        public async Task<ActionResult> OptOut(Guid alarmId)
+        {
+            try
+            {
+                bool optOutValue = Boolean.Parse(_httpContext.Request.Query["optOut"].ToString());
+                Guid userId = _userService.GetUserIdFromJWT();
+
+                bool success = await _alarmService.UpdateOptOut(alarmId,userId, optOutValue);
+                if (success)
+                {
+                    return Ok(new {success});
+                }
+                else
+                {
+                    return StatusCode(StatusCodes.Status500InternalServerError);
+                }
+
+
+            }catch(Exception e)
+            {
+                return BadRequest(e.Message);
+            }
         }
 
 

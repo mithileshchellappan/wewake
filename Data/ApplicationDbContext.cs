@@ -16,6 +16,7 @@ namespace WeWakeAPI.Data
         public DbSet<Member> Members { get; set; }
 
         public DbSet<InviteLink> InviteLinks { get; set; }
+        public DbSet<OptOut> OptOuts { get; set; }
 
         public DbSet<Chat> Chats { get; set; }
 

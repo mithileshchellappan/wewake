@@ -60,6 +60,8 @@ namespace WeWakeAPI.DBServices
                     vibrate: alarmReq.Vibrate,
                     notificationBody: alarmReq.NotificationBody,
                     notificationTitle: alarmReq.NotificationTitle);
+                OptOut optOut = new OptOut(alarm.AlarmId, alarm.CreatedBy, false);
+                await _context.OptOuts.AddAsync(optOut);
                 await _context.Alarms.AddAsync(alarm);
                 await _context.SaveChangesAsync();
                 return alarm;
@@ -94,6 +96,33 @@ namespace WeWakeAPI.DBServices
                 throw new Exception("Error in getting alarms");
             }
 
+        }
+
+        public async Task<bool> UpdateOptOut(Guid alarmId,Guid memberId,bool isOptOut)
+        {
+            try
+            {
+                OptOut optOut = await _context.OptOuts.FirstAsync(g=>g.AlarmId == alarmId && g.MemberId == memberId);
+                if(optOut == null)
+                {
+                    optOut = new OptOut(alarmId, memberId,isOptOut);
+                    _context.OptOuts.Add(optOut);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+                else
+                {
+                    optOut.IsOptOut = isOptOut;
+                    _context.OptOuts.Update(optOut);
+                    await _context.SaveChangesAsync();
+                    return true;
+                }
+
+            }catch(Exception e)
+            {
+
+                throw new Exception(e.Message);
+            }
         }
 
     }
