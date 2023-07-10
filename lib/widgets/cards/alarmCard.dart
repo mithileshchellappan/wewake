@@ -153,7 +153,18 @@ class _AlarmCardState extends State<AlarmCard> {
               }
             }),
           customSwipeActionCell(
-              Icon(Icons.exit_to_app_rounded), Text("Opt Out"), (p0) => null)
+              Icon(Icons.exit_to_app_rounded), Text("Opt Out"), (p0) async {
+            widget.alarm.OptOut = !widget.alarm.OptOut;
+            var res = await optOutAlarm(widget.alarm);
+            if (res['success']) {
+              widget.alarmProvider
+                  .editAlarm(widget.alarm.AlarmId, widget.alarm);
+              AlarmService.syncAlarms(widget.alarmProvider.alarms!);
+              Fluttertoast.showToast(msg: "Updated alarm!");
+            } else {
+              Fluttertoast.showToast(msg: res['message']);
+            }
+          })
         ],
         // : [],
         child: Container(
@@ -385,6 +396,19 @@ class _AlarmCardState extends State<AlarmCard> {
                         : Theme.of(context).disabledColor,
                   ),
                 ),
+                SizedBox(
+                  width: 10,
+                ),
+                widget.alarm.OptOut
+                    ? Container(
+                        child:
+                            Text("OPTED OUT", style: TextStyle(fontSize: 11)),
+                        decoration: BoxDecoration(
+                            color: Colors.transparent,
+                            border: Border.all(color: Colors.white),
+                            borderRadius: BorderRadius.all(Radius.circular(5))),
+                      )
+                    : Container(),
                 Expanded(child: Container()),
                 StreamBuilder<DateTime>(
                     stream: _timeController.stream,

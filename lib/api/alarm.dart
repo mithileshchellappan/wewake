@@ -79,3 +79,19 @@ Future<dynamic> deleteAlarm(String alarmId) async {
     return {"success": false, "message": e.toString()};
   }
 }
+
+Future<dynamic> optOutAlarm(Alarm alarm) async {
+  try {
+    API api = new API();
+    Uri url = Uri.parse(
+        '$apiRoute/Alarm/OptOut/${alarm.AlarmId}?optOut=${alarm.OptOut}');
+    final res = await api.get(url);
+    if (res.statusCode <= 299 && res.statusCode >= 200) {
+      return {"success": true};
+    } else {
+      return {"success": false, "message": res.body.toString()};
+    }
+  } catch (e) {
+    return {"success": false, "message": e.toString()};
+  }
+}

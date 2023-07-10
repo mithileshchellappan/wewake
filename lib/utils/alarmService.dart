@@ -5,7 +5,7 @@ import 'package:alarm_test/models/Alarm.dart';
 class AlarmService {
   static Future<void> initAlarm() async {
     print("ALARM INIT");
-    await AP.Alarm.init(showDebugLogs: false);
+    await AP.Alarm?.init(showDebugLogs: false);
     // await setAlarm();
   }
 
