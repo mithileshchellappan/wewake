@@ -6,7 +6,10 @@ import 'package:alarm_test/constants/app.dart';
 import 'package:alarm_test/models/Task.dart';
 import 'package:alarm_test/providers/alarmsProvider.dart';
 import 'package:alarm_test/providers/userProvider.dart';
+import 'package:alarm_test/screens/groupDashboardScreen.dart';
+import 'package:alarm_test/screens/groupViewScreen.dart';
 import 'package:alarm_test/utils/alarmService.dart';
+import 'package:alarm_test/utils/helpers.dart';
 import 'package:alarm_test/widgets/taskTextField.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -24,12 +27,14 @@ class AlarmCard extends StatefulWidget {
   final AlarmProvider alarmProvider;
   int memberCount;
   bool allowActions;
+  bool showGoToButton;
   AlarmCard(
-      {required this.alarm,
+      {Key? key,
+      required this.alarm,
       required this.isAdmin,
       required this.alarmProvider,
       required this.memberCount,
-      Key? key,
+      this.showGoToButton = false,
       this.allowActions = true})
       : super(key: key);
 
@@ -202,12 +207,36 @@ class _AlarmCardState extends State<AlarmCard> {
                     style: TextStyle(fontSize: 15, color: Colors.white70),
                   ),
                 ),
-                Padding(
-                  padding: const EdgeInsets.only(left: 4.0),
-                  child: Text(
-                    DateFormat('hh:mm a dd MMMM yy ').format(widget.alarm.Time),
-                    style: TextStyle(fontSize: 11, color: Colors.white30),
-                  ),
+                Row(
+                  children: [
+                    Padding(
+                      padding: const EdgeInsets.only(left: 4.0),
+                      child: Text(
+                        DateFormat('hh:mm a dd MMMM yy ')
+                            .format(widget.alarm.Time),
+                        style: TextStyle(fontSize: 11, color: Colors.white30),
+                      ),
+                    ),
+                    Expanded(child: Container()),
+                    widget.showGoToButton
+                        ? GestureDetector(
+                            onTap: () => Navigator.push(
+                                  context,
+                                  MaterialPageRoute(
+                                      builder: (context) =>
+                                          GroupDashboardScreen(
+                                            groupId: widget.alarm.GroupId!,
+                                            iconColor: getRandomDarkColor(),
+                                          )),
+                                ),
+                            child: Row(
+                              children: [
+                                Text(widget.alarm.GroupName!),
+                                Icon(Icons.arrow_right),
+                              ],
+                            ))
+                        : Container()
+                  ],
                 ),
                 // Text(widget.alarm.AlarmAppId.toString()),
                 SizedBox(height: 10),

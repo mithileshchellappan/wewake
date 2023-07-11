@@ -19,7 +19,6 @@ class UserAlarmsScreen extends StatefulWidget {
 }
 
 class _UserAlarmsScreenState extends State<UserAlarmsScreen> {
-  Map<String, List<Alarm>> groupedAlarms = {};
   DateTime? _selectedDay;
   DateTime _focusedDay = DateTime.now();
   List<Alarm> focusedAlarms = [];
@@ -103,22 +102,28 @@ class _UserAlarmsScreenState extends State<UserAlarmsScreen> {
                 itemCount: alarmProvider.alarms
                     .where((element) => element.Time.day == _focusedDay.day)
                     .length,
-                physics: NeverScrollableScrollPhysics(),
+                physics: const NeverScrollableScrollPhysics(),
                 itemBuilder: (context, index) {
-                  List<Alarm> alarm = alarmProvider.alarms
+                  List<Alarm> alarms = alarmProvider.alarms
                       .where((element) => element.Time.day == _focusedDay.day)
                       .toList();
-                  if (alarm[index] != null) {
-                    return AlarmCard(
-                      alarm: alarm[index],
-                      memberCount: 0,
-                      isAdmin: false,
-                      alarmProvider: alarmProvider,
-                      allowActions: false,
+
+                  if (alarms[index] != null) {
+                    return Column(
+                      children: [
+                        AlarmCard(
+                          alarm: alarms[index],
+                          memberCount: 0,
+                          isAdmin: false,
+                          alarmProvider: alarmProvider,
+                          allowActions: false,
+                          showGoToButton: true,
+                        ),
+                      ],
                     );
                   }
                 },
-              ),
+              )
             ],
           ),
         ));

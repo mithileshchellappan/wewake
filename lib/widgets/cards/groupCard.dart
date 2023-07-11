@@ -84,7 +84,7 @@ class GroupCard extends StatelessWidget {
                 context,
                 MaterialPageRoute(
                     builder: (context) => GroupDashboardScreen(
-                          group: group,
+                          groupId: group.GroupId,
                           iconColor: iconColor,
                         )))
           },

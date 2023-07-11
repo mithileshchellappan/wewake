@@ -1,21 +1,21 @@
 import 'package:alarm_test/models/Group.dart';
+import 'package:alarm_test/providers/groupProvider.dart';
 import 'package:alarm_test/screens/chatScreen.dart';
 import 'package:alarm_test/screens/groupViewScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart';
 
 class GroupDashboardScreen extends StatefulWidget {
-  final Group group;
+  final String groupId;
   final Color iconColor;
   const GroupDashboardScreen(
-      {super.key, required this.group, required this.iconColor});
+      {super.key, required this.groupId, required this.iconColor});
   @override
   _GroupDashboardScreenState createState() => _GroupDashboardScreenState();
 }
 
 class _GroupDashboardScreenState extends State<GroupDashboardScreen> {
-  List<dynamic> serverAlarms = [];
-
   int _navBarIndex = 0;
   @override
   void initState() {
@@ -24,14 +24,16 @@ class _GroupDashboardScreenState extends State<GroupDashboardScreen> {
 
   @override
   Widget build(BuildContext context) {
+    GroupProvider groupProvider =
+        Provider.of<GroupProvider>(context, listen: true);
     return SafeArea(
       child: Scaffold(
         body: _navBarIndex == 0
             ? GroupViewScreen(
-                group: widget.group,
+                group: groupProvider.getGroup(widget.groupId),
                 iconColor: widget.iconColor,
               )
-            : ChatScreen(widget.group.GroupId),
+            : ChatScreen(groupProvider.getGroup(widget.groupId).GroupId),
         bottomNavigationBar: CupertinoTabBar(
           currentIndex: _navBarIndex,
           onTap: (value) => {
