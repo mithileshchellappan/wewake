@@ -130,7 +130,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
             BottomNavigationBarItem(
                 icon: Icon(CupertinoIcons.group), label: "Groups"),
             BottomNavigationBarItem(
-                icon: Icon(CupertinoIcons.alarm), label: "Alarms"),
+                icon: Icon(CupertinoIcons.calendar), label: "Calendar"),
           ],
         ),
       ),

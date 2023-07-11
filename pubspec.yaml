@@ -49,7 +49,7 @@ dependencies:
   flutter_chat_bubble: ^2.0.2
   web_socket_channel: ^2.4.0
   uuid: ^3.0.7
-  calendar_view: ^1.0.3
+  table_calendar: ^3.0.9
 dev_dependencies:
   flutter_test:
     sdk: flutter
