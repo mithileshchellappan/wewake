@@ -32,11 +32,11 @@ Future<Map<String, dynamic>> signUp(
         "user": user
       };
     } else {
-      return {"success": false, "message": errorText};
+      return {"success": false, "message": res.body.toString()};
     }
   } catch (e) {
     print(e);
-    return {"success": false, "message": errorText};
+    return {"success": false, "message": e.toString()};
   }
 }
 
@@ -66,11 +66,11 @@ Future<Map<String, dynamic>> login(String email, String password) async {
       return {"success": false, "message": "Incorrect Credentials. Try again!"};
     } else {
       print(res.body.toString());
-      return {"success": false, "message": errorText};
+      return {"success": false, "message": res.body.toString()};
     }
   } catch (e) {
     print(e);
-    return {"success": false, "message": errorText};
+    return {"success": false, "message": e.toString()};
   }
 }
 

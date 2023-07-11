@@ -41,7 +41,7 @@ class _GroupScreenState extends State<GroupScreen> {
     setGroups();
     getUpcomingAlarm();
     !_timeController.isClosed ? _timeController.add(DateTime.now()) : null;
-    _timer ??= Timer.periodic(Duration(seconds: 1), (_) {
+    _timer ??= Timer.periodic(Duration(microseconds: 500), (_) {
       _timeController.add(DateTime.now());
     });
   }

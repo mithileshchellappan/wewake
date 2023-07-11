@@ -36,8 +36,12 @@ class _UserAlarmsScreenState extends State<UserAlarmsScreen> {
   List<dynamic> _getEventsForRange(DateTime start) {
     alarmProvider = Provider.of<AlarmProvider>(context, listen: false);
     List<Alarm> alarms = alarmProvider!.alarms ?? [];
-    focusedAlarms =
-        alarms.where((element) => element.Time.day == start.day).toList();
+    focusedAlarms = alarms
+        .where((element) =>
+            element.Time.month == start.month &&
+            element.Time.day == start.day &&
+            element.Time.year == start.year)
+        .toList();
     return focusedAlarms;
   }
 

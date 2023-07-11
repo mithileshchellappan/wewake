@@ -157,8 +157,8 @@ class _AlarmCardState extends State<AlarmCard> {
                 Fluttertoast.showToast(msg: res['message']);
               }
             }),
-          customSwipeActionCell(
-              Icon(Icons.exit_to_app_rounded), Text("Opt Out"), (p0) async {
+          customSwipeActionCell(Icon(Icons.exit_to_app_rounded),
+              Text("Opt ${widget.alarm.OptOut ? "In" : "Out"}"), (p0) async {
             widget.alarm.OptOut = !widget.alarm.OptOut;
             var res = await optOutAlarm(widget.alarm);
             if (res['success']) {
