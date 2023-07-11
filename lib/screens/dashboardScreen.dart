@@ -9,7 +9,6 @@ import 'package:alarm_test/screens/groupViewScreen.dart';
 import 'package:alarm_test/screens/userAlarmsScreen.dart';
 import 'package:alarm_test/utils/alarmService.dart';
 import 'package:alarm_test/utils/helpers.dart';
-import 'package:alarm_test/utils/sharedPref.dart';
 import 'package:alarm_test/widgets/PopUps.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -48,13 +47,12 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
             if (group != null) {
               return MultiActionPopup(
-                "⏰ ${alarm!.NotificationTitle}",
-                "${alarm.NotificationBody}",
+                "⏰ ${alarm.NotificationTitle}",
+                alarm.NotificationBody,
                 "from: ${group.GroupName}",
                 actions: [
                   CupertinoDialogAction(
-                    child: const Text("Snooze (+5 min)"),
-                    textStyle: TextStyle(color: Colors.yellowAccent),
+                    textStyle: const TextStyle(color: Colors.yellowAccent),
                     onPressed: () {
                       alarm.Time = alarm.Time.add(const Duration(minutes: 1));
                       alarmProvider.editAlarm(alarm.AlarmId, alarm);
@@ -64,6 +62,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
                       Navigator.of(context).pop();
                       Fluttertoast.showToast(msg: "Snoozing");
                     },
+                    child: const Text("Snooze (+5 min)"),
                   ),
                   CupertinoDialogAction(
                     child: const Text("Go to group"),

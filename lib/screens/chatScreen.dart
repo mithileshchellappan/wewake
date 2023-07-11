@@ -1,5 +1,4 @@
 import 'dart:convert';
-import 'dart:io';
 
 import 'package:alarm_test/api/chat.dart';
 import 'package:alarm_test/models/Chat.dart';
@@ -16,8 +15,8 @@ import 'package:web_socket_channel/web_socket_channel.dart';
 import '../constants/api.dart';
 
 class ChatScreen extends StatefulWidget {
-  String groupId;
-  ChatScreen(this.groupId, {super.key});
+  final String groupId;
+  const ChatScreen(this.groupId, {super.key});
 
   @override
   State<ChatScreen> createState() => _ChatScreenState();
@@ -122,19 +121,20 @@ class _ChatScreenState extends State<ChatScreen> {
     chatsProvider = Provider.of<ChatProvider>(context, listen: true);
     chatMessages = chatsProvider.chats[widget.groupId] ?? [];
     return Scaffold(
+      backgroundColor: Colors.black54,
       appBar: CupertinoNavigationBar(
         brightness: Theme.of(context).brightness,
         backgroundColor: Theme.of(context).backgroundColor,
         transitionBetweenRoutes: true,
         automaticallyImplyLeading: true,
-        middle: Text(
+        middle: const Text(
           'Chat',
           style: TextStyle(color: Colors.white),
         ),
         trailing: Material(
           color: Colors.black,
           child: IconButton(
-            icon: Icon(Icons.refresh),
+            icon: const Icon(Icons.refresh),
             onPressed: reconnectToWs,
           ),
         ),
@@ -216,8 +216,8 @@ class _ChatScreenState extends State<ChatScreen> {
 }
 
 class ChatSendBubble extends StatelessWidget {
-  String text;
-  ChatSendBubble({
+  final String text;
+  const ChatSendBubble({
     required this.text,
     super.key,
   });

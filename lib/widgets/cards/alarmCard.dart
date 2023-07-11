@@ -293,7 +293,7 @@ class _AlarmCardState extends State<AlarmCard> {
                   },
                   child: Container(
                       decoration: const BoxDecoration(
-                          color: Colors.black,
+                          color: Colors.black45,
                           borderRadius: BorderRadius.only(
                               bottomLeft: Radius.circular(5),
                               bottomRight: Radius.circular(5))),
@@ -354,7 +354,7 @@ class _AlarmCardState extends State<AlarmCard> {
       builder: ((context, constraints) => Container(
             width: constraints.maxWidth,
             padding: EdgeInsets.only(top: 3),
-            color: Theme.of(context).backgroundColor,
+            color: Colors.black45,
             child: Row(
               children: [
                 SizedBox(

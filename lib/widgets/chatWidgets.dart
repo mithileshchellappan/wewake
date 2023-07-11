@@ -42,3 +42,33 @@ class ChatReceiveBubble extends StatelessWidget {
     );
   }
 }
+
+class ChatSendBubble extends StatelessWidget {
+  final String text;
+  const ChatSendBubble({
+    required this.text,
+    super.key,
+  });
+
+  @override
+  Widget build(BuildContext context) {
+    return GestureDetector(
+      onLongPress: () {},
+      child: ChatBubble(
+        clipper: ChatBubbleClipper3(type: BubbleType.sendBubble),
+        alignment: Alignment.topRight,
+        margin: EdgeInsets.only(bottom: 20),
+        backGroundColor: Colors.blue,
+        child: Container(
+          constraints: BoxConstraints(
+            maxWidth: MediaQuery.of(context).size.width * 0.5,
+          ),
+          child: Text(
+            text,
+            style: TextStyle(color: Colors.white),
+          ),
+        ),
+      ),
+    );
+  }
+}

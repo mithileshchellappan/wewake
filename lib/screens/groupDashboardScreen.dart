@@ -1,14 +1,14 @@
 import 'package:alarm_test/models/Group.dart';
 import 'package:alarm_test/screens/chatScreen.dart';
 import 'package:alarm_test/screens/groupViewScreen.dart';
-import 'package:alarm_test/screens/userAlarmsScreen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 
 class GroupDashboardScreen extends StatefulWidget {
-  Group group;
-  Color iconColor;
-  GroupDashboardScreen({required this.group, required this.iconColor});
+  final Group group;
+  final Color iconColor;
+  const GroupDashboardScreen(
+      {super.key, required this.group, required this.iconColor});
   @override
   _GroupDashboardScreenState createState() => _GroupDashboardScreenState();
 }

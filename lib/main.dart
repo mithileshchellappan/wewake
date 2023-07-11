@@ -36,6 +36,7 @@ class WeWake extends StatelessWidget {
             highlightColor: Colors.blue[500],
             disabledColor: Color.fromARGB(255, 50, 54, 56),
             brightness: Brightness.dark,
+            scaffoldBackgroundColor: Colors.black54,
             // canvasColor: Colors.black12,
             focusColor: Colors.blueGrey[700],
             backgroundColor: Colors.black,
