@@ -1,9 +1,13 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using Microsoft.AspNetCore.Http.HttpResults;
+using Microsoft.AspNetCore.Mvc;
+using Newtonsoft.Json;
+using System.Text.RegularExpressions;
 using WeWakeAPI.Data;
 using WeWakeAPI.DBServices;
 using WeWakeAPI.Exceptions;
 using WeWakeAPI.Models;
 using WeWakeAPI.RequestModels;
+using WeWakeAPI.Services;
 
 namespace WeWakeAPI.Controllers
 {
@@ -16,17 +20,20 @@ namespace WeWakeAPI.Controllers
         private readonly UserService _userService;
         private readonly GroupService _groupService;
         private readonly IHttpContextAccessor _httpContextAccessor;
+        private readonly IRedisService _redisService;
 
-        public AlarmController(ApplicationDbContext context, AlarmService alarmService, UserService userService, GroupService groupService, IHttpContextAccessor httpContextAccessor)
+        public AlarmController(ApplicationDbContext context, AlarmService alarmService, UserService userService, GroupService groupService, IHttpContextAccessor httpContextAccessor,IRedisService redisService)
         {
             _context = context;
             _alarmService = alarmService;
             _userService = userService;
             _groupService = groupService;
             _httpContextAccessor = httpContextAccessor;
+            _redisService = redisService;
         }
 
         private HttpContext _httpContext => _httpContextAccessor.HttpContext;
+
 
         [HttpGet("Group/{groupId}")]
         public async Task<ActionResult> GetAlarms(Guid groupId)
@@ -59,6 +66,24 @@ namespace WeWakeAPI.Controllers
                 // AlarmRequest ar = new(Guid.Parse(alarm["groupId"]), DateTime.Parse(alarm["time"]), alarm["isEnabled"], alarm["loopAudio"], alarm["vibrate"], alarm["notificationTitle"], alarm["notificationBody"], alarm["internalAudioFile"], alarm["useExternalAudio"], alarm["audioUrl"]);
                 Guid userId = await _userService.CheckIfUserExistsFromJWT();
                 Alarm createdAlarm = await _alarmService.CreateAlarm(alarm, userId);
+                var sendAlarm =new {
+                    alarmId = createdAlarm.AlarmId,
+                    groupId= createdAlarm.GroupId,
+                    createdBy=createdAlarm.CreatedBy,
+                    canMemberCreateAlarm = createdAlarm.Group.CanMemberCreateAlarm,
+                    alarmAppId = createdAlarm.AlarmAppId,
+                    time= createdAlarm.Time,
+                    isEnabled= createdAlarm.IsEnabled,
+                    loopAudio= createdAlarm.LoopAudio,
+                    vibrate= createdAlarm.Vibrate,
+                    notificationTitle= createdAlarm.NotificationTitle,
+                    notificationBody= createdAlarm.NotificationBody,
+                    internalAudioFile= createdAlarm.InternalAudioFile,
+                    useExternalAudio= createdAlarm.UseExternalAudio,
+                    audioURL= createdAlarm.AudioURL,
+                    groupName= createdAlarm.Group.GroupName,
+                };
+                _redisService.PublishToGroup(createdAlarm.GroupId.ToString(), JsonConvert.SerializeObject(new { action = "create", alarm = sendAlarm }));
                 return Ok(new { success = true, alarm = createdAlarm });
 
             }

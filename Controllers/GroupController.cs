@@ -8,6 +8,7 @@ using WeWakeAPI.DBServices;
 using WeWakeAPI.Models;
 using WeWakeAPI.RequestModels;
 using WeWakeAPI.ResponseModels;
+using WeWakeAPI.Services;
 
 namespace WeWakeAPI.Controllers
 {
@@ -55,6 +56,7 @@ namespace WeWakeAPI.Controllers
                 _context.Members.Add(member);
                 await _context.SaveChangesAsync();
                 var resGroup = group.AppendKey("memberCount",1);
+
                 return Ok(new {success=true,group = resGroup});
             }
             catch (Exception e)

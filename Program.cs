@@ -4,6 +4,7 @@ using WeWakeAPI.Middlewares;
 using WeWakeAPI.DBServices;
 using WeWakeAPI.Utils;
 using WeWakeAPI.WebSockets;
+using WeWakeAPI.Services;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,8 @@ string internalIp = IpAddr.GetIp();
 builder.Services.AddDbContext<ApplicationDbContext>(
     options => options.UseSqlServer(builder.Configuration.GetConnectionString("Database")));
 Console.WriteLine(builder.Configuration.GetConnectionString("Database"));
+
+builder.Services.AddSingleton<IRedisService,RedisService>();
 
 //builder.Services.AddCors(options =>
 //{
@@ -66,12 +69,13 @@ WebSocketOptions wsOptions = new WebSocketOptions
 };
 app.UseWebSockets(wsOptions);
 app.UseWebSocketMiddleware("/ws");
-
+var redisService = app.Services.GetRequiredService<IRedisService>();
+//redisService.
 
 app.UseJWTMiddleware();
 app.MapGet("/ping", () => "pong");
 console.log(internalIp);
-//app.Urls.Add($"http://{internalIp}:5022");
+app.Urls.Add($"http://{internalIp}:5022");
 //app.Urls.Add("http://localhost:5022");
-app.Urls.Add("http://0.0.0.0:5022");
+//app.Urls.Add("http://0.0.0.0:5022");
 app.Run();

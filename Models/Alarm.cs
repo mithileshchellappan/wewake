@@ -1,4 +1,5 @@
-﻿using System.ComponentModel.DataAnnotations;
+﻿using Newtonsoft.Json;
+using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 
 namespace WeWakeAPI.Models
@@ -39,6 +40,11 @@ namespace WeWakeAPI.Models
             InternalAudioFile = internalAudioFile;
             UseExternalAudio = useExternalAudio;
             AudioURL = audioURL;
+        }
+        override
+        public string ToString()
+        {
+            return JsonConvert.SerializeObject(this);
         }
     }
 }
