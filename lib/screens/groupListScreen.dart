@@ -38,7 +38,6 @@ class _GroupScreenState extends State<GroupScreen> {
   @override
   void initState() {
     super.initState();
-    setGroups();
     getUpcomingAlarm();
     !_timeController.isClosed ? _timeController.add(DateTime.now()) : null;
     _timer ??= Timer.periodic(Duration(microseconds: 500), (_) {
@@ -49,24 +48,6 @@ class _GroupScreenState extends State<GroupScreen> {
   void getUpcomingAlarm() {
     alarmProvider = Provider.of<AlarmProvider>(context, listen: false);
     alarm = alarmProvider.getUpcomingAlarm();
-  }
-
-  void setGroups() async {
-    groupProvider = Provider.of<GroupProvider>(context, listen: false);
-    var providerGroups = groupProvider?.groups ?? [];
-    if (providerGroups.length <= 0) {
-      var res = await getUserGroups();
-      if (res['success']) {
-        groupProvider.setGroup(res['groups']);
-        userGroups = groupProvider.groups;
-
-        print(userGroups.length);
-      } else {
-        Fluttertoast.showToast(msg: res['message']);
-      }
-    } else {
-      userGroups = groupProvider.groups;
-    }
   }
 
   Future<void> createGroupAndRefreshList(
@@ -118,6 +99,7 @@ class _GroupScreenState extends State<GroupScreen> {
     groupProvider = Provider.of<GroupProvider>(context, listen: true);
     userProvider = Provider.of<UserProvider>(context, listen: true);
     alarmProvider = Provider.of<AlarmProvider>(context, listen: true);
+    userGroups = groupProvider.groups ?? [];
     return Scaffold(
         backgroundColor: Theme.of(context).backgroundColor,
         // appBar: CupertinoNavigationBar(
@@ -205,6 +187,7 @@ class _GroupScreenState extends State<GroupScreen> {
           SliverList(
             delegate: SliverChildBuilderDelegate(
                 childCount: userGroups.length + 1, ((context, index) {
+              // userGroups = groupProvider.groups;
               if (index == 0) {
                 return StreamBuilder<DateTime>(
                   stream: _timeController.stream,
