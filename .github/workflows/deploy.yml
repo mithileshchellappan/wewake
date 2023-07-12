@@ -1,0 +1,30 @@
+name: Deploy WeWake API to Server
+
+on:
+  push:
+    branches:
+      - backend
+  workflow_dispatch:
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v2
+
+      - name: SSH into server
+        uses: appleboy/ssh-action@master
+        with:
+          host: ${{ env.SERVER_IP }}
+          username: ${{ env.SERVER_USERNAME }}
+          key: ${{ env.SERVER_PASSPHRASE }}
+          script: |
+            cd ~/repos/wewake
+            git pull
+            sudo docker stop wewakeapi || true
+            sudo docker rm wewakeapi || true
+            sudo docker rmi wewake-image || true
+            sudo docker build -t wewake-image -f Dockerfile .
+            sudo docker run -d -p 80:5022 --name wewakeapi wewake-image
