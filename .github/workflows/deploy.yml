@@ -17,9 +17,9 @@ jobs:
       - name: SSH into server
         uses: appleboy/ssh-action@master
         with:
-          host: ${{ env.SERVER_IP }}
-          username: ${{ env.SERVER_USERNAME }}
-          key: ${{ env.SERVER_PASSPHRASE }}
+          host: ${{ secrets.SERVER_IP }}
+          username: ${{ secrets.SERVER_USERNAME }}
+          key: ${{ secrets.SERVER_PASSPHRASE }}
           script: |
             cd ~/repos/wewake
             git pull
