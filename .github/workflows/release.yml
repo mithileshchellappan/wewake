@@ -5,6 +5,7 @@ on:
     branches:
       - frontend
 
+
 jobs:
   build:
     runs-on: ubuntu-latest
@@ -22,7 +23,7 @@ jobs:
         run: flutter pub get
 
       - name: Build APK
-        run: flutter build apk --release --release --dart-define=Server_Url=${{ secrets.SERVER_URL }} --dart-define=Redis_Url=${{ secrets.REDIS_URL }} --dart-define=Redis_Pass=${{ secrets.REDIS_PASS }}
+        run: flutter build apk --release --dart-define=Server_Url=${{ secrets.SERVER_IP }} --dart-define=Redis_Url=${{ secrets.REDIS_URL }} --dart-define=Redis_Pass=${{ secrets.REDIS_PASS }}
     
       - name: Create Release
         id: create_release
@@ -37,6 +38,8 @@ jobs:
 
       - name: Upload Release Asset
         uses: actions/upload-release-asset@v1
+        env:
+            GITHUB_TOKEN: ${{secrets.GITHUB_TOKEN}}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: build/app/outputs/flutter-apk/app-release.apk
