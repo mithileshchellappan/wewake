@@ -6,14 +6,12 @@ import 'package:redis/redis.dart';
 
 class RedisSubscriber {
   final List<String> channels;
-  final Function(String) messageListener;
 
   late Command cmd;
   late StreamController<Map<String, String>> _messageStreamController;
 
   RedisSubscriber({
     required this.channels,
-    required this.messageListener,
   }) {
     _messageStreamController =
         StreamController<Map<String, String>>.broadcast();
@@ -39,8 +37,6 @@ class RedisSubscriber {
             final channel = msg[1]?.toString();
             final message = msg[2]?.toString();
             if (channel != null && message != null) {
-              final formattedMessage = '$channel: $message';
-              messageListener(formattedMessage);
               _messageStreamController
                   .add({"group": channel, "message": message});
             }

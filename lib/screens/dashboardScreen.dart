@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:convert';
 
 import 'package:alarm_test/api/group.dart';
 import 'package:alarm_test/constants/api.dart';
@@ -6,6 +7,7 @@ import 'package:alarm_test/models/Alarm.dart';
 import 'package:alarm_test/models/Group.dart';
 import 'package:alarm_test/providers/alarmsProvider.dart';
 import 'package:alarm_test/providers/groupProvider.dart';
+import 'package:alarm_test/screens/groupDashboardScreen.dart';
 import 'package:alarm_test/screens/groupListScreen.dart';
 import 'package:alarm_test/screens/groupViewScreen.dart';
 import 'package:alarm_test/screens/userAlarmsScreen.dart';
@@ -43,7 +45,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
 
     setAlarms();
     // setGroups();
-    subToGroups();
+    subToGroups(context);
     subscription ??= AP.Alarm.ringStream.stream.listen((alarmSettings) {
       showDialog(
           context: context,
@@ -74,11 +76,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                   CupertinoDialogAction(
                     child: const Text("Go to group"),
                     onPressed: () {
-                      Group group = groupProvider.getGroup(alarm.GroupId!);
                       Navigator.of(context).pop();
                       Navigator.of(context).push(MaterialPageRoute(
-                          builder: (context) => GroupViewScreen(
-                              group: group, iconColor: getRandomDarkColor())));
+                          builder: (context) => GroupDashboardScreen(
+                              groupId: alarm.GroupId!,
+                              iconColor: getRandomDarkColor())));
                       AP.Alarm.stop(alarmSettings.id);
                     },
                   ),
@@ -100,12 +102,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
     });
   }
 
-  void subToGroups() async {
+  void subToGroups(context) async {
     var res = await setGroups();
 
     final redisSubscriber = RedisSubscriber(
       channels: res.map((Group g) => g.GroupId).toList(),
-      messageListener: (message) => print(message),
     );
 
     await redisSubscriber.connectAndSubscribe();
@@ -113,7 +114,35 @@ class _DashboardScreenState extends State<DashboardScreen> {
     redisSubscriber.appendChannel('test');
 
     redisSubscriber.messageStream.listen((event) {
-      print(event);
+      try {
+        Map<String, dynamic> decodedValue = jsonDecode(event['message']!);
+        print(decodedValue['action']);
+        if (decodedValue['action'] == 'create') {
+          print(decodedValue['alarm']);
+          Alarm newAlarm = Alarm.fromJson(decodedValue['alarm']);
+          print(newAlarm);
+          bool addedAlarm = alarmProvider.appendAlarm(newAlarm);
+          AlarmService.setAlarm(newAlarm);
+          if (addedAlarm) {
+            ScaffoldMessenger.of(context).showSnackBar(
+              SnackBar(
+                action: SnackBarAction(
+                    label: "Go to Group",
+                    onPressed: () => Navigator.of(context).push(
+                        MaterialPageRoute(
+                            builder: (context) => GroupDashboardScreen(
+                                groupId: newAlarm.GroupId!,
+                                iconColor: getRandomDarkColor())))),
+                content: const Text('New Alarm Added!'),
+              ),
+            );
+          }
+        }
+        print("inside event");
+      } catch (e) {
+        print(e);
+        // print(event);
+      }
     });
   }
 
@@ -176,6 +205,16 @@ class _DashboardScreenState extends State<DashboardScreen> {
     );
   }
 }
+
+bool isJsonDecodable(String value) {
+  try {
+    jsonDecode(value);
+    return true;
+  } catch (_) {
+    return false;
+  }
+}
+
 
 // class FloatingAction extends StatelessWidget {
 //   @override

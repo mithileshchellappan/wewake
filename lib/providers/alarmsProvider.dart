@@ -16,18 +16,22 @@ class AlarmProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  void appendAlarm(Alarm alarm) {
-    _alarms?.add(alarm);
+  bool appendAlarm(Alarm alarm) {
+    if (!_alarms!.any((element) => element.AlarmId == alarm.AlarmId)) {
+      _alarms?.add(alarm);
 
-    _alarms?.sort((a, b) {
-      if (a.IsEnabled != b.IsEnabled) {
-        return a.IsEnabled ? -1 : 1;
-      }
+      _alarms?.sort((a, b) {
+        if (a.IsEnabled != b.IsEnabled) {
+          return a.IsEnabled ? -1 : 1;
+        }
 
-      return a.Time.compareTo(b.Time);
-    });
-
-    notifyListeners();
+        return a.Time.compareTo(b.Time);
+      });
+      notifyListeners();
+      return true;
+    } else {
+      return false;
+    }
   }
 
   void clearAlarms() {
