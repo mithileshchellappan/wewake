@@ -122,8 +122,8 @@ class _DashboardScreenState extends State<DashboardScreen> {
           Alarm newAlarm = Alarm.fromJson(decodedValue['alarm']);
           print(newAlarm);
           bool addedAlarm = alarmProvider.appendAlarm(newAlarm);
-          AlarmService.setAlarm(newAlarm);
-          if (addedAlarm) {
+          if (addedAlarm == true) {
+            AlarmService.setAlarm(newAlarm);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
                 action: SnackBarAction(
