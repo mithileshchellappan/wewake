@@ -6,6 +6,7 @@ import 'package:alarm_test/models/Alarm.dart';
 import 'package:alarm_test/providers/alarmsProvider.dart';
 import 'package:alarm_test/providers/groupProvider.dart';
 import 'package:alarm_test/utils/alarmService.dart';
+import 'package:alarm_test/utils/redisServce.dart';
 import 'package:alarm_test/widgets/cards/groupCard.dart';
 import 'package:alarm_test/widgets/PopUps.dart';
 import 'package:flutter/cupertino.dart';
@@ -56,6 +57,8 @@ class _GroupScreenState extends State<GroupScreen> {
     var res = await callback(name, optionValue);
     print(res);
     if (res['success']) {
+      RedisSubscriber redisSubscriber = RedisSubscriber();
+      redisSubscriber.appendChannel(res['group'].GroupId);
       groupProvider.appendGroup(res['group']);
       setState(() {});
 
@@ -288,37 +291,8 @@ class GroupFloatingActionButton extends StatelessWidget {
             child: const Icon(Icons.nat),
             label: 'Debugging Button',
             onTap: () {
-              showDialog(
-                  context: context,
-                  builder: (context) {
-                    return MultiActionPopup(
-                      "⏰ Test",
-                      "Test",
-                      "from: Group",
-                      actions: [
-                        CupertinoDialogAction(
-                          textStyle:
-                              TextStyle(backgroundColor: Colors.yellowAccent),
-                          child: Container(
-                            child: const Text("Snooze (+5 min)"),
-                          ),
-                          onPressed: () {
-                            Navigator.of(context).pop();
-                            Fluttertoast.showToast(msg: "Snoozing");
-                          },
-                        ),
-                        CupertinoDialogAction(
-                          child: Text("Go to group"),
-                          onPressed: () {},
-                        ),
-                        CupertinoDialogAction(
-                          child: Text("Stop"),
-                          isDestructiveAction: true,
-                          onPressed: () {},
-                        )
-                      ],
-                    );
-                  });
+              RedisSubscriber sub = RedisSubscriber();
+              print(sub.channels);
             }),
         SpeedDialChild(
           child: const Icon(Icons.add),

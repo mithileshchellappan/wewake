@@ -1,33 +1,35 @@
 import 'dart:async';
-import 'dart:convert';
 
 import 'package:alarm_test/constants/api.dart';
 import 'package:redis/redis.dart';
 
 class RedisSubscriber {
-  final List<String> channels;
-
+  List<String> channels = [];
+  late PubSub pubsub;
+  static final RedisSubscriber _redisSubscriber = RedisSubscriber._internal();
   late Command cmd;
-  late StreamController<Map<String, String>> _messageStreamController;
+  late StreamController<Map<String, String>> _messageStreamController =
+      StreamController<Map<String, String>>.broadcast();
 
-  RedisSubscriber({
-    required this.channels,
-  }) {
-    _messageStreamController =
-        StreamController<Map<String, String>>.broadcast();
+  factory RedisSubscriber() {
+    return _redisSubscriber;
   }
+
+  RedisSubscriber._internal();
 
   Stream<Map<String, String>> get messageStream =>
       _messageStreamController.stream;
 
-  Future<void> connectAndSubscribe() async {
+  Future<void> connectAndSubscribe(List<String> channels) async {
+    print("here" + channels.toString());
+    this.channels = channels;
     final conn = RedisConnection();
     cmd = await conn.connectSecure(redisUrl, 6380);
 
     cmd.send_object(['AUTH', redisPass]).then((response) {
       if (response.toString().toLowerCase() == 'ok') {
         print('Connected to Redis');
-        final pubsub = PubSub(cmd);
+        this.pubsub = PubSub(cmd);
         this.channels.add("test");
         pubsub.subscribe(this.channels);
         final stream = pubsub.getStream();
@@ -50,7 +52,7 @@ class RedisSubscriber {
 
   void appendChannel(String channel) {
     channels.add(channel);
-    cmd.send_object(['SUBSCRIBE', channel]);
+    this.pubsub.subscribe([channel]);
   }
 
   void dispose() {

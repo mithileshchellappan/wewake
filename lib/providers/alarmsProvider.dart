@@ -35,6 +35,10 @@ class AlarmProvider extends ChangeNotifier {
     }
   }
 
+  bool alarmAlareadyExists(Alarm alarm) {
+    return _alarms!.any((element) => element == alarm);
+  }
+
   void clearAlarms() {
     _alarms = [];
     notifyListeners();

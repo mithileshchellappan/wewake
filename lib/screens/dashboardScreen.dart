@@ -105,13 +105,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
   void subToGroups(context) async {
     var res = await setGroups();
 
-    final redisSubscriber = RedisSubscriber(
-      channels: res.map((Group g) => g.GroupId).toList(),
-    );
+    final redisSubscriber = RedisSubscriber();
 
-    await redisSubscriber.connectAndSubscribe();
-
-    redisSubscriber.appendChannel('test');
+    await redisSubscriber
+        .connectAndSubscribe(res.map((Group g) => g.GroupId).toList());
 
     redisSubscriber.messageStream.listen((event) {
       try {
@@ -121,8 +118,10 @@ class _DashboardScreenState extends State<DashboardScreen> {
           print(decodedValue['alarm']);
           Alarm newAlarm = Alarm.fromJson(decodedValue['alarm']);
           print(newAlarm);
-          bool addedAlarm = alarmProvider.appendAlarm(newAlarm);
-          if (addedAlarm == true) {
+          bool addedAlarmBool = alarmProvider.alarmAlareadyExists(newAlarm);
+          if (addedAlarmBool) {
+            alarmProvider.appendAlarm(newAlarm);
+            print("here in if of addedAlarmBool");
             AlarmService.setAlarm(newAlarm);
             ScaffoldMessenger.of(context).showSnackBar(
               SnackBar(
