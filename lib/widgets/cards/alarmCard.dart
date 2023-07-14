@@ -45,21 +45,12 @@ class AlarmCard extends StatefulWidget {
 
 class _AlarmCardState extends State<AlarmCard> {
   static Timer? _timer;
-  List<Task> tasks = [];
-  bool showTasks = false;
-  List<FocusNode> _focusNodes = [FocusNode()];
-  List<TextEditingController> _textEditingControllers = [
-    TextEditingController()
-  ];
-
-  bool isTasksLoading = false;
   static StreamController<DateTime> _timeController =
       StreamController<DateTime>.broadcast();
 
   @override
   void initState() {
     super.initState();
-    tasks = [];
     !_timeController.isClosed ? _timeController.add(DateTime.now()) : null;
     _timer ??= Timer.periodic(Duration(seconds: 10), (_) {
       _timeController.add(DateTime.now());
@@ -70,28 +61,7 @@ class _AlarmCardState extends State<AlarmCard> {
   void dispose() async {
     _timer?.cancel();
     _timeController.close();
-    tasks = [];
-    for (var focusNode in _focusNodes) focusNode.dispose();
-    for (var editor in _textEditingControllers) editor.dispose();
     super.dispose();
-  }
-
-  void removeTask(int index) {
-    setState(() {
-      tasks.removeAt(index);
-    });
-  }
-
-  void addTask(Task task, int index) {
-    setState(() {
-      tasks.insert(index, task);
-    });
-  }
-
-  void onUpdate(UpdateTypes upd, int index, Task task) {
-    if (upd == UpdateTypes.remove)
-      removeTask(index);
-    else if (upd == UpdateTypes.insert) addTask(task, index);
   }
 
   String formatTimeDifference(Duration difference, widget) {
@@ -139,7 +109,6 @@ class _AlarmCardState extends State<AlarmCard> {
         leadingActions: [
           if ((widget.isAdmin ||
                   widget.alarm.CreatedBy == userProvider.user!.UserId) &&
-              !showTasks &&
               widget.allowActions)
             customSwipeActionCell(
                 Icon(CupertinoIcons.delete, color: Colors.red),
@@ -252,105 +221,6 @@ class _AlarmCardState extends State<AlarmCard> {
                 // Text(widget.alarm.AlarmAppId.toString()),
                 SizedBox(height: 10),
                 bottomBar(),
-                if (showTasks)
-                  InkWell(
-                    onTap: () {
-                      print("here");
-                      setState(() {
-                        _focusNodes.insert(0, FocusNode());
-                        _textEditingControllers.insert(
-                            0, TextEditingController());
-                      });
-
-                      tasks.insert(
-                          0,
-                          Task(widget.alarm.AlarmId, "Add your task", false, 0,
-                              IsNew: true));
-                    },
-                    child: Container(
-                        color: Colors.blueGrey[700],
-                        child: const Center(
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.center,
-                            children: [Icon(Icons.add), Text("Add New Task")],
-                          ),
-                        )),
-                  ),
-
-                if (isTasksLoading)
-                  Container(
-                    color: Colors.black,
-                    child: Center(
-                      child: CupertinoActivityIndicator(),
-                    ),
-                  ),
-                if (showTasks)
-                  Container(
-                    child: ListView.builder(
-                      shrinkWrap: true,
-                      physics: NeverScrollableScrollPhysics(),
-                      itemCount: tasks.length,
-                      itemBuilder: (context, index) {
-                        final item = tasks[index];
-                        return TaskTextField(
-                          index: index,
-                          task: item,
-                          memberCount: widget.memberCount,
-                          groupId: widget.alarm.GroupId!,
-                          focusNode: _focusNodes[index],
-                          onUpdate: onUpdate,
-                          textEditingController: _textEditingControllers[index],
-                        );
-                      },
-                    ),
-                  ),
-
-                InkWell(
-                  onTap: () async {
-                    if (!showTasks) {
-                      setState(() {
-                        isTasksLoading = true;
-                      });
-                    }
-                    var res = await getTasks(widget.alarm.AlarmId);
-                    if (res['success']) {
-                      for (var i = 0; i <= res['tasks'].length; i++) {
-                        _focusNodes.insert(0, FocusNode());
-                        _textEditingControllers.insert(
-                            0, TextEditingController());
-                      }
-                      setState(() {
-                        isTasksLoading = false;
-                        showTasks = !showTasks;
-                        tasks = res['tasks'];
-                      });
-                    } else {
-                      setState(() {
-                        isTasksLoading = false;
-                      });
-                      Fluttertoast.showToast(msg: "Unable to fetch tasks");
-                    }
-                  },
-                  child: Container(
-                      decoration: const BoxDecoration(
-                          color: Colors.black45,
-                          borderRadius: BorderRadius.only(
-                              bottomLeft: Radius.circular(5),
-                              bottomRight: Radius.circular(5))),
-                      child: Row(
-                        mainAxisAlignment: MainAxisAlignment.end,
-                        children: [
-                          Icon(showTasks
-                              ? Icons.arrow_drop_up
-                              : Icons.arrow_drop_down),
-                          Text(
-                            "Tasks",
-                            style: TextStyle(fontSize: 16),
-                          ),
-                          SizedBox(width: 10)
-                        ],
-                      )),
-                ),
               ],
             ),
           ),
@@ -394,7 +264,7 @@ class _AlarmCardState extends State<AlarmCard> {
       builder: ((context, constraints) => Container(
             width: constraints.maxWidth,
             padding: EdgeInsets.only(top: 3),
-            color: Colors.black45,
+            color: Colors.black54,
             child: Row(
               children: [
                 SizedBox(
