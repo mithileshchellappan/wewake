@@ -1,5 +1,6 @@
 import 'package:alarm_test/api/task.dart';
 import 'package:alarm_test/models/Task.dart';
+import 'package:alarm_test/screens/alarmTaskScreen.dart';
 import 'package:alarm_test/widgets/cards/alarmCard.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
@@ -28,7 +29,8 @@ class TaskTextField extends StatefulWidget {
 }
 
 class _TaskTextFieldState extends State<TaskTextField> {
-  bool isEdit = false;
+  bool _isEdit = false;
+  bool _isLoading = false;
   @override
   void initState() {
     super.initState();
@@ -40,6 +42,7 @@ class _TaskTextFieldState extends State<TaskTextField> {
   }
 
   void setUpdate(_) async {
+    print("here");
     if (widget.textEditingController.text.isEmpty) {
       widget.onUpdate(UpdateTypes.remove, widget.index, widget.task);
     } else {
@@ -50,34 +53,49 @@ class _TaskTextFieldState extends State<TaskTextField> {
           widget.task = res['task'];
 
           setState(() {
-            isEdit = false;
+            _isEdit = false;
             widget.task.IsNew = false;
           });
           widget.onUpdate(UpdateTypes.insert, widget.index, res['task']);
         } else {
           setState(() {
-            isEdit = false;
+            _isEdit = false;
             widget.task.IsNew = false;
           });
           widget.onUpdate(UpdateTypes.remove, widget.index, widget.task);
 
           Fluttertoast.showToast(msg: "Error creating task");
         }
+      } else {
+        setState(() {
+          _isEdit = false;
+          widget.task.IsNew = false;
+        });
       }
     }
   }
 
   void setDone() async {
-    var res = await setTaskStatus(widget.task.AlarmTaskId, widget.task.IsDone);
-    if (!res['success']) {
+    if (!_isLoading) {
       setState(() {
-        widget.task.IsDone = !widget.task.IsDone;
+        _isLoading = true;
       });
-      Fluttertoast.showToast(msg: "Error setting task status");
-    } else {
-      setState(() {
-        widget.task.IsDone ? ++widget.task.DoneCount : --widget.task.DoneCount;
-      });
+      var res =
+          await setTaskStatus(widget.task.AlarmTaskId, widget.task.IsDone);
+      if (!res['success']) {
+        setState(() {
+          widget.task.IsDone = !widget.task.IsDone;
+          _isLoading = false;
+        });
+        Fluttertoast.showToast(msg: "Error setting task status");
+      } else {
+        setState(() {
+          widget.task.IsDone
+              ? ++widget.task.DoneCount
+              : --widget.task.DoneCount;
+          _isLoading = false;
+        });
+      }
     }
   }
 
@@ -94,12 +112,13 @@ class _TaskTextFieldState extends State<TaskTextField> {
           // _controller.
           widget.focusNode.requestFocus();
           setState(() {
-            isEdit = true;
+            _isEdit = true;
             widget.textEditingController.text = widget.task.TaskText;
           });
         },
         child: Container(
-            height: widget.task.IsDone ? 25 : 30,
+            margin: EdgeInsets.symmetric(horizontal: 10),
+            height: widget.task.IsDone ? 35 : 40,
             // margin: const EdgeInsets.only(bottom: 3.0, top: 2.0),
             decoration: const BoxDecoration(
               color: Colors.black,
@@ -110,7 +129,7 @@ class _TaskTextFieldState extends State<TaskTextField> {
                 ),
               ),
             ),
-            child: (isEdit || widget.task.IsNew)
+            child: (_isEdit || widget.task.IsNew)
                 ? CupertinoTextField.borderless(
                     cursorHeight: 16,
                     autocorrect: true,
@@ -123,7 +142,7 @@ class _TaskTextFieldState extends State<TaskTextField> {
                     style: TextStyle(
                         color:
                             widget.task.IsDone ? Colors.white54 : Colors.white,
-                        fontSize: 16),
+                        fontSize: 15),
                     onTapOutside: setUpdate,
                     onSubmitted: setUpdate,
                   )
@@ -139,17 +158,23 @@ class _TaskTextFieldState extends State<TaskTextField> {
                         textAlign: TextAlign.center,
                         maxLines: 1,
                         style: TextStyle(
-                            fontSize: widget.task.IsDone ? 14 : 18,
+                            fontSize: widget.task.IsDone ? 18 : 20,
                             decoration: widget.task.IsDone
                                 ? TextDecoration.lineThrough
                                 : TextDecoration.none),
                       ),
+                      SizedBox(
+                          width: 5,
+                          child: Container(
+                            color: Colors.black,
+                          )),
+                      _isLoading ? CupertinoActivityIndicator() : Container(),
                       Expanded(
                         child: Container(),
                       ),
                       Text(
                         "${widget.task.DoneCount}/${widget.memberCount}",
-                        style: TextStyle(fontSize: 10),
+                        style: TextStyle(fontSize: 15),
                       )
                     ],
                   )));

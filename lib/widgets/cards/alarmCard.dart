@@ -6,6 +6,7 @@ import 'package:alarm_test/constants/app.dart';
 import 'package:alarm_test/models/Task.dart';
 import 'package:alarm_test/providers/alarmsProvider.dart';
 import 'package:alarm_test/providers/userProvider.dart';
+import 'package:alarm_test/screens/alarmTaskScreen.dart';
 import 'package:alarm_test/screens/groupDashboardScreen.dart';
 import 'package:alarm_test/screens/groupViewScreen.dart';
 import 'package:alarm_test/utils/alarmService.dart';
@@ -41,8 +42,6 @@ class AlarmCard extends StatefulWidget {
   @override
   _AlarmCardState createState() => _AlarmCardState();
 }
-
-enum UpdateTypes { update, remove, insert }
 
 class _AlarmCardState extends State<AlarmCard> {
   static Timer? _timer;
@@ -137,7 +136,7 @@ class _AlarmCardState extends State<AlarmCard> {
       child: SwipeActionCell(
         backgroundColor: Colors.black12,
         key: ObjectKey(widget.alarm.AlarmAppId),
-        trailingActions: [
+        leadingActions: [
           if ((widget.isAdmin ||
                   widget.alarm.CreatedBy == userProvider.user!.UserId) &&
               !showTasks &&
@@ -157,6 +156,8 @@ class _AlarmCardState extends State<AlarmCard> {
                 Fluttertoast.showToast(msg: res['message']);
               }
             }),
+        ],
+        trailingActions: [
           customSwipeActionCell(Icon(Icons.exit_to_app_rounded),
               Text("Opt ${widget.alarm.OptOut ? "In" : "Out"}"), (p0) async {
             widget.alarm.OptOut = !widget.alarm.OptOut;
@@ -169,6 +170,16 @@ class _AlarmCardState extends State<AlarmCard> {
             } else {
               Fluttertoast.showToast(msg: res['message']);
             }
+          }),
+          customSwipeActionCell(
+              const Icon(CupertinoIcons.today_fill), const Text("View Tasks"),
+              (p0) async {
+            Navigator.of(context).push(MaterialPageRoute(
+                fullscreenDialog: false,
+                builder: (context) => AlarmTaskScreen(
+                      alarm: widget.alarm,
+                      memberCount: widget.memberCount,
+                    )));
           })
         ],
         // : [],

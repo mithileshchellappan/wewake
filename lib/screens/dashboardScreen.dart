@@ -7,6 +7,7 @@ import 'package:alarm_test/models/Alarm.dart';
 import 'package:alarm_test/models/Group.dart';
 import 'package:alarm_test/providers/alarmsProvider.dart';
 import 'package:alarm_test/providers/groupProvider.dart';
+import 'package:alarm_test/screens/alarmTaskScreen.dart';
 import 'package:alarm_test/screens/groupDashboardScreen.dart';
 import 'package:alarm_test/screens/groupListScreen.dart';
 import 'package:alarm_test/screens/groupViewScreen.dart';
@@ -183,7 +184,7 @@ class _DashboardScreenState extends State<DashboardScreen> {
     alarmProvider = Provider.of<AlarmProvider>(context, listen: true);
     return SafeArea(
       child: Scaffold(
-        body: _navBarIndex == 0 ? GroupScreen() : UserAlarmsScreen(),
+        body: _getScreen(),
         bottomNavigationBar: CupertinoTabBar(
           currentIndex: _navBarIndex,
           onTap: (value) => {
@@ -198,10 +199,28 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 icon: Icon(CupertinoIcons.group), label: "Groups"),
             BottomNavigationBarItem(
                 icon: Icon(CupertinoIcons.calendar), label: "Calendar"),
+            BottomNavigationBarItem(
+                icon: Icon(
+                  CupertinoIcons.today_fill,
+                ),
+                label: "Tasks")
           ],
         ),
       ),
     );
+  }
+
+  Widget _getScreen() {
+    switch (_navBarIndex) {
+      case 0:
+        return GroupScreen();
+      case 1:
+        return UserAlarmsScreen();
+      case 2:
+        return UserAlarmsScreen();
+      default:
+        return GroupScreen();
+    }
   }
 }
 
