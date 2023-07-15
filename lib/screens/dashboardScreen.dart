@@ -199,11 +199,11 @@ class _DashboardScreenState extends State<DashboardScreen> {
                 icon: Icon(CupertinoIcons.group), label: "Groups"),
             BottomNavigationBarItem(
                 icon: Icon(CupertinoIcons.calendar), label: "Calendar"),
-            BottomNavigationBarItem(
-                icon: Icon(
-                  CupertinoIcons.today_fill,
-                ),
-                label: "Tasks")
+            //BottomNavigationBarItem(
+                //icon: Icon(
+                  //CupertinoIcons.today_fill,
+               // ),
+                //label: "Tasks")
           ],
         ),
       ),
