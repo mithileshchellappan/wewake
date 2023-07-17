@@ -29,6 +29,18 @@ class _AlarmTaskScreenState extends State<AlarmTaskScreen> {
     setTasks();
   }
 
+  @override
+  void dispose() {
+    for (var editor in _textEditingControllers) {
+      editor.dispose();
+    }
+    for (var focusNode in _focusNodes) {
+      focusNode.dispose();
+    }
+
+    super.dispose();
+  }
+
   void setTasks() async {
     setState(() {
       isLoading = true;
