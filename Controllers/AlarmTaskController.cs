@@ -50,10 +50,10 @@ namespace WeWakeAPI.Controllers
                 Group group =await _groupService.GetGroup(req.GroupId);
                 Alarm alarm = await _alarmService.GetAlarm(req.AlarmId);
                 Guid userId = _userService.GetUserIdFromJWT();
-                if((group.AdminId!=userId) || (alarm.CreatedBy != userId))
-                {
-                    return Unauthorized("User unauthorized");
-                }
+                // if((group.AdminId!=userId) || (alarm.CreatedBy != userId))
+                // {
+                //     return Unauthorized("User unauthorized");
+                // }
 
                 AlarmTaskResponse task = await _alarmTaskService.CreateTask(req.AlarmId,userId, req.TaskText);
 
